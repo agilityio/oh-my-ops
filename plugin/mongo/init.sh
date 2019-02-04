@@ -9,7 +9,7 @@ _do_log_level_debug "mongo"
 # The exposed docker port for mongo server.
 DO_MONGO_PORT=27017
 
-_DO_MONGO_CMDS=( "help" "start" "stop" )
+_DO_MONGO_CMDS=( "help" "start" "stop" "logs" "attach" )
 
 # The mongo docker image to be used for local deployment.
 # This image is built from the Dockerfile.
@@ -27,7 +27,7 @@ function _do_mongo_init() {
 }
 
 
-# Builds the docker image that will be used for local deployment. 
+# Builds the docker image that will be used for local deployment.
 #
 function _do_mongo_docker_build() {
     local dir="$DO_HOME/plugin/mongo"
@@ -52,7 +52,7 @@ function _do_mongo_start() {
 
     _do_print_header_2 "Mongo Start on port ${port}"
 
-    # Runs mongo as deamon and automatically remove the named 
+    # Runs mongo as deamon and automatically remove the named
     # container after finish.
     docker run --rm -d \
         --name="${_DO_MONGO_DOCKER_CONTAINER_NAME}"\
@@ -67,4 +67,22 @@ function _do_mongo_stop() {
     _do_print_header_2 "Mongo Stop"
 
     docker kill ${_DO_MONGO_DOCKER_CONTAINER_NAME} &> /dev/null
+}
+
+
+# Stops mongo server.
+#
+function _do_mongo_logs() {
+    _do_print_header_2 "Mongo Logs"
+
+    docker logs ${_DO_MONGO_DOCKER_CONTAINER_NAME}
+}
+
+
+# Attach mongo server.
+#
+function _do_mongo_attach() {
+    _do_print_header_2 "Mongo Attach"
+
+    docker attach ${_DO_MONGO_DOCKER_CONTAINER_NAME}
 }

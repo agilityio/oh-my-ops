@@ -73,7 +73,7 @@ function _do_hook_exist() {
     local func=$2
 
     local funcs=${_do_hook_map[$hook]}
-    for i in $(echo "$func" | sed 's/,/ /g'); do
+    for i in $(echo "$funcs" | sed 's/,/ /g'); do
         if [ "$i" = "$func" ]; then
             # The hook is found
             return 0
@@ -103,7 +103,7 @@ function _do_hook_call() {
     # argument list.
     local funcs=${_do_hook_map[$hook]}
 
-    for func in $(echo "$func" | sed 's/,/ /g'); do
+    for func in $(echo "$funcs" | sed 's/,/ /g'); do
         _do_log_debug "hook" "Call $func"
 
         ${func} "$@"

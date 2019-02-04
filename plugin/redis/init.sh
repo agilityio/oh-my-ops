@@ -9,7 +9,7 @@ _do_log_level_debug "redis"
 # The exposed docker port for redis server.
 DO_REDIS_PORT=6379
 
-_DO_REDIS_CMDS=( "help" "start" "stop" )
+_DO_REDIS_CMDS=( "help" "start" "stop" "logs" "attach" )
 
 # The redis docker image to be used for local deployment.
 _DO_REDIS_DOCKER_IMG="redis:3.2.11"
@@ -42,7 +42,7 @@ function _do_redis_start() {
 
     _do_print_header_2 "Redis Start on port ${port}"
 
-    # Runs redis as deamon and automatically remove the named 
+    # Runs redis as deamon and automatically remove the named
     # container after finish.
     docker run --rm -d \
         --name="${_DO_REDIS_DOCKER_CONTAINER_NAME}"\
@@ -57,4 +57,22 @@ function _do_redis_stop() {
     _do_print_header_2 "Redis Stop"
 
     docker kill ${_DO_REDIS_DOCKER_CONTAINER_NAME} &> /dev/null
+}
+
+
+# Stops redis server.
+#
+function _do_redis_logs() {
+    _do_print_header_2 "Redis Logs"
+
+    docker logs ${_DO_REDIS_DOCKER_CONTAINER_NAME}
+}
+
+
+# Attach redis server.
+#
+function _do_redis_attach() {
+    _do_print_header_2 "Redis Attach"
+
+    docker attach ${_DO_REDIS_DOCKER_CONTAINER_NAME}
 }
