@@ -29,6 +29,7 @@ function _do_docker_host_ip() {
     # other OS is not supported yet
 }
 
+
 # ==============================================================================
 # Proj plugin integration
 # ==============================================================================
@@ -88,6 +89,7 @@ function _do_docker_init() {
     _do_plugin_cmd "docker" _DO_DOCKER_CMDS
 
 }
+
 
 function _do_docker_stop_all() {
     _do_log_info "docker" "Stop all running containers"

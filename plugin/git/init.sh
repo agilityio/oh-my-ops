@@ -11,6 +11,7 @@ _DO_GIT_REPO_CMDS=( "help" "status" "add" )
 
 
 # Gets the git root directory of the current dir
+#
 function _do_git_root() {
     local dir=$(git rev-parse --show-toplevel)
     local err=$?
@@ -29,6 +30,7 @@ function _do_git_root() {
 # 
 # Returns: 
 #   0 if git enabled, 1 otherwise.
+#
 function _do_git_enabled() {
     local dir=$(_do_git_root $dir)
 
@@ -80,6 +82,7 @@ function _do_git_repo_init() {
     # Sets up the alias for showing the repo git status
     _do_log_debug "git" "Initialize git for $repo"
 
+
     _do_proj_repo_plugin "${proj_dir}" "${repo}" "git" _DO_GIT_REPO_CMDS 
 }
 
@@ -88,7 +91,15 @@ function _do_git_repo_help() {
     local proj_dir=$1
     local repo=$2
 
-    echo "  ${repo}-git-help: See git command helps"
+    echo "  
+  ${repo}-git-help: 
+    See git command helps
+
+  ${repo}-git-status: 
+    See the repository git status
+        
+  ${repo}-git-add:
+    Stage all modified file."
 }
 
 
@@ -99,6 +110,7 @@ function _do_git_repo_help() {
 function _do_git_init() {
     _do_log_info "git" "Initialize plugin"
 }
+
 
 # Listens to init proj repo hook.
 _do_proj_plugin "git"

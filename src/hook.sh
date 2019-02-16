@@ -1,5 +1,8 @@
 # Provides utils for different plugins to register custom handlers
-# to hooks.
+# to hooks. For instance,for the public "do-docker-stop-all" command, 
+# mongo plugin might want to register a listener that will terminate
+# the mongo daemon process.
+#
 # See: https://www.artificialworlds.net/blog/2012/10/17/bash-associative-array-examples/
 
 _do_log_level_warn "hook"

@@ -3,12 +3,14 @@ plugin_dir="$DO_HOME/plugin"
 _do_log_level_warn "plugin"
 
 # This is the array of loaded plugins
-declare -a loaded_plugins
+declare -a _do_plugin_list
+
 
 # Determines if a plugin is loaded.
 # $1. plugin_name: string
+#
 function _do_plugin_is_loaded() {
-    for i in "${loaded_plugins[@]}"; do 
+    for i in "${_do_plugin_list[@]}"; do 
         if [ "$i" = "$1" ]; then 
             # Found the plugin in the loaded list.
             return 0
@@ -30,7 +32,7 @@ function _do_plugin() {
         if ! _do_plugin_is_loaded $plugin_name; then 
 
             # Add the plugin into the loaded list.
-            loaded_plugins=( "${loaded_plugins[@]}" "$plugin_name" )
+            _do_plugin_list=( "${_do_plugin_list[@]}" "$plugin_name" )
 
             # Loads the plugin.
             local init_file="${plugin_dir}/${plugin_name}.sh"
@@ -46,7 +48,6 @@ function _do_plugin() {
         fi 
     done
 }
-
 
 
 # Registers plugin specific repo commands. 
@@ -83,14 +84,12 @@ function _do_plugin_cmd() {
 #
 function _do_plugin_init() {
     
-    local init_func
-
     # For all loaded plugins, trigger plugin init function if that 
     # exists. For example, for 'git' plugin, the init function should be 
     # named '_do_git_init'.
     #
-    for plugin in "${loaded_plugins[@]}"; do 
-        init_func="_do_${plugin}_init" 
+    for plugin in "${_do_plugin_list[@]}"; do 
+        local init_func="_do_${plugin}_init" 
 
         if _do_alias_exist "${init_func}"; then 
             # Calls the init function

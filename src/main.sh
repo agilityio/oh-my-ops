@@ -2,18 +2,21 @@
 # Loads core libraries
 src_files=(
     "os"
+    "src"
     "dir"
     "file"
     "string"
     "alias"
     "color"
     "print"
+    "assert"
     "log"
     "error"
     "success"
     "alias"
     "hook"
     "plugin"
+    "test"
 )
 
 for src_file in "${src_files[@]}"; do

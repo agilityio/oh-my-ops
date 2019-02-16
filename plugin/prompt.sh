@@ -1,7 +1,12 @@
 
+# The current working environment.
+DO_ENVIRONMENT="local"
+
+# This function is called whenever the current directory changed. 
+# 
 function _do_prompt() {
     local dir=$(pwd)
-    local environment="\[${TX_NORMAL} ${TX_BOLD}${FG_ENVIRONMENT}${TX_REVERSED}\] ${ENVIRONMENT} \[${TX_NORMAL}\]"
+    local environment="\[${TX_NORMAL} ${TX_BOLD}${FG_ENVIRONMENT}${TX_REVERSED}\] ${DO_ENVIRONMENT} \[${TX_NORMAL}\]"
 
     local text
     if [ -d ".git" ]; then
@@ -19,6 +24,11 @@ function _do_prompt() {
     PS1="
 \[${FG_GREEN}\]➜ ${environment} ${text} \[${FG_NORMAL}\]"
 }
+
+
+# ==============================================================================
+# Plugin Init
+# ==============================================================================
 
 function _do_prompt_init() {
     PROMPT_COMMAND=_do_prompt

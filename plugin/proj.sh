@@ -60,6 +60,7 @@ function _do_proj_repo_plugin() {
     local plugin=$3
     local cmds=$4[@]
 
+
     for cmd in "${!cmds}"; do 
         # Converts the command to undercase
         local under_cmd=$(_do_string_to_undercase $cmd)
