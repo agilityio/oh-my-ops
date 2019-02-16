@@ -66,7 +66,7 @@ function _do_docker_repo_init() {
     _do_log_debug "docker" "Initializes docker integration for $repo"
 
     # Registers tmux command such as 'repo-tmux-start', etc.
-    _do_proj_repo_plugin "${proj_dir}" "${repo}" "docker" _DO_DOCKER_REPO_CMDS
+    _do_repo_plugin "${proj_dir}" "${repo}" "docker" _DO_DOCKER_REPO_CMDS
 }
 
 
@@ -84,7 +84,7 @@ function _do_docker_repo_help() {
 # ==============================================================================
 _DO_DOCKER_CMDS=( "help" "stop-all" )
 
-function _do_docker_init() {
+function _do_docker_plugin_init() {
     _do_log_info "docker" "Initialize plugin"
     _do_plugin_cmd "docker" _DO_DOCKER_CMDS
 

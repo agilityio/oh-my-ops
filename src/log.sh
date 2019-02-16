@@ -16,11 +16,11 @@ function _do_log_level_name() {
             echo "${FG_RED}ERROR${FG_NORMAL}"
             ;;
         "2") 
-            echo "${FG_YELLOW}WARN${FG_NORMAL}"
+            echo "${FG_YELLOW} WARN${FG_NORMAL}"
             ;; 
             
         "3") 
-            echo "${FG_PURPLE}INFO${FG_NORMAL}"
+            echo "${FG_PURPLE} INFO${FG_NORMAL}"
             ;;
         "4") 
             echo "${FG_BLUE}DEBUG${FG_NORMAL}"

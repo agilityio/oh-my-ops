@@ -23,7 +23,7 @@ _DO_KEYCLOAK_DOCKER_CONTAINER_NAME="do_keycloak"
 
 # Initializes keycloak plugin.
 #
-function _do_keycloak_init() {
+function _do_keycloak_plugin_init() {
     _do_log_info "keycloak" "Initialize plugin"
     _do_plugin_cmd "keycloak" _DO_KEYCLOAK_CMDS
 

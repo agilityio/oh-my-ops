@@ -30,7 +30,7 @@ function _do_prompt() {
 # Plugin Init
 # ==============================================================================
 
-function _do_prompt_init() {
+function _do_prompt_plugin_init() {
     PROMPT_COMMAND=_do_prompt
 }
 

@@ -10,6 +10,7 @@ src_files=(
     "color"
     "print"
     "assert"
+    "arg"
     "log"
     "error"
     "success"
@@ -29,7 +30,7 @@ if [ -z "${DO_PLUGINS}" ]; then
     _do_log_debug "main" "load all plugins"
 
     # Loads all plugins.
-    for plugin in $( ls ${DO_HOME}/plugin ); do
+    for plugin in $( ls -A ${DO_HOME}/plugin ); do
         _do_plugin $(_do_file_name_without_ext $plugin)
     done
 

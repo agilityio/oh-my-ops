@@ -20,7 +20,7 @@ _DO_MONGO_DOCKER_CONTAINER_NAME="do_mongo"
 
 # Initializes mongo plugin.
 #
-function _do_mongo_init() {
+function _do_mongo_plugin_init() {
     _do_log_info "mongo" "Initialize plugin"
     _do_plugin_cmd "mongo" _DO_MONGO_CMDS
     _do_hook_after "_do_docker_stop_all" "_do_mongo_stop"

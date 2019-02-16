@@ -40,7 +40,7 @@ function _do_vg_repo_init() {
     _do_log_debug "vg" "Initializes vg integration for $repo"
 
     # Registers tmux command such as 'repo-tmux-start', etc.
-    _do_proj_repo_plugin "${proj_dir}" "${repo}" "vg" _DO_VG_REPO_CMDS 
+    _do_repo_plugin "${proj_dir}" "${repo}" "vg" _DO_VG_REPO_CMDS 
 }
 
 
@@ -76,28 +76,28 @@ function _do_vg_repo_help() {
 
 # Starts vagrant machine.
 function _do_vg_repo_start() {
-    _do_proj_repo_cmd $@ "vagrant up"
+    _do_repo_cmd $@ "vagrant up"
 }
 
 # Stops vagrant machine.
 function _do_vg_repo_stop() {
-    _do_proj_repo_cmd $@ "vagrant halt"
+    _do_repo_cmd $@ "vagrant halt"
 }
 
 # Ssh to vagrant machine.
 function _do_vg_repo_ssh() {
-    _do_proj_repo_cmd $@ "vagrant ssh"
+    _do_repo_cmd $@ "vagrant ssh"
 }
 
 # Destroy vagrant machine.
 function _do_vg_repo_destroy() {
-    _do_proj_repo_cmd $@ "vagrant destroy"
+    _do_repo_cmd $@ "vagrant destroy"
 }
 
 # ==============================================================================
 # Plugin Init
 # ==============================================================================
-function _do_vg_init() {
+function _do_vg_plugin_init() {
     _do_log_info "vg" "Initialize plugin"
     
 }

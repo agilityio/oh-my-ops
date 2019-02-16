@@ -20,7 +20,7 @@ _DO_REDIS_DOCKER_CONTAINER_NAME="do_redis"
 
 # Initializes redis plugin.
 #
-function _do_redis_init() {
+function _do_redis_plugin_init() {
     _do_log_info "redis" "Initialize plugin"
     _do_plugin_cmd "redis" _DO_REDIS_CMDS
 

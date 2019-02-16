@@ -20,7 +20,7 @@ _DO_POSTGRES_DOCKER_CONTAINER_NAME="do_postgres"
 
 # Initializes postgres plugin.
 #
-function _do_postgres_init() {
+function _do_postgres_plugin_init() {
     _do_log_info "postgres" "Initialize plugin"
     _do_plugin_cmd "postgres" _DO_POSTGRES_CMDS
 

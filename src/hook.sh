@@ -97,18 +97,19 @@ function _do_hook_exist() {
 function _do_hook_call() {
     local hook=$1
 
-    _do_log_debug "hook" "_do_hook_call $hook"
-
     # Removes the first argument to the argument list.
     shift
+    local args=$@
+
+    _do_log_debug "hook" "_do_hook_call $hook"
 
     # Triggers all registered functions with the specified
     # argument list.
     local funcs=${_do_hook_map[$hook]}
 
     for func in $(echo "$funcs" | sed 's/,/ /g'); do
-        _do_log_debug "hook" "Call $func"
+        _do_log_debug "hook" "Call $func $args"
 
-        ${func} "$@"
+        ${func} ${args}
     done
 }

@@ -40,7 +40,7 @@ function _do_bin_repo_init() {
     _do_log_debug "bin" "Initializes bin integration for $repo"
 
     # Registers tmux command such as 'repo-tmux-start', etc.
-    _do_proj_repo_plugin "${proj_dir}" "${repo}" "bin" _DO_BIN_REPO_CMDS 
+    _do_repo_plugin "${proj_dir}" "${repo}" "bin" _DO_BIN_REPO_CMDS 
 }
 
 
@@ -56,7 +56,7 @@ function _do_bin_repo_help() {
 # ==============================================================================
 # Plugin Init
 # ==============================================================================
-function _do_bin_init() {
+function _do_bin_plugin_init() {
     _do_log_info "bin" "Initialize plugin"
     
 }

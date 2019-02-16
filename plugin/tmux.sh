@@ -23,7 +23,7 @@ function _do_tmux_repo_init() {
     _do_log_debug "tmux" "Initializes tmux integration for $repo"
 
     # Registers tmux command such as 'repo-tmux-start', etc.
-    _do_proj_repo_plugin "${proj_dir}" "${repo}" "tmux" _DO_TMUX_REPO_CMDS 
+    _do_repo_plugin "${proj_dir}" "${repo}" "tmux" _DO_TMUX_REPO_CMDS 
 }
 
 
@@ -198,7 +198,7 @@ function _do_tmux_repo_enabled() {
 # Plugin Init
 # ==============================================================================
 
-function _do_tmux_init() {
+function _do_tmux_plugin_init() {
     _do_log_info "tmux" "Initialize plugin"
 
 }

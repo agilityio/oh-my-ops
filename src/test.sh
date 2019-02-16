@@ -10,10 +10,6 @@ function _do_test() {
         $func
         local err=$?
 
-        echo "HERE"
-
-        echo "HERE: $err"
-
         if _do_error "$err"; then 
             echo "HERE"
         else 
