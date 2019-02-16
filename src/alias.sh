@@ -9,6 +9,12 @@ function _do_alias_exist() {
     fi
 }
 
+function _do_alias_call_if_exists() {
+    local name=$1
+    if _do_alias_exist $name; then 
+        eval $name
+    fi
+}
 
 # Gets the list of alias given a prefix.
 function _do_alias_list() {

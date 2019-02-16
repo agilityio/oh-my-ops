@@ -116,3 +116,10 @@ function _do_git_repo_remote_init() {
 
     done    
 }
+
+
+function _do_git_proj_remote_cmd() {
+    local cmd=$1
+    local remote=$2
+    _do_proj_exec_all_repo_cmds "$(_do_proj_get_dir)" "git-${cmd}-${remote}"
+}

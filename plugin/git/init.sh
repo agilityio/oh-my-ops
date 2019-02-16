@@ -92,6 +92,20 @@ function _do_git_repo_help() {
 function _do_git_plugin_init() {
     _do_log_info "git" "Initialize plugin"
     _do_hook_after "_do_repo_gen" "_do_git_repo_gen"
+
+    # Adds alias that runs at repository level
+    local cmds=( "status" )
+    for cmd in ${cmds[@]}; do 
+        alias "do-proj-git-${cmd}"="_do_proj_default_exec_all_repo_cmds git-${cmd}"
+    done
+
+    # Alias alias that runs at remote level 
+    local cmds=( "fetch" "sync" )
+    for remote in $( _do_git_get_default_remote_list ); do 
+        for cmd in ${cmds[@]}; do 
+            alias "do-proj-git-${cmd}-$remote"="_do_proj_default_exec_all_repo_cmds git-${cmd}-$remote"
+        done
+    done
 }
 
 

@@ -12,3 +12,4 @@ function _do_git_repo_status() {
 
     _do_repo_cmd $proj_dir $repo "git status"
 }
+

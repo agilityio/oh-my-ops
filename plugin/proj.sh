@@ -30,6 +30,15 @@ function _do_proj_cmd() {
     _do_hook_call "_do_proj_cmd" $@ 
 }
 
+function _do_proj_default_exec_all_repo_cmds() {
+    local cmd=$1
+
+    local proj_dir=$(_do_proj_get_dir) 
+
+    for repo in $( _do_proj_get_repo_list $proj_dir ); do 
+        _do_alias_call_if_exists "${repo}-${cmd}"
+    done    
+}
 
 # Gets all repositories in a proj.
 #

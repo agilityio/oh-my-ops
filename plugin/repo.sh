@@ -175,6 +175,10 @@ function _do_repo_gen() {
     # by devops framework.
     touch .do.sh
 
+    # Adds empty README file
+    touch README.md
+
+    # Trigger hook for other plugins to generate more.
     _do_hook_call "_do_repo_gen" "${proj_dir}" "${repo}"
 
     # Triggers additional init for the repository.
