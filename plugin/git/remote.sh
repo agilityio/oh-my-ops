@@ -2,6 +2,33 @@
 _do_log_level_debug "git-remote"
 
 
+# This function is a util function to compute the remote uri for a given
+# repository and remote name.
+# Arguments:
+#   1. repo: The repository
+#   2. remote: The remote name.
+#
+function _do_git_repo_get_remote_uri() {
+    local repo=$1
+    local remote=$2
+
+    _do_dir_push $DO_HOME
+    
+    # Remove the last .git
+    # For example, if a remote is ssh://git@bitbucket.org/abc/devops.git
+    # The result would be ssh://git@bitbucket.org/abc
+    local uri=$( git config --local --get "remote.${remote}.url" | sed -e 's/\/[^\/]*\.git$//' )
+
+    _do_dir_pop
+
+    if [ -z "$uri" ]; then 
+        echo ""
+    else 
+        echo "${uri}/${repo}.git"
+    fi
+}
+
+
 function _do_git_repo_get_remote_list() {
     local proj_dir=$(_do_arg_required $1)
     local repo=$(_do_arg_required $2)
@@ -10,6 +37,16 @@ function _do_git_repo_get_remote_list() {
 
     git remote
 
+    _do_dir_pop
+}
+
+
+# Gets the default git remote list available 
+# at devops repository. 
+#
+function _do_git_get_default_remote_list() {
+    _do_dir_push $DO_HOME
+    git remote
     _do_dir_pop
 }
 

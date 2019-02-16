@@ -1,7 +1,6 @@
 _do_log_level_debug "git-branch"
 
 
-
 # Gets the current git branch
 #
 function _do_git_repo_get_branch() {

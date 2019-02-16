@@ -151,3 +151,40 @@ function _do_repo_cd() {
     _do_hook_call "_do_repo_cd" "${proj_dir}" "${repo}"
 }
 
+
+# Generates a new repository under the current project directory
+#
+function _do_repo_gen() {
+    local proj_dir=$(_do_proj_get_dir)
+
+    _do_print_header_2 "Generates new repository"
+
+    # Reads the repository name from command line.
+    printf "Please enter repository name: "
+    read repo
+
+    _do_log_info "proj" "Generates new repo '${repo}' at '${proj_dir}'"
+
+    local repo_dir="${proj_dir}/${repo}"
+
+    # Creates the repository directory
+    mkdir ${repo_dir}
+    cd $repo_dir
+
+    # Makes the .do.sh file so that this repository is picked up 
+    # by devops framework.
+    touch .do.sh
+
+    _do_hook_call "_do_repo_gen" "${proj_dir}" "${repo}"
+
+    # Triggers additional init for the repository.
+    _do_repo_init $proj_dir $repo
+}
+
+
+# Initializes plugin.
+function _do_repo_plugin_init() {
+    _do_log_info "repo" "Plugin initialize"
+
+    alias "do-repo-gen"="_do_repo_gen"
+}

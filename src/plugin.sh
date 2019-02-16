@@ -89,15 +89,18 @@ function _do_plugin_init() {
     # named '_do_git_plugin_init'.
     #
     for plugin in "${_DO_PLUGIN_LIST[@]}"; do 
-        local init_func="_do_${plugin}_plugin_init" 
+        local func="_do_${plugin}_plugin_init" 
 
-        if _do_alias_exist "${init_func}"; then 
-            ${init_func}
+        if _do_alias_exist "${func}"; then 
+            ${func}
         fi 
+    done
 
-        local ready_func="_do_${plugin}_plugin_ready" 
-        if _do_alias_exist "${ready_func}"; then 
-            ${ready_func}
+    for plugin in "${_DO_PLUGIN_LIST[@]}"; do 
+        local func="_do_${plugin}_plugin_ready" 
+
+        if _do_alias_exist "${func}"; then 
+            ${func}
         fi 
     done
 }

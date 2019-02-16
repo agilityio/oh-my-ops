@@ -4,22 +4,13 @@ _do_log_level_debug "git"
 
 _do_src_include_others_same_dir
 
+
 # ==============================================================================
 # Proj plugin integration
 # ==============================================================================
 
 # The array of all plugin repo comamnds.
 _DO_GIT_REPO_CMDS=( "help" "status" "add" )
-
-
-# Runs git status on the specified repository.
-# Arguments: 
-#   1. proj_dir: The project home directory.
-#   2. repo: The repository name.
-#
-function _do_git_repo_status() {
-    _do_repo_cmd $@ "git status"
-}
 
 # Runs 'git add .' on the specified directory.
 # Arguments: 
@@ -68,7 +59,7 @@ function _do_git_repo_init() {
     fi 
 
     # Sets up the alias for showing the repo git status
-    _do_log_debug "git" "Initialize git for '$repo'"
+    _do_log_info "git" "Initialize git for '$repo'"
 
     # Register hooks for command repo life cycle command.
     _do_repo_plugin "${proj_dir}" "${repo}" "git" _DO_GIT_REPO_CMDS 
@@ -100,6 +91,7 @@ function _do_git_repo_help() {
 
 function _do_git_plugin_init() {
     _do_log_info "git" "Initialize plugin"
+    _do_hook_after "_do_repo_gen" "_do_git_repo_gen"
 }
 
 
