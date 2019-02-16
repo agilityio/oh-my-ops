@@ -86,7 +86,7 @@ function _do_proj_init() {
     # Initializes all sub directories as a code repository
     _do_log_debug "proj" "Adds proj directory $dir"
     for name in $( _do_proj_get_repo_list $dir ); do 
-        if [ -f "$dir/$name/.do.sh" ]; then 
+        if _do_repo_is_enabled $dir $name; then 
             _do_repo_init $dir $name
         fi
     done

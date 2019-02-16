@@ -1,5 +1,14 @@
 _do_log_level_warn "repo"
 
+function _do_repo_is_enabled() {
+    local proj_dir=$1
+    local repo=$2    
+    if [ -f "$proj_dir/$repo/.do.sh" ]; then 
+        return 0
+    else 
+        return 1
+    fi
+}
 
 # Change directory and push it to stack.
 #
@@ -186,9 +195,37 @@ function _do_repo_gen() {
 }
 
 
+# Listens to "_do_prompt" event and update the list of repo aliases
+# Arguments:
+#   1. dir: The current directory. This is sent from prompt plugin. 
+#
+function _do_repo_prompt_changed() {    
+    local dir=$1
+
+    if [ ! -f "$dir/.do.sh" ]; then 
+        # Repository is not enabled for this directory
+        return
+    fi
+
+    local repo=$(basename $dir)
+    _do_log_info "repo" "Updates aliases for repo '${repo}'"
+    
+    # Removes all aliases begin with "repo-"
+    for cmd in $(_do_alias_list "repo-"); do
+        unalias "repo-${cmd}"
+    done
+
+    # Creates new aliases for the current repo
+    for cmd in $(_do_alias_list "$repo-"); do
+        alias "repo-${cmd}"="${repo}-${cmd}"
+    done
+}
+
+
 # Initializes plugin.
 function _do_repo_plugin_init() {
     _do_log_info "repo" "Plugin initialize"
 
     alias "do-repo-gen"="_do_repo_gen"
+    _do_hook_after "_do_prompt" "_do_repo_prompt_changed"
 }
