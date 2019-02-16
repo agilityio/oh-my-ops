@@ -1,4 +1,4 @@
-_do_log_level_debug "git-branch"
+_do_log_level_warn "git-branch"
 
 
 # Gets the current git branch
@@ -97,6 +97,5 @@ function _do_git_repo_branch_init() {
 
             alias "${cmd}"="_do_git_repo_branch_${name} ${proj_dir} ${repo} ${branch}"
         done
-
     done    
 }

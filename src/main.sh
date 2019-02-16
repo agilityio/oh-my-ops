@@ -13,7 +13,6 @@ src_files=(
     "arg"
     "log"
     "error"
-    "success"
     "alias"
     "hook"
     "plugin"

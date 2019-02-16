@@ -1,5 +1,5 @@
 
-_do_log_level_debug "git-remote"
+_do_log_level_warn "git-remote"
 
 
 # This function is a util function to compute the remote uri for a given
@@ -121,5 +121,5 @@ function _do_git_repo_remote_init() {
 function _do_git_proj_remote_cmd() {
     local cmd=$1
     local remote=$2
-    _do_proj_exec_all_repo_cmds "$(_do_proj_get_dir)" "git-${cmd}-${remote}"
+    _do_proj_exec_all_repo_cmds "$(_do_proj_default_get_dir)" "git-${cmd}-${remote}"
 }

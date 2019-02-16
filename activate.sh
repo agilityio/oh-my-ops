@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 # Uncommand this to just load the specified plugins
-DO_PLUGINS="proj git prompt"
+# DO_PLUGINS="proj git prompt"
 
 DO_HOME="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )";
 

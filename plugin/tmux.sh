@@ -1,6 +1,6 @@
 _do_plugin "proj"
 
-_do_log_level_debug "tmux"
+_do_log_level_warn "tmux"
 
 # ==============================================================================
 # Proj plugin integration

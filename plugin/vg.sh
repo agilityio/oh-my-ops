@@ -1,7 +1,7 @@
 _do_plugin "proj"
 
 # Docker Supports
-_do_log_level_debug "vg"
+_do_log_level_warn "vg"
 
 
 # ==============================================================================

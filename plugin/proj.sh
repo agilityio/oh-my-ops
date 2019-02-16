@@ -1,5 +1,5 @@
 _do_plugin "repo"
-_do_log_level_debug "proj"
+_do_log_level_warn "proj"
 
 declare -a _DO_PROJ_DIRS
 
@@ -33,7 +33,7 @@ function _do_proj_cmd() {
 function _do_proj_default_exec_all_repo_cmds() {
     local cmd=$1
 
-    local proj_dir=$(_do_proj_get_dir) 
+    local proj_dir=$(_do_proj_default_get_dir) 
 
     for repo in $( _do_proj_get_repo_list $proj_dir ); do 
         _do_alias_call_if_exists "${repo}-${cmd}"
@@ -95,7 +95,7 @@ function _do_proj_init() {
 
 # Gets the project directory of the current directory.
 #
-function _do_proj_get_dir() {
+function _do_proj_default_get_dir() {
 
     # From the current directory, keep traverse back work to find a project 
     # container loaded before.

@@ -1,4 +1,4 @@
-_do_log_level_debug "repo"
+_do_log_level_warn "repo"
 
 
 # Change directory and push it to stack.
@@ -155,7 +155,7 @@ function _do_repo_cd() {
 # Generates a new repository under the current project directory
 #
 function _do_repo_gen() {
-    local proj_dir=$(_do_proj_get_dir)
+    local proj_dir=$(_do_proj_default_get_dir)
 
     _do_print_header_2 "Generates new repository"
 
