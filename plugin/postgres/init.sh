@@ -33,7 +33,9 @@ function _do_postgres_plugin_init() {
 #
 function _do_postgres_docker_build() {
     local dir="$DO_HOME/plugin/postgres"
-    docker build "${dir}" -t ${_DO_POSTGRES_DOCKER_IMG}
+    _do_dir_push $dir
+    docker build . -t ${_DO_POSTGRES_DOCKER_IMG}
+    _do_dir_pop
 }
 
 
