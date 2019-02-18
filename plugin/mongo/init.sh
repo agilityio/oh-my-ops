@@ -31,7 +31,9 @@ function _do_mongo_plugin_init() {
 #
 function _do_mongo_docker_build() {
     local dir="$DO_HOME/plugin/mongo"
-    docker build "${dir}" -t ${_DO_MONGO_DOCKER_IMG}
+    _do_dir_push $dir
+    docker build . -t ${_DO_MONGO_DOCKER_IMG}
+    _do_dir_pop
 }
 
 
