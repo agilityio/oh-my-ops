@@ -168,13 +168,16 @@ function _do_repo_cd() {
 # Generates a new repository under the current project directory
 #
 function _do_repo_gen() {
+    local repo=$1
     local proj_dir=$(_do_proj_default_get_dir)
 
     _do_print_header_2 "Generates new repository"
 
     # Reads the repository name from command line.
-    printf "Please enter repository name: "
-    read repo
+    if [ -z "$repo" ]; then 
+        printf "Please enter repository name: "
+        read repo
+    fi 
 
     _do_log_info "proj" "Generates new repo '${repo}' at '${proj_dir}'"
 

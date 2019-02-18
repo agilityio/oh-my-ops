@@ -34,6 +34,7 @@ function _do_src_include_others_same_dir() {
     local dir=$(_do_src_dir)
     local excluded=$(_do_src_name)
 
+    local name
     for name in $(ls $dir); do
         if [ ! "$name" == "$excluded" ]; then 
             source $dir/$name

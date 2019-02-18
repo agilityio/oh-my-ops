@@ -1,7 +1,7 @@
 _do_plugin "proj"
 
 # Docker Supports
-_do_log_level_debug "docker"
+_do_log_level_warn "docker"
 
 
 function _do_docker_host_ip() {

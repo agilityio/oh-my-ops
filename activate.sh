@@ -18,4 +18,4 @@
 DO_HOME="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )";
 
 # Activates the main source file.
-source "$DO_HOME/src/main.sh"
+source "$DO_HOME/src/main.sh" $@

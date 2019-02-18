@@ -91,6 +91,7 @@ function _do_git_repo_branch_init() {
 
         # Register git fetch command
         local names=( "checkout" "merge" )
+        local name
         for name in ${names[@]}; do
             local cmd="${repo}-git-${name}-${branch}"
             _do_log_debug "git-branch" "  Register '$cmd' alias"

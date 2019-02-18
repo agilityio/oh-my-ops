@@ -9,7 +9,7 @@ function _do_assert_fail() {
 
     printf "${FG_CYAN}${msg}.${FG_NORMAL}\n" >&2
     _do_assert_stack_trace
-    return $?
+    exit 1
 }
 
 
@@ -24,7 +24,7 @@ function _do_assert() {
 
         printf "Expected not empty.\n" >&2
         _do_assert_stack_trace
-        return $?
+        exit 1
     fi 
 }
 
@@ -40,7 +40,7 @@ function _do_assert_eq() {
 
         printf "Expected ${FG_YELLOW}[$expected]${TX_NORMAL} but was ${FG_RED}[$actual]${TX_NORMAL}\n" >&2
         _do_assert_stack_trace
-        return $?
+        exit 1
     fi 
 }
 
@@ -57,8 +57,21 @@ function _do_assert_neq() {
 
         printf "Expected not ${FG_RED}[$actual]${TX_NORMAL}\n" >&2
         _do_assert_stack_trace
-        return $?
+        exit 1
     fi
+}
+
+
+function _do_assert_dir() {
+    local dir=$1
+
+    [ -d $dir ] || _do_assert_fail "Expected $dir a directory"
+}
+
+function _do_assert_file() {
+    local dir=$1
+
+    [ -f $dir ] || _do_assert_fail "Expected $dir a file"
 }
 
 
@@ -80,15 +93,4 @@ function _do_assert_stack_trace() {
     done | grep -v "^$BASH_SOURCE"
     printf "${TX_NORMAL}" >&2
 
-    # Exit assert
-    exit 1
 }
-
-function _do_assert_trap_exit() {
-    echo "Assertion Failed! Exit."
-    return $?
-}
-
-# Trap the assert error and return to make sure the error does not
-# close the session.
-_do_trap_push "_do_assert_trap_exit"

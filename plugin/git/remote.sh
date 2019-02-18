@@ -29,6 +29,8 @@ function _do_git_repo_get_remote_uri() {
 }
 
 
+# Gets the list of all remotes registered for the specified repositories.
+# 
 function _do_git_repo_get_remote_list() {
     local proj_dir=$(_do_arg_required $1)
     local repo=$(_do_arg_required $2)
@@ -96,6 +98,18 @@ function _do_git_repo_remote_sync() {
 }
 
 
+# Listens to event that initializes a repository and adding aliases
+# for git commands support. For example, for 'devops' repository, 
+# the following git aliases might be registered. 
+#   'devops-git-fetch-origin'
+#       For fetch latest code from origin remote.
+#
+#   'devops-git-pull-origin'
+#       For pull changes from origin remote.
+#
+#   'devops-git-sync-origin'
+#       For sync code with origin remote.
+#
 function _do_git_repo_remote_init() {
     local proj_dir=$(_do_arg_required $1)
     local repo=$(_do_arg_required $2)
@@ -103,17 +117,19 @@ function _do_git_repo_remote_init() {
     # For all git remotes, register additional command such as git fetch, git sync, ...
     for remote in $(_do_git_repo_get_remote_list $proj_dir $repo); do 
         _do_log_info "git-remote" "Initialize git remote for '$remote'"
+
+        # Triggers hook for additional extensions if any.
         _do_hook_call "_do_git_repo_remote_init" $proj_dir $repo $remote
 
-        # Register git fetch command
+        # Register git remote commands
         local names=( "fetch" "pull" "sync" )
+        local name
         for name in ${names[@]}; do
             local cmd="${repo}-git-${name}-${remote}"
 
             _do_log_debug "git-remote" "  Register '$cmd' alias"
             alias "${cmd}"="_do_git_repo_remote_${name} ${proj_dir} ${repo} ${remote}"
         done
-
     done    
 }
 

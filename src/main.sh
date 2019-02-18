@@ -1,4 +1,29 @@
 
+# The remaining arguments that cannot be parsed.
+_DO_MAIN_ARGS=()
+
+# 0 Indicates this is a quick boot.
+_DO_MAIN_QUICK="no"
+
+
+# Parse input arguments
+while [[ $# -gt 0 ]]
+do
+    key="$1"
+    case $key in
+        -q|--quick)
+        _DO_MAIN_QUICK="yes"
+        shift
+        ;;
+
+        *)    # unknown option
+        _DO_MAIN_ARGS+=("$1") # save it in an array for later
+        shift # past argument
+        ;;
+    esac
+done
+
+
 # Loads core libraries
 src_files=(
     "os"
@@ -17,9 +42,9 @@ src_files=(
     "alias"
     "hook"
     "plugin"
-    "test"
 )
 
+# Loads all core source files.
 for src_file in "${src_files[@]}"; do
     source "${DO_HOME}/src/${src_file}.sh"
 done
@@ -42,4 +67,10 @@ fi
 
 # Initializes all plugins registered
 _do_plugin_init
-_do_print_banner
+
+
+# Display banner for full activation.
+if [ "$_DO_MAIN_QUICK" == "no" ]; then 
+    _do_print_banner
+fi 
+

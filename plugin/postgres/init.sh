@@ -1,6 +1,6 @@
 _do_plugin "docker"
 
-_do_log_level_debug "postgres"
+_do_log_level_warn "postgres"
 
 # ==============================================================================
 # Plugin Init

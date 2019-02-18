@@ -55,6 +55,7 @@ function _do_proj_default_exec_all_repo_cmds() {
 #
 function _do_proj_get_repo_list() {
     local dir=$1
+    local name
     for name in $( ls -A $dir ); do 
         if [ -f "$dir/$name/.do.sh" ]; then 
             echo $name
@@ -101,6 +102,8 @@ function _do_proj_init() {
 
     # Initializes all sub directories as a code repository
     _do_log_debug "proj" "Adds proj directory $dir"
+
+    local name
     for name in $( _do_proj_get_repo_list $dir ); do 
         if _do_repo_is_enabled $dir $name; then 
             _do_repo_init $dir $name

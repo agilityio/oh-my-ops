@@ -1,7 +1,7 @@
 _do_plugin "docker"
 _do_plugin "postgres"
 
-_do_log_level_debug "keycloak"
+_do_log_level_warn "keycloak"
 
 # ==============================================================================
 # Plugin Init
