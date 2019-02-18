@@ -1,5 +1,9 @@
 _do_log_level_warn "repo"
 
+
+# This function looks are a directory and if there is a file named ".do.sh" then
+# devops is enabled for that repository. 
+# 
 function _do_repo_is_enabled() {
     local proj_dir=$1
     local repo=$2    
