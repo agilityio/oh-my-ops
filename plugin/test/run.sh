@@ -1,15 +1,20 @@
-# The remaining arguments that cannot be parsed.
-_DO_TEST_DIRS=()
-
-# 0 Indicates this is a quick boot.
-_DO_TEST_VERBOSE="no"
-
 
 # Just loads the test plugin.
 DO_PLUGINS="test"
 
 # Activates the environment with just the test plug
 source activate.sh --quick
+
+
+# =============================================================================
+# Parse input arguments.
+# =============================================================================
+# The remaining arguments that cannot be parsed.
+test_dirs=()
+
+# 0 Indicates this is a quick boot.
+verbose="no"
+
 
 # Parses the arguments parsed to this script.
 #
@@ -20,18 +25,24 @@ function _do_test_parse_args() {
         key="$1"
         case $key in
             -v|--verbose)
-            _DO_TEST_VERBOSE="yes"
+            verbose="yes"
             shift
             ;;
 
             *)    # unknown option
-            _DO_TEST_DIRS+=("$1") # save it in an array for later
+            test_dirs+=("$1") # save it in an array for later
             shift # past argument
             ;;
         esac
     done
 }
 
+_do_test_parse_args $@
+
+
+# =============================================================================
+# Executes the test suite 
+# =============================================================================
 
 # This is the generated bash file that will be 
 # call later. This fill will include the original test source file 
@@ -52,8 +63,11 @@ pattern='^[[:blank:]]*function[[:blank:]]*\(test_[^\(]*\).*$'
 
 
 function _do_test_start() {
+    # Needs to go to the current directories again 
+    # To resolves the user input.
     cd $cur_dir &> /dev/null
 
+    # This is the directory to resolve the test cases.
     local dir=$1
 
     # Go to this directory to make sure the find command return the absolute path.
@@ -62,8 +76,8 @@ function _do_test_start() {
 
     if _do_error $err; then 
         _do_assert_fail "Expected a $dir is a directory"
-        
     fi 
+
 
     # Recursively looks for all test files that end with "-test.sh" and runs them.
     local file
@@ -88,8 +102,6 @@ function _do_test_start() {
                 echo "
 source ${DO_HOME}/activate.sh --quick
 source $file
-
-_DO_TEST_TMP_DIR=${_DO_TEST_TMP_DIR}
 $func
                 " > $gen_f
 
@@ -110,7 +122,7 @@ $func
                     # The test passed.
                     printf "...${FG_GREEN}OK${FG_NORMAL}\n"
 
-                    if [ ${_DO_TEST_VERBOSE} == "yes" ]; then 
+                    if [ ${verbose} == "yes" ]; then 
                         cat $out_f
                     fi
                 fi             
@@ -123,12 +135,10 @@ $func
 
 }
 
-_do_test_parse_args $@
 
-
-if [ ${#_DO_TEST_DIRS[@]} -gt 0 ]; then 
+if [ ${#test_dirs[@]} -gt 0 ]; then 
     # If the test directories are passed in, just run tests on those directories.
-    for dir in ${_DO_TEST_DIRS[@]}; do 
+    for dir in ${test_dirs[@]}; do 
         _do_test_start $dir
     done
 
@@ -137,6 +147,9 @@ else
     _do_test_start .
 fi 
 
+# =============================================================================
+# Teardown the test suite
+# =============================================================================
 
 # Deletes all generated files
 rm -rfd $tmp_dir &> /dev/null
