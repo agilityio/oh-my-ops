@@ -7,7 +7,7 @@ function _do_assert_fail() {
         msg="Failed"
     fi
 
-    printf "${FG_CYAN}${msg}.${FG_NORMAL}\n" >&2
+    printf "${FG_CYAN}${msg}${FG_NORMAL}\n" >&2
     _do_assert_stack_trace
     exit 1
 }
