@@ -1,4 +1,9 @@
 
+if ! echo "$0" | grep -q "bash"; then
+    echo "This script only support bash! Please executes 'bash' to change to bash shell instead."
+    return
+fi
+
 # The remaining arguments that cannot be parsed.
 _DO_MAIN_ARGS=()
 
