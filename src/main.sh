@@ -9,6 +9,7 @@ src_files=(
     "alias"
     "color"
     "print"
+    "trap"
     "assert"
     "arg"
     "log"

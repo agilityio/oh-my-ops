@@ -1,8 +1,15 @@
 _do_plugin "repo"
+
 _do_log_level_warn "proj"
 
+# The array of all project directories.
 declare -a _DO_PROJ_DIRS
 
+
+# Register a plugin to load. 
+# Arguments:
+#   1. plugin: The plugin name.
+#
 function _do_proj_plugin() {
     local plugin=$1
 
@@ -18,9 +25,10 @@ function _do_proj_plugin() {
 }
 
 
-# Runs 'git add .' on the specified directory.
+# Executes a project level command. 
+#
 # Arguments: 
-#   1.proj_dir: The project home directory.
+#   1. proj_dir: The project home directory.
 #   2. repo: The repository name.
 #
 function _do_proj_cmd() {
@@ -30,6 +38,8 @@ function _do_proj_cmd() {
     _do_hook_call "_do_proj_cmd" $@ 
 }
 
+# Executes a repository level commands.
+#
 function _do_proj_default_exec_all_repo_cmds() {
     local cmd=$1
 
@@ -39,6 +49,7 @@ function _do_proj_default_exec_all_repo_cmds() {
         _do_alias_call_if_exists "${repo}-${cmd}"
     done    
 }
+
 
 # Gets all repositories in a proj.
 #
@@ -53,7 +64,10 @@ function _do_proj_get_repo_list() {
 
 
 # Determines if a proj is loaded.
-# $1. dir: string
+# Arguments:
+#   1. dir: string
+#
+# Returns: 0 if the project is loaded. Otherwise 1.
 #
 function _do_proj_is_loaded() {
     local dir=$(_do_arg_required $1)
@@ -70,12 +84,14 @@ function _do_proj_is_loaded() {
     return 1
 }
 
+
 # Adds a project to devops management.
 # Arguments:
 #   1. dir: The absolute director to the project home.
 #
 function _do_proj_init() {
     local dir=$(_do_arg_required $1)
+
     dir=$(_do_dir_normalized $dir)
 
     # Adds the current project to the directories
@@ -120,6 +136,7 @@ function _do_proj_default_get_dir() {
         cd ..
     done
 }
+
 
 # Initializes plugin.
 #

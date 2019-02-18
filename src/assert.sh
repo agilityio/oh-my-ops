@@ -80,6 +80,15 @@ function _do_assert_stack_trace() {
     done | grep -v "^$BASH_SOURCE"
     printf "${TX_NORMAL}" >&2
 
-    # Exit with error
+    # Exit assert
+    exit 1
 }
 
+function _do_assert_trap_exit() {
+    echo "Assertion Failed! Exit."
+    return $?
+}
+
+# Trap the assert error and return to make sure the error does not
+# close the session.
+_do_trap_push "_do_assert_trap_exit"
