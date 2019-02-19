@@ -28,7 +28,7 @@ function _do_docker_image_remove() {
     local img=$1
 
     if _do_docker_image_exists $img; then 
-        docker rmi ${img}
+        docker rmi -f ${img}
         return $?
     fi 
 }

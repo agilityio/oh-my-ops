@@ -27,3 +27,14 @@ function _do_dir_random_tmp_dir() {
     _do_assert $tmp_dir
     echo $tmp_dir
 }
+
+
+function _do_dir_assert() {
+    local dir=$1
+    [ -d $dir ] || _do_assert_fail "Expected $dir a directory"
+}
+
+function _do_dir_assert_not() {
+    local dir=$1
+    [ ! -d $dir ] || _do_assert_fail "Expected $dir is not a directory"
+}

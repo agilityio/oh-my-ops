@@ -13,6 +13,7 @@ DO_NEO4J_BOLT_PORT=7687
 DO_NEO4J_USER=neo4j
 DO_NEO4J_PASS=pass
 
+# The list of commands availble, eg., do-neo4j-help, do-neo4j-build, ...
 _DO_NEO4J_CMDS=( "help" "clean" "build" "start" "stop" "logs" "attach" "admin" )
 
 # The neo4j docker image to be used for local deployment.
@@ -88,7 +89,7 @@ function _do_neo4j_clean() {
 
 # Determines if neo4j is already running or not.
 function _do_neo4j_is_running() {
-    if _do_docker_process_exists ${_DO_NEO4J_DOCKER_IMG}; then 
+    if _do_docker_process_exists ${_DO_NEO4J_DOCKER_CONTAINER_NAME}; then 
         return 0
     else 
         return 1

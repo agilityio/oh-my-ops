@@ -28,6 +28,7 @@ function _do_assert() {
     fi 
 }
 
+
 function _do_assert_eq() {
     local expected=$1
     local actual=$2
@@ -59,19 +60,6 @@ function _do_assert_neq() {
         _do_assert_stack_trace
         exit 1
     fi
-}
-
-
-function _do_assert_dir() {
-    local dir=$1
-
-    [ -d $dir ] || _do_assert_fail "Expected $dir a directory"
-}
-
-function _do_assert_file() {
-    local dir=$1
-
-    [ -f $dir ] || _do_assert_fail "Expected $dir a file"
 }
 
 

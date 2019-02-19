@@ -9,7 +9,7 @@ function test_do_repo_gen() {
 
     _do_repo_gen $name
 
-    _do_assert_dir "../$name"
+    _do_dir_assert "../$name"
 
     rm -rfd ../$name
 }

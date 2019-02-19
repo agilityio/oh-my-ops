@@ -17,6 +17,7 @@ function _do_src_file() {
     done | grep -v "^$BASH_SOURCE"
 }
 
+
 # Gets the base dir of the calling script.
 function _do_src_dir() {
     local file=$(_do_src_file)
@@ -29,14 +30,15 @@ function _do_src_name() {
     basename $file
 }
 
+
 # Includes other bash scripts in the same directory.
 function _do_src_include_others_same_dir() {
     local dir=$(_do_src_dir)
     local excluded=$(_do_src_name)
 
     local name
-    for name in $(ls $dir); do
-        if [ ! "$name" == "$excluded" ]; then 
+    for name in $(ls -A $dir); do
+        if [ -f $dir/$name ] && [ ! "$name" == "$excluded" ]; then 
             source $dir/$name
         fi
     done

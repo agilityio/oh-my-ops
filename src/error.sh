@@ -13,12 +13,12 @@ function _do_error() {
 
 function _do_error_report() {
     local err=$1
-    local msg=${2:-}
+    shift
 
-    if _do_error $1; then 
-        _do_print_error $msg
+    if _do_error $err; then 
+        _do_print_error "ERROR!" $@
 
     else 
-        _do_print_finished $msg
+        _do_print_finished "SUCCESS!" $@
     fi
 }

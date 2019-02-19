@@ -22,10 +22,6 @@ function _do_git_repo_add() {
 }
 
 
-# ==============================================================================
-# Proj plugin integration
-# ==============================================================================
-
 # Determines if the specified directory has git enabled.
 # Arguments:
 #   1. dir: A directory.

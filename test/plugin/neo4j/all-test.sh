@@ -1,9 +1,10 @@
 function test_do_neo4j() {
+    local img=${_DO_NEO4J_DOCKER_IMG}
+    
     _do_neo4j_stop
 
     # Removes the image
-    local img=${_DO_NEO4J_DOCKER_IMG}
-    docker rmi ${img}
+    _do_neo4j_clean
     _do_docker_assert_image_not_exists ${img}
 
     # Rebuilds it

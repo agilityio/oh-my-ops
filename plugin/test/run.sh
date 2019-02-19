@@ -92,6 +92,10 @@ function _do_test_start() {
             local func
             for func in ${funcs[@]}; do 
 
+                if [ ${verbose} == "yes" ]; then 
+                    _do_print_line_1
+                fi 
+                    
                 printf $func
 
                 # Generates the file that quickly activate the devops framework 
