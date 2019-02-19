@@ -1,9 +1,6 @@
 
-# Just loads the test plugin.
-DO_PLUGINS="test"
-
 # Activates the environment with just the test plug
-source activate.sh --quick
+source activate.sh --quick 
 
 
 # =============================================================================
@@ -146,6 +143,7 @@ else
     # If the test directories are not passed in, just runs test on the current directory.
     _do_test_start .
 fi 
+
 
 # =============================================================================
 # Teardown the test suite

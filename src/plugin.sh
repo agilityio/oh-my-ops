@@ -32,7 +32,7 @@ function _do_plugin() {
         if ! _do_plugin_is_loaded $plugin_name; then 
 
             # Add the plugin into the loaded list.
-            _DO_PLUGIN_LIST=( "${_DO_PLUGIN_LIST[@]}" "$plugin_name" )
+            _DO_PLUGIN_LIST+=( "$plugin_name" )
 
             # Loads the plugin.
             local init_file="${plugin_dir}/${plugin_name}.sh"
@@ -42,7 +42,7 @@ function _do_plugin() {
 
             if [ -f "${init_file}" ]; then 
                 source "${init_file}"
-            fi 
+            fi
 
             _do_log_debug "plugin" "load $plugin_name"
         fi 
@@ -95,6 +95,7 @@ function _do_plugin_init() {
             ${func}
         fi 
     done
+
 
     for plugin in "${_DO_PLUGIN_LIST[@]}"; do 
         local func="_do_${plugin}_plugin_ready" 

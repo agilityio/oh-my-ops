@@ -1,6 +1,6 @@
 _do_plugin "docker"
 
-_do_log_level_debug "neo4j"
+_do_log_level_warn "neo4j"
 
 # ==============================================================================
 # Plugin Init

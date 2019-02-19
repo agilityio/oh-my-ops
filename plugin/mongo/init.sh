@@ -1,5 +1,7 @@
 _do_plugin "docker"
 
+_do_plugin "docker"
+
 _do_log_level_warn "mongo"
 
 # ==============================================================================
@@ -23,6 +25,7 @@ _DO_MONGO_DOCKER_CONTAINER_NAME="do_mongo"
 function _do_mongo_plugin_init() {
     _do_log_info "mongo" "Initialize plugin"
     _do_plugin_cmd "mongo" _DO_MONGO_CMDS
+
     _do_hook_after "_do_docker_stop_all" "_do_mongo_stop"
 }
 

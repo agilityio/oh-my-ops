@@ -2,14 +2,23 @@
 # The remaining arguments that cannot be parsed.
 _DO_MAIN_ARGS=()
 
-# 0 Indicates this is a quick boot.
+# Plugins system should be loaded
+_DO_PLUGINS_ENABLED="yes"
+
+# Boots up the framework fastest possible.
 _DO_MAIN_QUICK="no"
+
 
 # Parse input arguments
 while [[ $# -gt 0 ]]
 do
     key="$1"
     case $key in
+        -np|--no-plugins)
+        _DO_PLUGINS_ENABLED="no"
+        shift
+        ;;
+
         -q|--quick)
         _DO_MAIN_QUICK="yes"
         shift
@@ -58,19 +67,22 @@ done
 _do_log_level_warn "main"
 
 
-if [ -z "${DO_PLUGINS}" ]; then
-    _do_log_debug "main" "load all plugins"
+if [ "${_DO_PLUGINS_ENABLED}" == "yes" ]; then 
+    if [ -z "${DO_PLUGINS}" ]; then
+        _do_log_debug "main" "load all plugins"
 
-    # Loads all plugins.
-    for plugin in $( ls -A ${DO_HOME}/plugin ); do
-        _do_plugin $(_do_file_name_without_ext $plugin)
-    done
+        # Loads all plugins.
+        for plugin in $( ls -A ${DO_HOME}/plugin ); do
+            _do_plugin $(_do_file_name_without_ext $plugin)
+        done
 
-else
-    _do_log_debug "main" "load just specified plugins"
-    # Just loads the specified plugins.
-    _do_plugin  "${DO_PLUGINS}"
+    else
+        _do_log_debug "main" "load just specified plugins"
+        # Just loads the specified plugins.
+        _do_plugin  "${DO_PLUGINS}"
+    fi
 fi
+
 
 # Initializes all plugins registered
 _do_plugin_init
