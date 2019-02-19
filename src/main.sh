@@ -1,15 +1,9 @@
 
-if ! echo "$0" | grep -q "bash"; then
-    echo "This script only support bash! Please executes 'bash' to change to bash shell instead."
-    return
-fi
-
 # The remaining arguments that cannot be parsed.
 _DO_MAIN_ARGS=()
 
 # 0 Indicates this is a quick boot.
 _DO_MAIN_QUICK="no"
-
 
 # Parse input arguments
 while [[ $# -gt 0 ]]
@@ -27,6 +21,13 @@ do
         ;;
     esac
 done
+
+
+# Checks if the current shell is bash
+if [ _DO_MAIN_QUICK == "no" ] && ! echo "$0" | grep -q "bash"; then 
+    echo "This script only support bash! Please executes 'bash' to change to bash shell instead."
+    return
+fi
 
 
 # Loads core libraries
@@ -55,6 +56,7 @@ for src_file in "${src_files[@]}"; do
 done
 
 _do_log_level_warn "main"
+
 
 if [ -z "${DO_PLUGINS}" ]; then
     _do_log_debug "main" "load all plugins"
