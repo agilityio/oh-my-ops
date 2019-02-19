@@ -76,7 +76,6 @@ function _do_sphinx_repo_build() {
         return 1
     fi    
 
-
     _do_sphinx_build_ensured
 
 
@@ -99,7 +98,8 @@ function _do_sphinx_repo_start() {
     
     _do_sphinx_build_ensured
 
-    local title="$repo: Starts sphinx web server at http://localhost:${DO_SPHINX_PORT}"
+    local url=$(_do_sphinx_repo_get_url $proj_dir $repo)
+    local title="$repo: Starts sphinx web server at $url"
     _do_print_header_2 $title
 
     _do_sphinx_repo_cmd $proj_dir $repo "--daemon" "start.sh"
@@ -125,7 +125,8 @@ function _do_sphinx_repo_watch() {
     else 
         _do_sphinx_build_ensured
 
-        local title="$repo: Starts sphinx web server with live reloading at http://localhost:${DO_SPHINX_PORT}"
+        local url=$(_do_sphinx_repo_get_url $proj_dir $repo)
+        local title="$repo: Starts sphinx web server with live reloading at $url"
         _do_print_header_2 $title
 
         _do_sphinx_repo_cmd $proj_dir $repo "start.sh"
@@ -153,6 +154,13 @@ function _do_sphinx_repo_stop() {
     fi    
 }
 
+# Gets the repository's sphinx web url
+function _do_sphinx_repo_get_url() {
+    local proj_dir=$1
+    local repo=$2
+    echo "http://localhost:${DO_SPHINX_PORT}"
+}
+
 
 # Reports the sphinx web server status.
 #
@@ -161,9 +169,10 @@ function _do_sphinx_repo_status() {
     local repo=$2
     _do_print_header_2 "$repo: Sphinx status"
 
+    local url=$(_do_sphinx_repo_get_url $proj_dir $repo)
     if _do_sphinx_is_running; then 
         docker logs ${_DO_SPHINX_DOCKER_CONTAINER_NAME}    
-        _do_print_finished "Sphinx is running at http://localhost:${DO_SPHINX_PORT}"
+        _do_print_finished "Sphinx is running at $url"
     else
         _do_print_warn "Sphinx is not running"
         return 0
@@ -180,9 +189,10 @@ function _do_sphinx_repo_web() {
         return 1
     fi
 
-    _do_print_header_2 "$repo: Open sphinx web at http://localhost:${DO_SPHINX_PORT}"
+    local url=$(_do_sphinx_repo_get_url $proj_dir $repo)
+    _do_print_header_2 "$repo: Open sphinx web at $url"
 
-    _do_browser_open "http://localhost:${DO_SPHINX_PORT}"
+    _do_browser_open "$url"
 }
 
 

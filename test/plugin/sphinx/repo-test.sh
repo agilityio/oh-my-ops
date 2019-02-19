@@ -22,6 +22,10 @@ function test_do_sphinx_repo() {
     # Starts the web server
     _do_sphinx_repo_start $proj_dir $repo 
 
+    # wait for the dash board url to be available
+    local url=$(_do_sphinx_repo_get_url $proj_dir $repo)
+    _do_curl_wait_url $url 20 || _do_assert_fail
+
     # Display status, should be running
     _do_sphinx_repo_status $proj_dir $repo 
 
