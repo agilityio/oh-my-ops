@@ -1,0 +1,6 @@
+FROM neo4j
+
+# 7474 for HTTP.
+# 7473 for HTTPS.
+# 7687 for Bolt.
+EXPOSE 7474 7473 7687
