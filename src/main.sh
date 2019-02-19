@@ -56,6 +56,8 @@ src_files=(
     "error"
     "alias"
     "hook"
+    "curl"
+    "browser"
     "plugin"
 )
 
@@ -79,7 +81,7 @@ if [ "${_DO_PLUGINS_ENABLED}" == "yes" ]; then
     else
         _do_log_debug "main" "load just specified plugins"
         # Just loads the specified plugins.
-        _do_plugin  "${DO_PLUGINS}"
+        _do_plugin "${DO_PLUGINS}"
     fi
 fi
 
