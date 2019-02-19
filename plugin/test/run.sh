@@ -7,7 +7,7 @@ source activate.sh --quick
 # Parse input arguments.
 # =============================================================================
 # The remaining arguments that cannot be parsed.
-test_dirs=()
+test_args=()
 
 # 0 Indicates this is a quick boot.
 verbose="no"
@@ -27,7 +27,7 @@ function _do_test_parse_args() {
             ;;
 
             *)    # unknown option
-            test_dirs+=("$1") # save it in an array for later
+            test_args+=("$1") # save it in an array for later
             shift # past argument
             ;;
         esac
@@ -59,7 +59,65 @@ total_failed=0
 pattern='^[[:blank:]]*function[[:blank:]]*\(test_[^\(]*\).*$'
 
 
-function _do_test_start() {
+function _do_test_run_file {
+    local file=$1
+    _do_file_assert $file
+
+    _do_print_header_1 "$file"
+
+    # Extracts all test functions out of the original source file and 
+    # generate function calls to those at the end of the generated test file.
+    local funcs=$( cat $file | grep $pattern | sed -e "s/${pattern}/\1/" )
+
+    # Loops through all test functions found in the test file. For each 
+    # of the function, generate a bash file to execute just that function.
+    local func
+    for func in ${funcs[@]}; do 
+
+        if [ ${verbose} == "yes" ]; then 
+            _do_print_line_1
+        fi 
+            
+        printf $func
+
+        # Generates the file that quickly activate the devops framework 
+        # and include the orginal test source file and run the current test function.
+        echo "
+source ${DO_HOME}/activate.sh --quick
+source $file
+$func
+        " > $gen_f
+
+        # Go to the temp directory
+        cd ${tmp_dir}
+    
+        # Runs the original test file and redirect standard out and error.
+        bash $gen_f > $out_f 2> $err_f
+        local err=$?
+
+        if _do_error $err; then 
+            # The test has failed.
+            total_failed=$((total_failed + 1))
+
+            printf "...${FG_RED}Failed${FG_NORMAL}\n"
+            cat $out_f
+        else 
+            # The test passed.
+            printf "...${FG_GREEN}OK${FG_NORMAL}\n"
+
+            if [ ${verbose} == "yes" ]; then 
+                cat $out_f
+            fi
+        fi             
+        cat $err_f
+
+        total_tests=$((total_tests + 1))
+    done 
+
+}
+
+
+function _do_test_run_dir() {
     # Needs to go to the current directories again 
     # To resolves the user input.
     cd $cur_dir &> /dev/null
@@ -80,72 +138,27 @@ function _do_test_start() {
     local file
     for file in $( find $(pwd) -type f -name "*-test.sh" ); do
         if [ -f $file ]; then 
-        
-            _do_print_header_1 "$file"
-
-            # Extracts all test functions out of the original source file and 
-            # generate function calls to those at the end of the generated test file.
-            local funcs=$( cat $file | grep $pattern | sed -e "s/${pattern}/\1/" )
-
-            # Loops through all test functions found in the test file. For each 
-            # of the function, generate a bash file to execute just that function.
-            local func
-            for func in ${funcs[@]}; do 
-
-                if [ ${verbose} == "yes" ]; then 
-                    _do_print_line_1
-                fi 
-                    
-                printf $func
-
-                # Generates the file that quickly activate the devops framework 
-                # and include the orginal test source file and run the current test function.
-                echo "
-source ${DO_HOME}/activate.sh --quick
-source $file
-$func
-                " > $gen_f
-
-                # Go to the temp directory
-                cd ${tmp_dir}
-           
-                # Runs the original test file and redirect standard out and error.
-                bash $gen_f > $out_f 2> $err_f
-                local err=$?
-
-                if _do_error $err; then 
-                    # The test has failed.
-                    total_failed=$((total_failed + 1))
-
-                    printf "...${FG_RED}Failed${FG_NORMAL}\n"
-                    cat $out_f
-                else 
-                    # The test passed.
-                    printf "...${FG_GREEN}OK${FG_NORMAL}\n"
-
-                    if [ ${verbose} == "yes" ]; then 
-                        cat $out_f
-                    fi
-                fi             
-                cat $err_f
-
-                total_tests=$((total_tests + 1))
-            done 
-        fi
+            _do_test_run_file $file
+        fi 
     done
 
 }
 
 
-if [ ${#test_dirs[@]} -gt 0 ]; then 
+if [ ${#test_args[@]} -gt 0 ]; then 
     # If the test directories are passed in, just run tests on those directories.
-    for dir in ${test_dirs[@]}; do 
-        _do_test_start $dir
+    for arg in ${test_args[@]}; do 
+        if [ -f $cur_dir/$arg ]; then 
+            _do_test_run_file $cur_dir/$arg
+
+        else
+            _do_test_run_dir $dir
+        fi 
     done
 
 else 
     # If the test directories are not passed in, just runs test on the current directory.
-    _do_test_start .
+    _do_test_run_dir .
 fi 
 
 

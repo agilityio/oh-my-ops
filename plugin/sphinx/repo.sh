@@ -8,6 +8,8 @@ function _do_sphinx_repo_help() {
     local proj_dir=$1
     local repo=$2
 
+    _do_print_header_2 "$repo: Sphinx help"
+
     echo "  
   ${repo}-sphinx-help: 
     See sphinx command helps
@@ -25,7 +27,7 @@ function _do_sphinx_repo_help() {
     Watches the sphinx web server, with live-reloading.
 
   ${repo}-sphinx-stop: 
-    Stops the sphinx web server, with live-reloading.
+    Stops the sphinx web server.
 
   ${repo}-sphinx-status: 
     Displays the sphinx status.
