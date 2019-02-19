@@ -1,1 +1,0 @@
-Search.setIndex({envversion:48,filenames:["index"],objects:{},objnames:{},objtypes:{},terms:{local:0},titles:["Devops"],titleterms:{devop:0}})
