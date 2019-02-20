@@ -73,6 +73,9 @@ function _do_test_run_file {
     # of the function, generate a bash file to execute just that function.
     local func
     for func in ${funcs[@]}; do 
+        if [ "${func}" == "test_setup" ] || [ "${func}" == "test_teardown" ]; then 
+            continue
+        fi 
 
         if [ ${verbose} == "yes" ]; then 
             _do_print_line_1
@@ -85,7 +88,20 @@ function _do_test_run_file {
         echo "
 source ${DO_HOME}/activate.sh --quick
 source $file
+
+if type test_setup &>/dev/null; then 
+    test_setup
+fi
+
 $func
+err=$?
+
+if type test_teardown &>/dev/null; then 
+    test_teardown 
+fi
+
+exit $?
+
         " > $gen_f
 
         # Go to the temp directory

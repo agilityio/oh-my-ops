@@ -73,9 +73,11 @@ function _do_repo_cmd() {
     _do_print_header_2 "$repo: $@"
     _do_repo_dir_push $proj_dir $repo 
 
-    $@
+    eval $@
+    local err=$?
 
     _do_dir_pop
+    return $err
 }
 
 

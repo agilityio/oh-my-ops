@@ -1,4 +1,4 @@
-_do_log_level_debug "git-status"
+_do_log_level_debug "git"
 
 
 # Runs git status on the specified repository.

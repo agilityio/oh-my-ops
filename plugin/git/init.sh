@@ -10,7 +10,7 @@ _do_src_include_others_same_dir
 # ==============================================================================
 
 # The array of all plugin repo comamnds.
-_DO_GIT_REPO_CMDS=( "help" "status" "add" )
+_DO_GIT_REPO_CMDS=( "help" "status" "add" "commit" )
 
 # Runs 'git add .' on the specified directory.
 # Arguments: 

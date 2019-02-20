@@ -79,7 +79,7 @@ function _do_git_repo_remote_pull() {
     
     local branch=$(_do_git_repo_get_branch $proj_dir $repo)
 
-    _do_repo_cmd $proj_dir $repo "echo git pull $remote $branch"
+    _do_repo_cmd $proj_dir $repo "git pull $remote $branch"
 }
 
 
