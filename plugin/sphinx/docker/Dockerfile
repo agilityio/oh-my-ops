@@ -16,6 +16,7 @@ ADD ./sphinx_rtd_theme/css/theme_overrides.css /usr/local/lib/python3.6/site-pac
 
 ADD Makefile /app
 ADD bin /app/bin
+RUN chmod +x $( ls /app/bin/*.sh )
 
 VOLUME [ "/app/src" ]
 ENTRYPOINT [ "/app/bin/entrypoint.sh" ]

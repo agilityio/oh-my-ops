@@ -1,3 +1,17 @@
+# Figures out which operating system we are on.
+DO_OS="$(uname -s)"
+
+
+case "${DO_OS}" in
+    Linux*)     DO_OS=linux;;
+    Darwin*)    DO_OS=mac;;
+    CYGWIN*)    DO_OS=cygwin;;
+    # MINGW*)     DO_OS=mingw;;
+    *)          
+        echo "Sorry! We don't support '$(uname)' operating system yet. Please hang on tight!"
+        return
+esac
+
 
 # The remaining arguments that cannot be parsed.
 _DO_MAIN_ARGS=()
@@ -32,10 +46,14 @@ do
 done
 
 
+
 # Checks if the current shell is bash
-if [ _DO_MAIN_QUICK == "no" ] && ! echo "$0" | grep -q "bash"; then 
-    echo "This script only support bash! Please executes 'bash' to change to bash shell instead."
-    return
+if [ _DO_MAIN_QUICK == "no" ]; then  
+
+    if ! echo "$0" | grep -q "bash"; then 
+        echo "Only support bash! Please executes 'bash' to change to bash shell instead."
+        return
+    fi
 fi
 
 
