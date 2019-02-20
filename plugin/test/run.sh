@@ -144,23 +144,26 @@ function _do_test_run_dir() {
 
 }
 
+function _do_test_run() {
+    if [ ${#test_args[@]} -gt 0 ]; then 
+        # If the test directories are passed in, just run tests on those directories.
+        local arg
+        for arg in ${test_args[@]}; do 
+            if [ -f $cur_dir/$arg ]; then 
+                _do_test_run_file $cur_dir/$arg
 
-if [ ${#test_args[@]} -gt 0 ]; then 
-    # If the test directories are passed in, just run tests on those directories.
-    for arg in ${test_args[@]}; do 
-        if [ -f $cur_dir/$arg ]; then 
-            _do_test_run_file $cur_dir/$arg
+            else
+                _do_test_run_dir $arg
+            fi 
+        done
 
-        else
-            _do_test_run_dir $dir
-        fi 
-    done
+    else 
+        # If the test directories are not passed in, just runs test on the current directory.
+        _do_test_run_dir .
+    fi 
+}
 
-else 
-    # If the test directories are not passed in, just runs test on the current directory.
-    _do_test_run_dir .
-fi 
-
+_do_test_run
 
 # =============================================================================
 # Teardown the test suite

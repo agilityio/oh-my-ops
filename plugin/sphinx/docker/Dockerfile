@@ -16,6 +16,8 @@ ADD ./sphinx_rtd_theme/css/theme_overrides.css /usr/local/lib/python3.6/site-pac
 
 ADD Makefile /app
 ADD bin /app/bin
+
+# Makes all . bash file executable
 RUN chmod +x $( ls /app/bin/*.sh )
 
 VOLUME [ "/app/src" ]
