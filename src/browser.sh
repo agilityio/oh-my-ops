@@ -9,12 +9,15 @@ function _do_browser_open() {
         # For mac, the open command is supported by default.
         open "${url}"
 
-    elif which xdg-open > /dev/null; then
+    elif which xdg-open &> /dev/null; then
         xdg-open "${url}"
 
-    elif which gnome-open > /dev/null; then
+    elif which gnome-open &> /dev/null; then
         gnome-open "${url}"
 
+    elif which cygstart &> /dev/null; then 
+        cygstart "${url}"
+    
     else
         echo "Cannot open ${url}"
     fi

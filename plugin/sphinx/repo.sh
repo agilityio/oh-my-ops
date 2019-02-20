@@ -266,7 +266,7 @@ function _do_sphinx_repo_cmd() {
         -e DO_ENVIRONMENT=${DO_ENVIRONMENT} \
         -v $(_do_docker_dir_normalized ${repo_dir})/doc:/app/src \
         -w=/app/src \
-        -it ${_DO_SPHINX_DOCKER_IMG} ${cmd}
+        ${_DO_SPHINX_DOCKER_IMG} ${cmd}
     
     return $?
 }
