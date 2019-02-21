@@ -112,23 +112,40 @@ function _do_git_repo_remote_sync() {
     local repo=$(_do_arg_required $2)
     local remote=$(_do_arg_required $3)
 
-    local branch=$(_do_git_repo_get_branch $proj_dir $repo)
-
-
+    # Display header.
     local title="${repo}: Git sync '${remote}' at branch ${branch}"
     _do_print_header_2 "${title}"
 
-    _do_repo_cmd $proj_dir $repo "git pull $remote $branch"
+    # Don't allow to sync dirty git repository.
+    if _do_git_repo_is_dirty $proj_dir $repo; then 
+        _do_print_error "Repository is dirty. Please commit first."
+        return 1
+    fi
+
+    _do_repo_dir_push $proj_dir $repo 
+
+    # Gets the current repository git branch. 
+    # We will sync this branch with the remote repository.
+    local branch=$(_do_git_repo_get_branch $proj_dir $repo)
+
+
+    # Pull all changes to remote repository
+    _do_print_line_1 "git pull ${remote} ${branch}"
+    git pull $remote $branch
     local err=$?
 
     if _do_error $err; then 
         _do_print_warn "Cannot pull changes from $remote $branch"
     fi
 
-    _do_repo_cmd $proj_dir $repo "git push $remote $branch"
+    # Push all changes to remote repository
+    _do_print_line_1 "git push ${remote} ${branch}"
+    git push $remote $branch
 
     err=$?
     _do_error_report ${err} "${title}"
+    _do_dir_pop
+
     return $err
 }
 
