@@ -87,6 +87,9 @@ function _do_git_repo_help() {
 
 function _do_git_plugin_init() {
     _do_log_info "git" "Initialize plugin"
+
+    # Listens to command that generates new repository and 
+    # generate git support.
     _do_hook_after "_do_repo_gen" "_do_git_repo_gen"
 
     # Adds alias that runs at repository level

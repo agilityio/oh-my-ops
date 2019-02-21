@@ -1,4 +1,3 @@
-
 # Activates the environment with just the test plug
 source activate.sh --quick 
 
@@ -11,7 +10,6 @@ test_args=()
 
 # 0 Indicates this is a quick boot.
 verbose="no"
-
 
 # Parses the arguments parsed to this script.
 #
@@ -63,6 +61,8 @@ function _do_test_run_file {
     local file=$1
     _do_file_assert $file
 
+    local only_func=$2
+
     _do_print_header_1 "$file"
 
     # Extracts all test functions out of the original source file and 
@@ -74,6 +74,12 @@ function _do_test_run_file {
     local func
     for func in ${funcs[@]}; do 
         if [ "${func}" == "test_setup" ] || [ "${func}" == "test_teardown" ]; then 
+            # Skips test_setup and test_teardown function
+            continue
+        fi 
+
+        if [ ! -z "$only_func" ] && [ "${func}" != "${only_func}" ]; then 
+            # Skips the current function because the "only_func" argument is passed in.
             continue
         fi 
 
@@ -87,6 +93,7 @@ function _do_test_run_file {
         # and include the orginal test source file and run the current test function.
         echo "
 source ${DO_HOME}/activate.sh --quick
+
 source $file
 
 if type test_setup &>/dev/null; then 
@@ -133,6 +140,14 @@ exit $?
 }
 
 
+# Runs the test on the specified directory. It should scan the directory and its 
+# children and looks for any file with name started with "-test.sh". All test 
+# functions found in that directory should be executed, unless the "only_func" argument
+# is passed in. 
+# Arguments:
+#   1. dir: The directory to run.
+#   2. only_func: optional. 
+#
 function _do_test_run_dir() {
     # Needs to go to the current directories again 
     # To resolves the user input.
@@ -140,6 +155,7 @@ function _do_test_run_dir() {
 
     # This is the directory to resolve the test cases.
     local dir=$1
+    local only_func=$2
 
     # Go to this directory to make sure the find command return the absolute path.
     cd $dir &> /dev/null
@@ -154,22 +170,31 @@ function _do_test_run_dir() {
     local file
     for file in $( find $(pwd) -type f -name "*-test.sh" ); do
         if [ -f $file ]; then 
-            _do_test_run_file $file
+            _do_test_run_file $file $only_func
         fi 
     done
-
 }
 
+# Runs the full tests, given the arguments parsed earlier.
+#
 function _do_test_run() {
     if [ ${#test_args[@]} -gt 0 ]; then 
         # If the test directories are passed in, just run tests on those directories.
+
         local arg
         for arg in ${test_args[@]}; do 
+            # Gets out the test function if any.
+            IFS="#" read -ra parts <<< "${arg}"
+            arg=${parts[0]}
+            func=${parts[1]}
+
             if [ -f $cur_dir/$arg ]; then 
-                _do_test_run_file $cur_dir/$arg
+                # If the argument is just a file, run the file only
+                _do_test_run_file $cur_dir/$arg $func
 
             else
-                _do_test_run_dir $arg
+                # Runs all the file found in the argument.
+                _do_test_run_dir $arg $func
             fi 
         done
 
