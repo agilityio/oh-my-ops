@@ -91,6 +91,7 @@ function _do_git_plugin_init() {
     # Listens to command that generates new repository and 
     # generate git support.
     _do_hook_after "_do_repo_gen" "_do_git_repo_gen"
+    _do_hook_after "_do_repo_clone" "_do_git_repo_clone"
 
     # Adds alias that runs at repository level
     local cmds=( "status" )

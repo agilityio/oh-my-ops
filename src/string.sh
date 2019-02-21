@@ -52,4 +52,3 @@ function _do_string_urldecode() {
     local url_encoded="${1//+/ }"
     printf '%b' "${url_encoded//%/\\x}"
 }
-

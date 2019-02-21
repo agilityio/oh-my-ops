@@ -55,6 +55,7 @@ total_failed=0
 # This regular expression will help to extract the function definition 
 # that begin with "test_" prefix. 
 pattern='^[[:blank:]]*function[[:blank:]]*\(test_[^\(]*\).*$'
+line=$(printf '%0.1s' "."{1..75})   
 
 
 function _do_test_run_file {
@@ -83,11 +84,8 @@ function _do_test_run_file {
             continue
         fi 
 
-        if [ ${verbose} == "yes" ]; then 
-            _do_print_line_1
-        fi 
-            
-        printf $func
+        pad=${line:${#func}}
+        printf "%s ${TX_DIM}%s${FG_NORMAL}" "$func" "${pad}"
 
         # Generates the file that quickly activate the devops framework 
         # and include the orginal test source file and run the current test function.
@@ -122,11 +120,11 @@ exit $?
             # The test has failed.
             total_failed=$((total_failed + 1))
 
-            printf "...${FG_RED}Failed${FG_NORMAL}\n"
+            printf "[${FG_RED}F${FG_NORMAL}]\n"
             cat $out_f
         else 
             # The test passed.
-            printf "...${FG_GREEN}OK${FG_NORMAL}\n"
+            printf "[${FG_GREEN}P${FG_NORMAL}]\n"
 
             if [ ${verbose} == "yes" ]; then 
                 cat $out_f

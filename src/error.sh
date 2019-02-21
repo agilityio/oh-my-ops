@@ -22,3 +22,28 @@ function _do_error_report() {
         _do_print_finished "SUCCESS!" $@
     fi
 }
+
+
+function _do_error_report_line() {
+    local err=$1
+    shift
+
+    local msg=$1
+    shift
+
+    local line=$(printf '%0.1s' "."{1..75})   
+
+    local pad=${line:${#msg}}
+    local color
+    local char
+
+    if _do_error $err; then 
+        char="F"
+        color=${FG_RED}
+    else 
+        char="P"
+        color=${FG_GREEN}
+    fi
+
+    printf "${color}%s${FG_NORMAL} ${TX_DIM}%s${FG_NORMAL}[${color}${char}${FG_NORMAL}]\n" "$msg" "${pad}"
+}

@@ -12,12 +12,30 @@ function _do_print_banner() {
 -------------------------------------------------------------------------------${FG_NORMAL}"
 }
 
+function _do_print_line() {
+    local char=$1
+    local color=$2
+    local msg=${3:-}
+
+    if [ ! -z "${msg}" ]; then 
+        msg="${msg} "
+    fi 
+
+    local pad=""
+    if [ ${#msg} -lt 80 ]; then
+        local line=$(printf '%0.1s' "${char}"{1..79})   
+        pad=${line:${#msg}}
+    fi
+
+    printf "${color}%s%s${FG_NORMAL}\n" "$msg" "${pad}"
+}
+
 function _do_print_line_1() {
-    echo -e "${FG_BLUE}-------------------------------------------------------------------------------${FG_NORMAL}"
+    _do_print_line "-" "${FG_BLUE}" "$@"
 }
 
 function _do_print_line_2() {
-    echo -e "${FG_BLUE}===============================================================================${FG_NORMAL}"
+    _do_print_line "=" "${FG_BLUE}" "$@"
 }
 
 function _do_print_header_1() {

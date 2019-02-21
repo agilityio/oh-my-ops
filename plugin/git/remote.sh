@@ -17,14 +17,17 @@ function _do_git_repo_get_remote_uri() {
     # Remove the last .git
     # For example, if a remote is ssh://git@bitbucket.org/abc/devops.git
     # The result would be ssh://git@bitbucket.org/abc
-    local uri=$( git config --local --get "remote.${remote}.url" | sed -e 's/\/[^\/]*\.git$//' )
-
+    # local uri=$( git config --local --get "remote.${remote}.url" | sed -e 's/\/[^\/]*\.git$//' )
+    local devops_repo_name="devops"
+    local uri=$( git config --local --get "remote.${remote}.url" | sed -e "s/${devops_repo_name}.git$/${repo}.git/" )
     _do_dir_pop
 
     if [ -z "$uri" ]; then 
         echo ""
+        return 1
     else 
-        echo "${uri}/${repo}.git"
+        echo ${uri}
+        return 0
     fi
 }
 
@@ -63,7 +66,15 @@ function _do_git_repo_remote_fetch() {
     local repo=$(_do_arg_required $2)    
     local remote=$(_do_arg_required $3)    
 
+    local title="${repo}: Git fetch '${remote}'"
+    _do_print_header_2 "${title}"
+
+    # Runs the actual fetch command.
     _do_repo_cmd $proj_dir $repo "git fetch $remote"
+
+    local err=$?
+    _do_error_report ${err} "${title}"
+    return $err
 }
 
 
@@ -79,7 +90,15 @@ function _do_git_repo_remote_pull() {
     
     local branch=$(_do_git_repo_get_branch $proj_dir $repo)
 
+
+    local title="${repo}: Git pull '${remote}' at branch ${branch}"
+    _do_print_header_2 "${title}"
+
     _do_repo_cmd $proj_dir $repo "git pull $remote $branch"
+
+    local err=$?
+    _do_error_report ${err} "${title}"
+    return $err    
 }
 
 
@@ -94,7 +113,23 @@ function _do_git_repo_remote_sync() {
     local remote=$(_do_arg_required $3)
 
     local branch=$(_do_git_repo_get_branch $proj_dir $repo)
-    _do_repo_cmd $proj_dir $repo "echo git push $remote $branch"
+
+
+    local title="${repo}: Git sync '${remote}' at branch ${branch}"
+    _do_print_header_2 "${title}"
+
+    _do_repo_cmd $proj_dir $repo "git pull $remote $branch"
+    local err=$?
+
+    if _do_error $err; then 
+        _do_print_warn "Cannot pull changes from $remote $branch"
+    fi
+
+    _do_repo_cmd $proj_dir $repo "git push $remote $branch"
+
+    err=$?
+    _do_error_report ${err} "${title}"
+    return $err
 }
 
 
@@ -138,4 +173,5 @@ function _do_git_proj_remote_cmd() {
     local cmd=$1
     local remote=$2
     _do_proj_exec_all_repo_cmds "$(_do_proj_default_get_dir)" "git-${cmd}-${remote}"
+    return $?
 }
