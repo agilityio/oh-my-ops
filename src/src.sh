@@ -36,10 +36,13 @@ function _do_src_include_others_same_dir() {
     local dir=$(_do_src_dir)
     local excluded=$(_do_src_name)
 
+    _do_dir_push $dir
+
     local name
-    for name in $(ls -A $dir); do
-        if [ -f $dir/$name ] && [ ! "$name" == "$excluded" ]; then 
-            source $dir/$name
+    for name in $(ls -A *.sh); do
+        if [ -f "./$name" ] && [ ! "$name" == "$excluded" ]; then 
+            source ./$name
         fi
     done
+    _do_dir_pop
 }

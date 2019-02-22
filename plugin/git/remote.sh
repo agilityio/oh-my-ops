@@ -128,7 +128,6 @@ function _do_git_repo_remote_sync() {
     # We will sync this branch with the remote repository.
     local branch=$(_do_git_repo_get_branch $proj_dir $repo)
 
-
     # Pull all changes to remote repository
     _do_print_line_1 "git pull ${remote} ${branch}"
     git pull $remote $branch
