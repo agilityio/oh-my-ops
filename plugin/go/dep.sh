@@ -38,7 +38,14 @@ function _do_go_repo_dep_package_cmd() {
 }
 
 function _do_go_repo_dep_package_install() {
-    _do_go_repo_dep_package_cmd $@ "dep ensure --update"
+    local proj_dir=$(_do_arg_required $1)
+    local repo=$(_do_arg_required $2)
+    local package=$(_do_arg_required $3)
+
+    local title="Update '${package}' go dep dependencies"
+    _do_print_line_1 "$title"
+
+    _do_go_repo_dep_package_cmd $proj_dir $repo $package "dep ensure --update"
 }
 
 

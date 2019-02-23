@@ -1,4 +1,4 @@
-_do_log_level_debug "go"
+_do_log_level_warn "go"
 
 
 # Listens to the _do_repo_gen hook and generates go support.

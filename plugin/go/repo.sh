@@ -72,17 +72,8 @@ function _do_go_repo_build() {
     local title="$repo: Builds go repository"
     _do_print_header_2 $title
 
-    if _do_go_is_running; then 
-        _do_print_error "Go is running. ${repo}-go-stop to stop the server first."
-        return 1
-    fi    
-
-    _do_go_build_ensured
-
     local cmd="_do_go_repo_dep_package_install $proj_dir $repo"
-    _do_go_repo_dep_package_walk "$proj_dir" "$repo" "\"$cmd\""
-
-    _do_go_repo_cmd $proj_dir $repo "go install" 
+    _do_go_repo_dep_package_walk "$proj_dir" "$repo" "$cmd"
 
     local err=$?
     _do_error_report $err "$title"
@@ -145,24 +136,9 @@ function _do_go_repo_cmd() {
     local repo=$1
     shift
 
-    local daemon_opts=""
+    _do_dir_repo_push $proj_dir $repo
+    go $@
 
-    if [ "$1" == "--daemon" ]; then 
-        daemon_opts="-d"
-        shift
-    fi 
-
-    local cmd=$@
-
-    local repo_dir=${proj_dir}/${repo}
-
-    docker run --rm ${daemon_opts} \
-        --name="${_DO_GO_DOCKER_CONTAINER_NAME}"\
-        -p=${DO_GO_PORT}:${DO_GO_PORT} \
-        -e DO_ENVIRONMENT=${DO_ENVIRONMENT} \
-        -v $(_do_docker_dir_resolved ${repo_dir})/doc:/app/src \
-        -w=/app/src \
-        ${_DO_GO_DOCKER_IMG} ${cmd}
-    
+    _do_dir_pop
     return $?
 }

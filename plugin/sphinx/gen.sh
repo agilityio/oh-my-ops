@@ -1,4 +1,4 @@
-_do_log_level_debug "sphinx"
+_do_log_level_warn "sphinx"
 
 
 # Listens to the _do_repo_gen hook and generates sphinx support.

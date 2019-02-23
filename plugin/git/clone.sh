@@ -1,4 +1,4 @@
-_do_log_level_debug "git-clone"
+_do_log_level_warn "git-clone"
 
 
 # Listens to the _do_repo_clone hook and generates git support.

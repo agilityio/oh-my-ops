@@ -1,4 +1,4 @@
-_do_log_level_debug "git-gen"
+_do_log_level_warn "git-gen"
 
 
 # Listens to the _do_repo_gen hook and generates git support.
