@@ -15,18 +15,25 @@ function _do_git_repo_gen() {
     # The default origin would be at local
     git init .
 
+
     # Copies over the list of git remotes from devops repository
-    local remotes=$( _do_git_get_default_remote_list )
-    for remote in ${remotes[@]}; do 
+    local default_repo=$( _do_proj_repo_get_default "${proj_dir}" )
+    _do_log_debug "git-clone" "Default repo: $default_repo"
 
-        # Resolves the git uri for this repository.
-        local uri=$(_do_git_repo_get_remote_uri $proj_dir $repo $remote)
+    if [ ! -z "${default_repo}" ]; then 
+        local remotes=$( _do_git_repo_get_remote_list ${proj_dir} ${default_repo} )
 
-        if [ ! -z "$uri" ]; then 
-            _do_log_debug "git-gen" "Add git remote '$remote': '$uri'"
-            git remote add $remote $uri
-        fi
-    done 
+        for remote in ${remotes[@]}; do 
+
+            # Resolves the git uri for this repository.
+            local uri=$(_do_git_repo_get_remote_uri $proj_dir $repo $remote)
+
+            if [ ! -z "$uri" ]; then 
+                _do_log_debug "git-gen" "Add git remote '$remote': '$uri'"
+                git remote add $remote $uri
+            fi
+        done 
+    fi
 
     _do_dir_pop
 }

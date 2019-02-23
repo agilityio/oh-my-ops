@@ -1,4 +1,5 @@
-proj_dir=$(_do_proj_default_get_dir)
+proj_dir=$(_do_dir_normalized $DO_HOME/..)
+_do_proj_init "$proj_dir" "devops"
 
 fake_repo="do-test-gen"
 repo_opts="$proj_dir $fake_repo"

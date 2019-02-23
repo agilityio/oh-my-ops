@@ -23,7 +23,7 @@ function _do_string_to_dash() {
 
 function _do_string_to_env_var() {
     local str="$1"
-    str="${str//\//-}"
+    str="${str//[^a-zA-Z0-9\-]/-}"
     str=$(_do_string_to_upper $str)
     str=$(_do_string_to_undercase $str)
     echo "$str"

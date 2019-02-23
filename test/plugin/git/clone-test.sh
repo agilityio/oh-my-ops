@@ -1,7 +1,8 @@
-proj_dir=$(_do_proj_default_get_dir)
+proj_dir=$(_do_dir_normalized $DO_HOME/..)
+_do_proj_init "$proj_dir" "devops"
+
 fake_repo="do-test-gen"
 repo_opts="$proj_dir $fake_repo"
-
 
 function test_setup() {
     cd $proj_dir
@@ -9,7 +10,7 @@ function test_setup() {
 
     _do_repo_clone $fake_repo
 
-    _do_dir_assert $fake_repo
+    _do_dir_assert $proj_dir/$fake_repo
 
     # Makes sure git repository is enabled
     _do_git_repo_enabled $repo_opts || _do_assert_fail

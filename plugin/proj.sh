@@ -1,6 +1,6 @@
 _do_plugin "repo"
 
-_do_log_level_warn "proj"
+_do_log_level_debug "proj"
 
 # The array of all project directories.
 declare -a _DO_PROJ_DIRS
@@ -106,7 +106,6 @@ function _do_proj_init() {
     local dir=$(_do_arg_required $1)
     local def_repo=$2
 
-
     dir=$(_do_dir_normalized $dir)
 
     if [ ! -z "${def_repo}" ]; then 
@@ -146,6 +145,23 @@ function _do_proj_repo_get_default() {
     dir=$(_do_dir_normalized ${dir})
     local proj_var=$(_do_string_to_env_var $dir)
     echo "${_DO_PROJ_REPO_MAP[${proj_var}]}"
+}
+
+
+# Gets the default repository name, given a project directory. 
+# Arguments:
+#   1. dir: The project directory.
+#
+function _do_proj_repo_set_default() {
+    local dir=$(_do_arg_required $1)
+    _do_dir_assert ${dir}
+    dir=$(_do_dir_normalized ${dir})
+
+    local repo=$(_do_arg_required $2)
+    _do_dir_assert "$dir/$repo"
+
+    local proj_var=$(_do_string_to_env_var $dir)
+    _DO_PROJ_REPO_MAP[${proj_var}]=$repo
 }
 
 
@@ -201,14 +217,14 @@ function _do_proj_plugin_ready() {
 
     _do_dir_push $dir 
 
-    local def_repo_dir=$(git rev-parse --show-toplevel)
-    _do_log_debug "proj" "git root dir  $git_root_dir"
+    local def_repo_dir=$(git rev-parse --show-toplevel 2> /dev/null)
+    _do_log_debug "proj" "git root dir $def_repo_dir"
     
     if [ -z "$def_repo_dir" ]; then 
         dir=.
     else 
         dir=$def_repo_dir/..
-        def_repo_dir=$(basename $(pwd))
+        def_repo_dir=$(basename $def_repo_dir)
     fi
 
     dir=$(_do_dir_normalized $dir)

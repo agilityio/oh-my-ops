@@ -82,7 +82,7 @@ function _do_go_repo_dep_package_walk() {
     _do_dir_push $src_dir
 
     local dir 
-    for dir in $(find * -maxdepth 0 -type d); do 
+    for dir in $(find * -maxdepth 0 -type d 2> /dev/null); do 
         if [ -f "$dir/Gopkg.toml" ]; then 
             eval $@ $dir
             local err=$?

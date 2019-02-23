@@ -31,9 +31,8 @@ function _do_dir_random_tmp_dir() {
 
 function _do_dir_assert() {
     local dir=$1
-    local msg="Expected $dir a directory"
     _do_assert $dir
-    [ -d $dir ] || _do_assert_fail $title
+    [ -d $dir ] || _do_assert_fail "Expected $dir a directory"
 }
 
 function _do_dir_assert_not() {
