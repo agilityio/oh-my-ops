@@ -11,7 +11,7 @@ function _do_go_repo_dep_enabled() {
     local repo=$2
 
     # On the first dep package found, return right away.
-    local packages=$(_do_go_repo_dep_package_list $proj_dir $repo)
+    local packages=( $(_do_go_repo_dep_package_list $proj_dir $repo) )
     if [ ${#packages[@]} -gt 0 ]; then 
         # go dep is enabled
         return 0
@@ -72,7 +72,7 @@ function _do_go_repo_dep_package_walk() {
     # Looks for all 
     local src_dir="$proj_dir/$repo/src"
 
-    if [ -d "$src_dir" ]; then 
+    if [ ! -d "$src_dir" ]; then 
         # If the source dir does not exist, no thing to walk.
         return 
     fi 
@@ -82,7 +82,7 @@ function _do_go_repo_dep_package_walk() {
     _do_dir_push $src_dir
 
     local dir 
-    for dir in $(find * -maxdepth 0 -type d 2> /dev/null); do 
+    for dir in $(ls -A .); do 
         if [ -f "$dir/Gopkg.toml" ]; then 
             eval $@ $dir
             local err=$?

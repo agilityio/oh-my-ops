@@ -31,10 +31,13 @@
 _DO_REPO_COMMANDS=(
     "init"
     "cd"
+    "status"
     "help"
     "clean"
     "build"
     "start"
+    "stop"
+    "watch"
     "deploy"
 )
 
@@ -85,4 +88,80 @@ function _do_repo_cd() {
 
     # Triggers hook call for other plugin.
     _do_hook_call "_do_repo_cd" "${proj_dir}" "${repo}"
+}
+
+
+function _do_repo_status() {
+    local proj_dir=$1
+    local repo=$2
+
+    _do_print_header_2 "${repo}-status"
+
+    # Triggers hook call for other plugin.
+    _do_hook_call "_do_repo_status" "${proj_dir}" "${repo}"
+}
+
+function _do_repo_clean() {
+    local proj_dir=$1
+    local repo=$2
+
+    _do_print_header_2 "${repo}-clean"
+
+    # Triggers hook call for other plugin.
+    _do_hook_call "_do_repo_clean" "${proj_dir}" "${repo}"
+}
+
+function _do_repo_build() {
+    local proj_dir=$1
+    local repo=$2
+
+    _do_print_header_2 "${repo}-build"
+
+    # Triggers hook call for other plugin.
+    _do_hook_call "_do_repo_build" "${proj_dir}" "${repo}"
+
+}
+
+function _do_repo_start() {
+    local proj_dir=$1
+    local repo=$2
+
+    _do_print_header_2 "${repo}-start"
+
+    # Triggers hook call for other plugin.
+    _do_hook_call "_do_repo_start" "${proj_dir}" "${repo}"
+
+}
+
+
+function _do_repo_stop() {
+    local proj_dir=$1
+    local repo=$2
+
+    _do_print_header_2 "${repo}-stop"
+
+    # Triggers hook call for other plugin.
+    _do_hook_call "_do_repo_stop" "${proj_dir}" "${repo}"
+}
+
+
+function _do_repo_watch() {
+    local proj_dir=$1
+    local repo=$2
+
+    _do_print_header_2 "${repo}-watch"
+
+    # Triggers hook call for other plugin.
+    _do_hook_call "_do_repo_watch" "${proj_dir}" "${repo}"
+}
+
+
+function _do_repo_deploy() {
+    local proj_dir=$1
+    local repo=$2
+
+    _do_print_header_2 "${repo}-deploy"
+
+    # Triggers hook call for other plugin.
+    _do_hook_call "_do_repo_deploy" "${proj_dir}" "${repo}"
 }

@@ -7,7 +7,7 @@ _do_log_level_warn "tmux"
 # ==============================================================================
 
 # The array of all plugin repo comamnds.
-_DO_TMUX_REPO_CMDS=( "help" "start" "stop" )
+_DO_TMUX_REPO_CMDS=( "help" )
 
 
 # Initializes tmux supports for the specified repository.
@@ -48,6 +48,10 @@ function _do_tmux_repo_help() {
 function _do_tmux_repo_start() {
     local proj_dir=$1
     local repo=$2
+
+    if ! _do_tmux_repo_enabled "${proj_dir}" "${repo}"; then 
+        return
+    fi
 
     _do_print_header_1 "Runs tmux for $repo"
 
@@ -149,6 +153,10 @@ function _do_tmux_repo_stop() {
     local proj_dir=$1
     local repo=$2
 
+    if ! _do_tmux_repo_enabled "${proj_dir}" "${repo}"; then 
+        return
+    fi
+
     _do_print_header_1 "Stops tmux for $repo"
 
     tmux kill-session -t "$repo" &> /dev/null
@@ -200,7 +208,6 @@ function _do_tmux_repo_enabled() {
 
 function _do_tmux_plugin_init() {
     _do_log_info "tmux" "Initialize plugin"
-
+    _do_proj_plugin "tmux"
 }
 
-_do_proj_plugin "tmux"

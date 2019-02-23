@@ -1,3 +1,5 @@
+_do_assert_cmd "git"
+
 _do_plugin "repo"
 
 _do_log_level_warn "git"
@@ -92,6 +94,7 @@ function _do_git_plugin_init() {
     # generate git support.
     _do_hook_after "_do_repo_gen" "_do_git_repo_gen"
     _do_hook_after "_do_repo_clone" "_do_git_repo_clone"
+    _do_hook_after "_do_repo_status" "_do_git_repo_status"
 
     # Adds alias that runs at repository level
     local cmds=( "status" )

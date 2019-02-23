@@ -1,3 +1,5 @@
+_do_assert_cmd "docker"
+
 _do_plugin "proj"
 
 # Docker Supports

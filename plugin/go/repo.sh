@@ -8,6 +8,10 @@ _DO_GO_PATHS=()
 function _do_go_repo_help() {
     local proj_dir=$1
     local repo=$2
+    
+    if ! _do_go_repo_enabled $proj_dir $repo; then 
+        return
+    fi 
 
     _do_print_header_2 "$repo: Go help"
 
@@ -45,6 +49,10 @@ function _do_go_repo_clean() {
     local proj_dir=$1
     local repo=$2
 
+    if ! _do_go_repo_enabled $proj_dir $repo; then 
+        return
+    fi 
+
     local title="$repo: cleans go build result"
     _do_print_header_2 $title
 
@@ -68,6 +76,10 @@ function _do_go_repo_clean() {
 function _do_go_repo_build() {
     local proj_dir=$(_do_arg_required $1)
     local repo=$(_do_arg_required $2)
+
+    if ! _do_go_repo_enabled $proj_dir $repo; then 
+        return
+    fi 
 
     local title="$repo: Builds go repository"
     _do_print_header_2 $title

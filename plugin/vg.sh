@@ -9,7 +9,7 @@ _do_log_level_warn "vg"
 # ==============================================================================
 
 # The array of all plugin repo comamnds.
-_DO_VG_REPO_CMDS=( "help" "start" "stop" "ssh" "destroy" )
+_DO_VG_REPO_CMDS=( "help" )
 
 
 # If the specified repository has a file "Dockerfile", vg is enabled for 
@@ -51,6 +51,10 @@ function _do_vg_repo_help() {
     local repo=$2
     local mode=$3
 
+    if ! _do_vg_repo_enabled "${proj_dir}" "${repo}"; then 
+        return
+    fi
+
     if [ "${mode}" = "--short" ]; then 
         echo "  ${repo}-vg-help: See vg command helps"
         return
@@ -76,21 +80,41 @@ function _do_vg_repo_help() {
 
 # Starts vagrant machine.
 function _do_vg_repo_start() {
+
+    if ! _do_vg_repo_enabled "${proj_dir}" "${repo}"; then 
+        return
+    fi
+
     _do_repo_cmd $@ "vagrant up"
 }
 
 # Stops vagrant machine.
 function _do_vg_repo_stop() {
+
+    if ! _do_vg_repo_enabled "${proj_dir}" "${repo}"; then 
+        return
+    fi
+
     _do_repo_cmd $@ "vagrant halt"
 }
 
 # Ssh to vagrant machine.
 function _do_vg_repo_ssh() {
+
+    if ! _do_vg_repo_enabled "${proj_dir}" "${repo}"; then 
+        return
+    fi    
+    
     _do_repo_cmd $@ "vagrant ssh"
 }
 
 # Destroy vagrant machine.
 function _do_vg_repo_destroy() {
+
+    if ! _do_vg_repo_enabled "${proj_dir}" "${repo}"; then 
+        return
+    fi
+
     _do_repo_cmd $@ "vagrant destroy"
 }
 

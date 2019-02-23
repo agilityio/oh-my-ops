@@ -20,13 +20,13 @@ function _do_proj_plugin() {
 
     _do_log_debug "proj" "Register proj plugin $plugin"
 
-    for cmd in "${_DO_REPO_COMMANDS[@]}"; do 
-        local func="_do_${plugin}_repo_${cmd}"
+    # for cmd in "${_DO_REPO_COMMANDS[@]}"; do 
+    #     local func="_do_${plugin}_repo_${cmd}"
 
-        if _do_alias_exist "${func}"; then 
-            _do_hook_after "_do_repo_${cmd}" "${func}"
-        fi
-    done
+    #     if _do_alias_exist "${func}"; then 
+    #         _do_hook_after "_do_repo_${cmd}" "${func}"
+    #     fi
+    # done
 }
 
 function _do_proj_list() {

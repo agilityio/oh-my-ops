@@ -1,3 +1,5 @@
+_do_assert_cmd "go" "dep" 
+
 _do_plugin "docker"
 
 _do_log_level_warn "go"
@@ -28,6 +30,9 @@ function _do_go_plugin_init() {
     # Listens to init proj repo hook.
     _do_proj_plugin "go"
     _do_hook_after "_do_repo_gen" "_do_go_repo_gen"
+    _do_hook_after "_do_repo_help" "_do_go_repo_help"
+    _do_hook_after "_do_repo_clean" "_do_go_repo_clean"
+    _do_hook_after "_do_repo_build" "_do_go_repo_build"
 
     # Adds alias that runs at repository level
     local cmds=( "clean" "build" )

@@ -8,6 +8,10 @@ function _do_sphinx_repo_help() {
     local proj_dir=$1
     local repo=$2
 
+    if ! _do_sphinx_repo_enabled $proj_dir $repo; then 
+        return
+    fi 
+
     _do_print_header_2 "$repo: Sphinx help"
 
     echo "  
@@ -44,6 +48,10 @@ function _do_sphinx_repo_clean() {
     local proj_dir=$1
     local repo=$2
 
+    if ! _do_sphinx_repo_enabled $proj_dir $repo; then 
+        return
+    fi 
+
     local title="$repo: cleans sphinx build result"
     _do_print_header_2 $title
 
@@ -67,6 +75,10 @@ function _do_sphinx_repo_clean() {
 function _do_sphinx_repo_build() {
     local proj_dir=$1
     local repo=$2
+
+    if ! _do_sphinx_repo_enabled $proj_dir $repo; then 
+        return
+    fi 
 
     local title="$repo: Build html documentation with sphinx"
     _do_print_header_2 $title
@@ -94,6 +106,10 @@ function _do_sphinx_repo_start() {
     local repo=$2
     local opts=$3
 
+    if ! _do_sphinx_repo_enabled $proj_dir $repo; then 
+        return
+    fi 
+
     _do_log_info "sphinx" "start"
     
     _do_sphinx_build_ensured
@@ -116,6 +132,10 @@ function _do_sphinx_repo_start() {
 function _do_sphinx_repo_watch() {
     local proj_dir=$1
     local repo=$2
+
+    if ! _do_sphinx_repo_enabled $proj_dir $repo; then 
+        return
+    fi 
 
     _do_log_info "sphinx" "watch"
     
@@ -141,6 +161,10 @@ function _do_sphinx_repo_stop() {
     local proj_dir=$1
     local repo=$2
     
+    if ! _do_sphinx_repo_enabled $proj_dir $repo; then 
+        return
+    fi 
+
     local title="$repo: Sphinx stop"
     _do_print_header_2 $title 
 
@@ -167,6 +191,11 @@ function _do_sphinx_repo_get_url() {
 function _do_sphinx_repo_status() {
     local proj_dir=$1
     local repo=$2
+
+    if ! _do_sphinx_repo_enabled $proj_dir $repo; then 
+        return
+    fi 
+
     _do_print_header_2 "$repo: Sphinx status"
 
     local url=$(_do_sphinx_repo_get_url $proj_dir $repo)
@@ -184,6 +213,10 @@ function _do_sphinx_repo_status() {
 #
 function _do_sphinx_repo_web() {
     _do_log_info "sphinx" "web"
+
+    if ! _do_sphinx_repo_enabled $proj_dir $repo; then 
+        return
+    fi 
 
     if _do_sphinx_warn_not_running; then 
         return 1
@@ -235,6 +268,8 @@ function _do_sphinx_repo_init() {
 
     # Register hooks for command repo life cycle command.
     _do_repo_plugin "${proj_dir}" "${repo}" "sphinx" _DO_SPHINX_REPO_CMDS 
+
+    _do_hook_after "_do_repo_clean" "_do_sphinx_repo_clean"
 }
 
 

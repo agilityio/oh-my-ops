@@ -28,6 +28,9 @@ function _do_sphinx_plugin_init() {
     # Listens to init proj repo hook.
     _do_proj_plugin "sphinx"
     _do_hook_after "_do_repo_gen" "_do_sphinx_repo_gen"
+    _do_hook_after "_do_repo_clean" "_do_sphinx_repo_clean"
+    _do_hook_after "_do_repo_build" "_do_sphinx_repo_build"
+    _do_hook_after "_do_repo_status" "_do_sphinx_repo_status"
 
     # Adds alias that runs at repository level
     local cmds=( "clean" "build" )
