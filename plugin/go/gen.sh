@@ -5,6 +5,7 @@ _do_log_level_debug "go"
 #
 function _do_go_repo_gen() {
     local proj_dir=$(_do_arg_required $1)
+
     local repo=$(_do_arg_required $2)
         
     _do_print_line_1 "Generates go support"

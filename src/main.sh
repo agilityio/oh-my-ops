@@ -48,8 +48,7 @@ done
 
 
 # Checks if the current shell is bash
-if [ _DO_MAIN_QUICK == "no" ]; then  
-
+if [ "${_DO_MAIN_QUICK}" == "no" ]; then  
     if ! echo "$0" | grep -q "bash"; then 
         echo "Only support bash! Please executes 'bash' to change to bash shell instead."
         return

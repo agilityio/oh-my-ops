@@ -1,30 +1,28 @@
+proj_dir=$(_do_proj_default_get_dir)
+name="do-test-gen"
+
 function test_do_repo_gen() {
     # Go to devops directory
-    _do_dir_home_push
-    pwd
+    cd $proj_dir
 
     # Generates 
-    local name="do-test-gen"
-    rm -rfd ../$name
+    rm -rfd $name
 
     _do_repo_gen $name
 
-    _do_dir_assert "../$name"
+    _do_dir_assert $proj_dir/$name
 
-    rm -rfd ../$name
+    rm -rfd $name
 }
 
 function test_do_repo_clone() {
-    # Go to devops directory
-    _do_dir_home_push
+    cd $proj_dir
 
-    # Generates 
-    local name="do-test-gen"
-    rm -rfd ../$name
+    rm -rfd $name
 
     _do_repo_clone $name
 
-    _do_dir_assert "../$name"
+    _do_dir_assert $proj_dir/$name
 
-    rm -rfd ../$name
+    rm -rfd $name
 }

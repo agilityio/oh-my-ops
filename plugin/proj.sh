@@ -1,6 +1,6 @@
 _do_plugin "repo"
 
-_do_log_level_warn "proj"
+_do_log_level_debug "proj"
 
 # The array of all project directories.
 declare -a _DO_PROJ_DIRS
@@ -24,6 +24,9 @@ function _do_proj_plugin() {
     done
 }
 
+function _do_proj_list() {
+    echo ${_DO_PROJ_DIRS[@]}
+}
 
 # Executes a project level command. 
 #
@@ -91,12 +94,13 @@ function _do_proj_is_loaded() {
 #   1. dir: The absolute director to the project home.
 #
 function _do_proj_init() {
+
     local dir=$(_do_arg_required $1)
 
     dir=$(_do_dir_normalized $dir)
 
     # Adds the current project to the directories
-    _DO_PROJ_DIRS=( "${_DO_PROJ_DIRS}" "$dir" )
+    _DO_PROJ_DIRS=( ${_DO_PROJ_DIRS} "$dir" )
 
     _do_hook_call "_do_proj_init" "$dir" 
 
@@ -115,6 +119,13 @@ function _do_proj_init() {
 # Gets the project directory of the current directory.
 #
 function _do_proj_default_get_dir() {
+
+    if [ ${#_DO_PROJ_DIRS[@]} -eq 1 ]; then 
+        # If just 1 proj dir is loaded, this is easy. 
+        # Just returns that project directory
+        echo ${_DO_PROJ_DIRS[0]}
+        return
+    fi 
 
     # From the current directory, keep traverse back work to find a project 
     # container loaded before.
@@ -145,5 +156,31 @@ function _do_proj_default_get_dir() {
 #
 function _do_proj_plugin_ready() {
     _do_log_info "proj" "Plugin ready"
-    _do_proj_init "$DO_HOME/.."
+
+    local last_index=${#BASH_SOURCE[@]}
+    last_index=$((size - 1))
+    
+    local file=${BASH_SOURCE[$last_index]}
+    _do_log_debug "proj" "last file in bash source $file"
+
+    local dir="$(dirname $file)"
+    _do_log_debug "proj" "last dir in bash source $dir"
+
+    _do_dir_push $dir 
+
+    local git_root_dir=$(git rev-parse --show-toplevel)
+    _do_log_debug "proj" "git root dir  $git_root_dir"
+    
+    if [ -z "$git_root_dir" ]; then 
+        dir=.
+    else 
+        dir=$git_root_dir/..
+    fi
+    dir=$(_do_dir_normalized $dir)
+
+    _do_dir_pop
+
+    _do_log_debug "proj" "Loading projects at $dir"
+
+    _do_proj_init "$dir"
 }

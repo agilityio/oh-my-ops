@@ -1,16 +1,16 @@
-proj_dir=$(_do_dir_normalized $DO_HOME/..)
+proj_dir=$(_do_proj_default_get_dir)
 fake_repo="do-test-gen"
 repo_opts="$proj_dir $fake_repo"
 
 
 function test_setup() {
-    # Go to devops directory
-    _do_dir_home_push
+    cd $proj_dir
+    rm -rfd $fake_repo &> /dev/null
 
-    rm -rfd ../$fake_repo &> /dev/null
     _do_repo_clone $fake_repo
 
-    _do_dir_assert "../$fake_repo"
+    _do_dir_assert $fake_repo
+
     # Makes sure git repository is enabled
     _do_git_repo_enabled $repo_opts || _do_assert_fail
 
@@ -19,8 +19,8 @@ function test_setup() {
 
 
 function test_teardown() {
-    _do_dir_home_push
-    rm -rfd ../$fake_repo
+    cd $proj_dir
+    rm -rfd $fake_repo
 }
 
 

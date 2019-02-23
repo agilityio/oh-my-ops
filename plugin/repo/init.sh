@@ -1,4 +1,4 @@
-_do_log_level_warn "repo"
+_do_log_level_debug "repo"
 
 _do_src_include_others_same_dir
 

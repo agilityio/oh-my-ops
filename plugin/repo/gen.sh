@@ -4,6 +4,9 @@
 function _do_repo_gen() {
     local repo=$1
     local proj_dir=$(_do_proj_default_get_dir)
+    _do_log_debug "repo" "proj_dir: $proj_dir"
+
+    _do_dir_assert $proj_dir
 
     _do_print_header_2 "Generates new repository"
 
@@ -13,9 +16,10 @@ function _do_repo_gen() {
         read repo
     fi 
 
-    _do_log_info "proj" "Generates new repo '${repo}' at '${proj_dir}'"
-
     local repo_dir="${proj_dir}/${repo}"
+    _do_dir_assert_not $repo_dir
+
+    _do_log_info "repo" "Generates new repo '${repo}' at '${proj_dir}'"
 
     # Creates the repository directory
     mkdir ${repo_dir}
