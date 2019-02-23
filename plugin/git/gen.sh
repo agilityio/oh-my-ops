@@ -15,7 +15,6 @@ function _do_git_repo_gen() {
     # The default origin would be at local
     git init .
 
-
     # Copies over the list of git remotes from devops repository
     local default_repo=$( _do_proj_repo_get_default "${proj_dir}" )
     _do_log_debug "git-clone" "Default repo: $default_repo"
@@ -34,6 +33,8 @@ function _do_git_repo_gen() {
             fi
         done 
     fi
+
+    
 
     _do_dir_pop
 }

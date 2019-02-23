@@ -1,6 +1,6 @@
 _do_plugin "repo"
 
-_do_log_level_debug "proj"
+_do_log_level_warn "proj"
 
 # The array of all project directories.
 declare -a _DO_PROJ_DIRS

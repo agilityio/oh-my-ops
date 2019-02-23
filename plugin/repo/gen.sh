@@ -32,6 +32,21 @@ function _do_repo_gen() {
     # Adds empty README file
     touch README.md
 
+    echo 'root = true
+[*]
+indent_style = space
+indent_size = 4
+charset = utf-8
+trim_trailing_whitespace = false
+insert_final_newline = true
+    ' > .editorconfig
+    
+    echo '* text auto
+*.sh text eol=lf
+    ' > .gitatrributes
+
+    echo '' > .gitignore
+
     # Trigger hook for other plugins to generate more.
     _do_hook_call "_do_repo_gen" "${proj_dir}" "${repo}"
 
