@@ -82,3 +82,14 @@ function _do_assert_stack_trace() {
     printf "${TX_NORMAL}" >&2
 
 }
+
+
+function _do_assert_cmd() {
+    local cmd
+    for cmd in $@; do 
+        which $cmd &> /dev/null 
+        if _do_error $?; then 
+            _do_assert_fail "Expected '$cmd' command to be installed"
+        fi 
+    done
+}
