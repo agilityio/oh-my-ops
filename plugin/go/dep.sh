@@ -71,8 +71,14 @@ function _do_go_repo_dep_package_walk() {
 
     # Looks for all 
     local src_dir="$proj_dir/$repo/src"
-    _do_dir_assert $src_dir
 
+    if [ -d "$src_dir" ]; then 
+        # If the source dir does not exist, no thing to walk.
+        return 
+    fi 
+
+    # Walks through all directories under "src", and check if there is any 
+    # go package under it.
     _do_dir_push $src_dir
 
     local dir 

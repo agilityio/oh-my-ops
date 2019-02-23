@@ -82,11 +82,12 @@ function _do_repo_cmd() {
 }
 
 
-
 # Initializes plugin.
 function _do_repo_plugin_init() {
     _do_log_info "repo" "Plugin initialize"
 
     alias "do-repo-gen"="_do_repo_gen"
+    alias "do-repo-clone"="_do_repo_clone"
+    
     _do_hook_after "_do_prompt" "_do_repo_prompt_changed"
 }

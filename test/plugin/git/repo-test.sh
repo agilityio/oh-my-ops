@@ -67,7 +67,7 @@ function test_do_git_remote_list() {
 
     # Makes sure we can get the list of remote uri for the generated repository
     for remote in ${remotes[@]}; do 
-        local uri=$(_do_git_repo_get_remote_uri ${fake_repo} $remote)
+        local uri=$(_do_git_repo_get_remote_uri $proj_dir ${fake_repo} $remote)
 
         echo "$remote: $uri"
         _do_assert $uri

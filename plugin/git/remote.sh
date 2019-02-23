@@ -5,21 +5,28 @@ _do_log_level_warn "git-remote"
 # This function is a util function to compute the remote uri for a given
 # repository and remote name.
 # Arguments:
-#   1. repo: The repository
-#   2. remote: The remote name.
+#   1. proj_dir: The project repository
+#   2. repo: The repository
+#   3. remote: The remote name.
 #
 function _do_git_repo_get_remote_uri() {
-    local repo=$1
-    local remote=$2
+    local proj_dir=$1
+    local repo=$2
+    local remote=$3
 
-    _do_dir_push $DO_HOME
+    _do_dir_assert $proj_dir
+
+    # Makes sure that the default repository is available for the current project
+    local default_repo=$(_do_proj_repo_get_default ${proj_dir})
+    _do_assert $default_repo
+
+    _do_repo_dir_push $proj_dir $default_repo
     
     # Remove the last .git
     # For example, if a remote is ssh://git@bitbucket.org/abc/devops.git
     # The result would be ssh://git@bitbucket.org/abc
     # local uri=$( git config --local --get "remote.${remote}.url" | sed -e 's/\/[^\/]*\.git$//' )
-    local devops_repo_name="devops"
-    local uri=$( git config --local --get "remote.${remote}.url" | sed -e "s/${devops_repo_name}.git$/${repo}.git/" )
+    local uri=$( git config --local --get "remote.${remote}.url" | sed -e "s/${default_repo}.git$/${repo}.git/" )
     _do_dir_pop
 
     if [ -z "$uri" ]; then 

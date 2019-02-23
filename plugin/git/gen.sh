@@ -20,7 +20,7 @@ function _do_git_repo_gen() {
     for remote in ${remotes[@]}; do 
 
         # Resolves the git uri for this repository.
-        local uri=$(_do_git_repo_get_remote_uri $repo $remote)
+        local uri=$(_do_git_repo_get_remote_uri $proj_dir $repo $remote)
 
         if [ ! -z "$uri" ]; then 
             _do_log_debug "git-gen" "Add git remote '$remote': '$uri'"

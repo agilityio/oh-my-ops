@@ -5,6 +5,11 @@ _do_log_level_warn "proj"
 # The array of all project directories.
 declare -a _DO_PROJ_DIRS
 
+# The map from project to a default repository.
+# The default repository would often be the git repository 
+# that activate the do framework.
+declare -A _DO_PROJ_REPO_MAP
+
 
 # Register a plugin to load. 
 # Arguments:
@@ -92,20 +97,34 @@ function _do_proj_is_loaded() {
 # Adds a project to devops management.
 # Arguments:
 #   1. dir: The absolute director to the project home.
-#
+#   2. def_repo_dir: Optional. The default repository discovered for this 
+#       project. If it exists, it is possible to automatically set up 
+#       git remote on a new repo clone or init.
+#       
 function _do_proj_init() {
 
     local dir=$(_do_arg_required $1)
+    local def_repo=$2
+
 
     dir=$(_do_dir_normalized $dir)
+
+    if [ ! -z "${def_repo}" ]; then 
+        # If the default repository is passed in. 
+        _do_dir_assert "${dir}/${def_repo}"
+    fi 
+
+    # This is the default repository for the current repository.
+    local proj_var=$(_do_string_to_env_var $dir)
+    _DO_PROJ_REPO_MAP[${proj_var}]="${def_repo}"
+
+    # Initializes all sub directories as a code repository
+    _do_log_debug "proj" "Adds proj directory $dir"
 
     # Adds the current project to the directories
     _DO_PROJ_DIRS=( ${_DO_PROJ_DIRS} "$dir" )
 
     _do_hook_call "_do_proj_init" "$dir" 
-
-    # Initializes all sub directories as a code repository
-    _do_log_debug "proj" "Adds proj directory $dir"
 
     local name
     for name in $( _do_proj_get_repo_list $dir ); do 
@@ -113,6 +132,20 @@ function _do_proj_init() {
             _do_repo_init $dir $name
         fi
     done
+}
+
+
+# Gets the default repository name, given a project directory. 
+# Arguments:
+#   1. dir: The project directory.
+#
+function _do_proj_repo_get_default() {
+    local dir=$(_do_arg_required $1)
+    _do_dir_assert ${dir}
+
+    dir=$(_do_dir_normalized ${dir})
+    local proj_var=$(_do_string_to_env_var $dir)
+    echo "${_DO_PROJ_REPO_MAP[${proj_var}]}"
 }
 
 
@@ -168,19 +201,21 @@ function _do_proj_plugin_ready() {
 
     _do_dir_push $dir 
 
-    local git_root_dir=$(git rev-parse --show-toplevel)
+    local def_repo_dir=$(git rev-parse --show-toplevel)
     _do_log_debug "proj" "git root dir  $git_root_dir"
     
-    if [ -z "$git_root_dir" ]; then 
+    if [ -z "$def_repo_dir" ]; then 
         dir=.
     else 
-        dir=$git_root_dir/..
+        dir=$def_repo_dir/..
+        def_repo_dir=$(basename $(pwd))
     fi
+
     dir=$(_do_dir_normalized $dir)
 
     _do_dir_pop
 
-    _do_log_debug "proj" "Loading projects at $dir"
+    _do_log_debug "proj" "Loading projects at $dir, with default: '${def_repo_dir}'"
 
-    _do_proj_init "$dir"
+    _do_proj_init "${dir}" "${def_repo_dir}"
 }
