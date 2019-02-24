@@ -2,7 +2,7 @@ _do_assert_cmd "python"
 
 _do_plugin "docker"
 
-_do_log_level_warn "python"
+_do_log_level_debug "python"
 
 _do_src_include_others_same_dir
 
@@ -29,10 +29,10 @@ function _do_python_plugin_init() {
 
     # Listens to init proj repo hook.
     _do_proj_plugin "python"
-    _do_hook_after "_do_repo_gen" "_do_python_repo_gen"
-    _do_hook_after "_do_repo_help" "_do_python_repo_help"
-    _do_hook_after "_do_repo_clean" "_do_python_repo_clean"
-    _do_hook_after "_do_repo_build" "_do_python_repo_build"
+    local cmds=( "init" "help" )
+    for cmd in ${cmds[@]}; do 
+        _do_hook_after "_do_repo_${cmd}" "_do_python_repo_${cmd}"
+    done 
 
     # Adds alias that runs at repository level
     local cmds=( "clean" "build" )

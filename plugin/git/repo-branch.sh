@@ -1,4 +1,4 @@
-_do_log_level_warn "git-branch"
+_do_log_level_debug "git-branch"
 
 
 # Gets the current git branch
@@ -94,7 +94,7 @@ function _do_git_repo_branch_init() {
         local name
         for name in ${names[@]}; do
             local cmd="${repo}-git-${name}-${branch}"
-            _do_log_debug "git-branch" "  Register '$cmd' alias"
+            _do_log_debug "git-branch" "  Register alias '$cmd'"
 
             alias "${cmd}"="_do_git_repo_branch_${name} ${proj_dir} ${repo} ${branch}"
         done
