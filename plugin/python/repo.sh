@@ -1,7 +1,3 @@
-# The array of all plugin repo commands.
-_DO_PYTHON_REPO_CMDS=( "help" "venv-start" "venv-stop" )
-
-_DO_PYTHON_PATHS=()
 
 # Displays helps about how to run a repository python commands.
 #
@@ -44,7 +40,6 @@ function _do_python_repo_init() {
     # Sets up the alias for showing the repo python status
     _do_log_info "python" "Initialize python for '$repo'"
 
-    # Register hooks for command repo life cycle command.
-    _do_repo_plugin "${proj_dir}" "${repo}" "python" _DO_PYTHON_REPO_CMDS 
+    _do_repo_alias_add $proj_dir $repo "python" "venv-start venv-stop"
 }
 

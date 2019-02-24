@@ -3,9 +3,6 @@ _do_plugin "proj"
 # Docker Supports
 _do_log_level_warn "bin"
 
-# The array of all plugin repo comamnds.
-_DO_BIN_REPO_CMDS=( "help" )
-
 
 # ==============================================================================
 # Proj plugin integration
@@ -39,8 +36,7 @@ function _do_bin_repo_init() {
 
     _do_log_debug "bin" "Initializes bin integration for $repo"
 
-    # Registers tmux command such as 'repo-tmux-start', etc.
-    _do_repo_plugin "${proj_dir}" "${repo}" "bin" _DO_BIN_REPO_CMDS 
+    _do_repo_alias_add $proj_dir $repo "bin" "help"
 }
 
 
@@ -58,7 +54,5 @@ function _do_bin_repo_help() {
 # ==============================================================================
 function _do_bin_plugin_init() {
     _do_log_info "bin" "Initialize plugin"
-   
-    # Listens to init proj repo hook.
-    _do_proj_plugin "bin"
+    _do_repo_cmd_hook_add "bin" "init help"
 }

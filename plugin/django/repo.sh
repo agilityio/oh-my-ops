@@ -1,5 +1,3 @@
-# The array of all plugin repo comamnds.
-_DO_DJANGO_REPO_CMDS=( "help" "clean" "build" "start" "watch" "stop" "status" "web")
 
 # Displays helps about how to run a repository django commands.
 #
@@ -195,6 +193,6 @@ function _do_django_repo_init() {
     _do_log_info "django" "Initialize django for '$repo'"
 
     # Register hooks for command repo life cycle command.
-    _do_repo_plugin "${proj_dir}" "${repo}" "django" _DO_DJANGO_REPO_CMDS 
+    _do_repo_alias_add $proj_dir $repo "bin" "help clean build start watch stop status web"
 }
 

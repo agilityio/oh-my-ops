@@ -27,12 +27,7 @@ function _do_python_plugin_init() {
     _do_log_info "python" "Initialize plugin"
     _do_plugin_cmd "python" _DO_PYTHON_CMDS
 
-    # Listens to init proj repo hook.
-    _do_proj_plugin "python"
-    local cmds=( "init" "help" )
-    for cmd in ${cmds[@]}; do 
-        _do_hook_after "_do_repo_${cmd}" "_do_python_repo_${cmd}"
-    done 
+    _do_repo_cmd_hook_add "python" "init help"
 
     # Adds alias that runs at repository level
     local cmds=( "clean" "build" )

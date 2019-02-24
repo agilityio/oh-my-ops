@@ -26,38 +26,6 @@ function _do_repo_dir_push() {
 }
 
 
-# Registers plugin specific repo commands. 
-#
-# Arguments:
-#   1. proj_dir: The project absolute directory.
-#   2. repo: The repo name.
-#   3. plugin: The plugin name.
-#   4. The global array name that contains all plugin commands.
-#
-# Notes:
-#   odd syntax here for passing array parameters: 
-#   http://stackoverflow.com/questions/8082947/how-to-pass-an-array-to-a-bash-function
-#
-function _do_repo_plugin() {
-    local proj_dir=$1
-    local repo=$2
-    local plugin=$3
-    local cmds=$4[@]
-
-    for cmd in "${!cmds}"; do 
-        # Converts the command to undercase
-        local func="_do_${plugin}_repo_$(_do_string_to_undercase $cmd)"
-        local cmd="${repo}-${plugin}-$(_do_string_to_dash ${cmd})"
-
-        if ! _do_alias_exist "${cmd}"; then 
-            # Register an alias for the plugin repo command.
-            _do_log_debug "repo" "Register '${cmd}' alias"
-
-            alias "${cmd}"="${func} ${proj_dir} ${repo}"
-        fi
-    done
-}
-
 
 # Registers repo-level command hooks. 
 # Arguments:

@@ -1,6 +1,3 @@
-# The array of all plugin repo comamnds.
-_DO_GO_REPO_CMDS=( "help" "clean" "build" )
-
 _DO_GO_PATHS=()
 
 # Displays helps about how to run a repository go commands.
@@ -132,8 +129,7 @@ function _do_go_repo_init() {
     # Sets up the alias for showing the repo go status
     _do_log_info "go" "Initialize go for '$repo'"
 
-    # Register hooks for command repo life cycle command.
-    _do_repo_plugin "${proj_dir}" "${repo}" "go" _DO_GO_REPO_CMDS 
+    _do_repo_alias_add $proj_dir $repo "go" "help clean build"
 }
 
 

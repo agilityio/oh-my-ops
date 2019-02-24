@@ -6,9 +6,6 @@ _do_log_level_warn "tmux"
 # Proj plugin integration
 # ==============================================================================
 
-# The array of all plugin repo comamnds.
-_DO_TMUX_REPO_CMDS=( "help" )
-
 
 # Initializes tmux supports for the specified repository.
 #
@@ -22,8 +19,28 @@ function _do_tmux_repo_init() {
 
     _do_log_debug "tmux" "Initializes tmux integration for $repo"
 
-    # Registers tmux command such as 'repo-tmux-start', etc.
-    _do_repo_plugin "${proj_dir}" "${repo}" "tmux" _DO_TMUX_REPO_CMDS 
+    _do_repo_alias_add $proj_dir $repo "tmux" "help start stop" 
+}
+
+
+# Runs any sphinx command in docker.
+# Arguments:
+#   1. repo: The repository name.
+#
+function _do_sphinx_repo_cmd() {
+    local proj_dir=$1
+    shift
+
+    local repo=$1
+    shift
+
+    local daemon_opts=""
+
+    if [ "$1" == "--daemon" ]; then 
+        daemon_opts="-d"
+        shift
+    fi 
+
 }
 
 
@@ -208,6 +225,6 @@ function _do_tmux_repo_enabled() {
 
 function _do_tmux_plugin_init() {
     _do_log_info "tmux" "Initialize plugin"
-    _do_proj_plugin "tmux"
+    _do_repo_cmd_hook_add "tmux" "init help"
 }
 

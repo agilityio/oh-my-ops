@@ -8,10 +8,6 @@ _do_log_level_warn "vg"
 # Proj plugin integration
 # ==============================================================================
 
-# The array of all plugin repo comamnds.
-_DO_VG_REPO_CMDS=( "help" )
-
-
 # If the specified repository has a file "Dockerfile", vg is enabled for 
 # the repository. 
 #
@@ -39,8 +35,7 @@ function _do_vg_repo_init() {
 
     _do_log_debug "vg" "Initializes vg integration for $repo"
 
-    # Registers tmux command such as 'repo-tmux-start', etc.
-    _do_repo_plugin "${proj_dir}" "${repo}" "vg" _DO_VG_REPO_CMDS 
+    _do_repo_alias_add $proj_dir $repo "vg" "help start stop ssh destroy" 
 }
 
 
@@ -123,8 +118,5 @@ function _do_vg_repo_destroy() {
 # ==============================================================================
 function _do_vg_plugin_init() {
     _do_log_info "vg" "Initialize plugin"
-    
+    _do_repo_cmd_hook_add "vg" "init help"
 }
-
-# Listens to init proj repo hook.
-_do_proj_plugin "vg"

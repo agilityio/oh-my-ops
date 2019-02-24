@@ -1,8 +1,4 @@
 
-# The array of all plugin repo comamnds.
-_DO_DOCKER_REPO_CMDS=( "help" )
-
-
 # If the specified repository has a file "Dockerfile", docker is enabled for
 # the repository.
 #
@@ -30,8 +26,7 @@ function _do_docker_repo_init() {
 
     _do_log_debug "docker" "Initializes docker integration for $repo"
 
-    # Registers tmux command such as 'repo-tmux-start', etc.
-    _do_repo_plugin "${proj_dir}" "${repo}" "docker" _DO_DOCKER_REPO_CMDS
+    _do_repo_alias_add $proj_dir $repo "docker" "help" 
 }
 
 
