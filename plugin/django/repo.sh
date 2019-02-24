@@ -86,7 +86,7 @@ function _do_django_repo_build() {
     _do_python_repo_venv_start $proj_dir $repo
 
     _do_dir_push $proj_dir/$repo/src
-    python manage.py check
+    python manage.py migrate
     _do_dir_pop 
 
     _do_python_repo_venv_stop $proj_dir $repo
@@ -117,6 +117,11 @@ function _do_django_repo_watch() {
     _do_python_repo_venv_start $proj_dir $repo
 
     _do_dir_push $proj_dir/$repo/src
+
+    _do_print_line_1 "migrate db"
+    python manage.py migrate
+
+    _do_print_line_1 "start web server"
     python manage.py runserver
     _do_dir_pop 
 
@@ -192,6 +197,6 @@ function _do_django_repo_init() {
     # Sets up the alias for showing the repo django status
     _do_log_info "django" "Initialize django for '$repo'"
 
-    _do_repo_alias_add $proj_dir $repo "bin" "help clean build start watch stop status web"
+    _do_repo_alias_add $proj_dir $repo "django" "help clean build start watch stop status web"
 }
 
