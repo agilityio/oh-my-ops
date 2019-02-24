@@ -23,27 +23,6 @@ function _do_tmux_repo_init() {
 }
 
 
-# Runs any sphinx command in docker.
-# Arguments:
-#   1. repo: The repository name.
-#
-function _do_sphinx_repo_cmd() {
-    local proj_dir=$1
-    shift
-
-    local repo=$1
-    shift
-
-    local daemon_opts=""
-
-    if [ "$1" == "--daemon" ]; then 
-        daemon_opts="-d"
-        shift
-    fi 
-
-}
-
-
 # Displays helps for the specified repository.
 #
 function _do_tmux_repo_help() {

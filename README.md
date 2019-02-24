@@ -14,23 +14,23 @@ Unit Testing
 To test the whole framework run:
 
 ```
-do_test
+bash test.sh
 ```
 
 To test just files in a specific directory, run:
 
 ```
-do_test test/plugin/git
+bash test.sh test/plugin/git
 ```
 
 To test just a single file, run:
 
 ```
-do_test test/plugin/git/repo-test.sh
+bash test.sh test/plugin/git/repo-test.sh
 ```
 
 To test just a function, run:
 
 ```
-do_test test/plugin/git/repo-test.sh#test_do_git_repo_add_status_commit
+bash test.sh test/plugin/git/repo-test.sh#test_do_git_repo_add_status_commit
 ```

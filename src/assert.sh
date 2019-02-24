@@ -80,7 +80,6 @@ function _do_assert_stack_trace() {
         i=$((i + 1))
     done | grep -v "^$BASH_SOURCE"
     printf "${TX_NORMAL}" >&2
-
 }
 
 

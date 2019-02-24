@@ -10,6 +10,13 @@ function _do_error() {
     fi 
 }
 
+function do_error_assert_not() {
+    local $err="$1"
+    shift
+
+    [ ! do_error $1 ] || _do_assert_fail $@
+}
+
 
 function _do_error_report() {
     local err=$1

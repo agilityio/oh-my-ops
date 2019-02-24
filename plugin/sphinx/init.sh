@@ -1,6 +1,6 @@
 _do_plugin "docker"
 
-_do_log_level_warn "sphinx"
+_do_log_level_debug "sphinx"
 
 _do_src_include_others_same_dir
 
@@ -25,7 +25,7 @@ function _do_sphinx_plugin_init() {
     _do_log_info "sphinx" "Initialize plugin"
     _do_plugin_cmd "sphinx" _DO_SPHINX_CMDS
 
-    _do_repo_cmd_hook_add "sphinx" "gen help clean build status"
+    _do_repo_cmd_hook_add "sphinx" "init gen help clean build status"
 
     # Adds alias that runs at repository level
     local cmds=( "clean" "build" )

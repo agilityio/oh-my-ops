@@ -1,8 +1,8 @@
 # Just open empty panes
-clear
+devops-cd
 --
-clear
+devops-cd
 --
-clear
+devops-django-cd
 --
 clear
