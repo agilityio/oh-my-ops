@@ -1,5 +1,6 @@
 # Activates the environment with just the test plug
-source activate.sh --quick 
+source ${DO_HOME}/activate.sh --quick --no-plugins
+
 
 
 # =============================================================================
@@ -111,7 +112,7 @@ exit $?
 
         # Go to the temp directory
         cd ${tmp_dir}
-    
+
         # Runs the original test file and redirect standard out and error.
         bash $gen_f > $out_f 2> $err_f
         local err=$?

@@ -15,7 +15,7 @@
 # DO_PLUGINS_EXCLUDED=slack
 
 # The home directory of the devops repository.
-DO_HOME="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )";
+export DO_HOME="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )";
 
 # Activates the main source file.
 source "$DO_HOME/src/main.sh" $@
