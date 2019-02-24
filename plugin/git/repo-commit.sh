@@ -9,9 +9,17 @@ _do_log_level_warn "git"
 function _do_git_repo_commit() {
     local proj_dir=$(_do_arg_required $1)
     shift 
+
     local repo=$(_do_arg_required $1)    
     shift
 
-    _do_repo_cmd $proj_dir $repo "git commit \"$@\""
+    # Reads the repository name from command line.
+    local message=$@
+    if [ $# -eq 0 ]; then 
+        printf "Please enter commit message: "
+        read message
+    fi 
+
+    _do_repo_cmd $proj_dir $repo "git commit -m \"$message\""
     return $?
 }
