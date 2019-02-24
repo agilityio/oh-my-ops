@@ -26,8 +26,6 @@ function _do_django_plugin_init() {
 
     _do_plugin_cmd "django" _DO_DJANGO_CMDS
 
-    # Listens to init proj repo hook.
-    _do_proj_plugin "django" 
     _do_repo_cmd_hook_add "django" "init help clean build"
 
     # Adds alias that runs at repository level

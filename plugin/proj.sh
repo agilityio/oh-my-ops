@@ -11,23 +11,6 @@ declare -a _DO_PROJ_DIRS
 declare -A _DO_PROJ_REPO_MAP
 
 
-# Register a plugin to load. 
-# Arguments:
-#   1. plugin: The plugin name.
-#
-function _do_proj_plugin() {
-    local plugin=$1
-
-    _do_log_debug "proj" "Register proj plugin $plugin"
-
-    # for cmd in "${_DO_REPO_COMMANDS[@]}"; do 
-    #     local func="_do_${plugin}_repo_${cmd}"
-
-    #     if _do_alias_exist "${func}"; then 
-    #         _do_hook_after "_do_repo_${cmd}" "${func}"
-    #     fi
-    # done
-}
 
 function _do_proj_list() {
     echo ${_DO_PROJ_DIRS[@]}

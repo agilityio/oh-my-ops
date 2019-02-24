@@ -27,9 +27,6 @@ function _do_go_plugin_init() {
     _do_log_info "go" "Initialize plugin"
     _do_plugin_cmd "go" _DO_GO_CMDS
 
-    # Listens to init proj repo hook.
-    _do_proj_plugin "go"
-
     _do_repo_cmd_hook_add "go" "gen help clean build"
 
     # Adds alias that runs at repository level

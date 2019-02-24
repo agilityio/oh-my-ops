@@ -17,8 +17,6 @@ function _do_docker_plugin_init() {
     _do_log_info "docker" "Initialize plugin"
     _do_plugin_cmd "docker" _DO_DOCKER_CMDS
 
-    # Listens to init proj repo hook.
-    _do_proj_plugin "docker"
 }
 
 function _do_docker_stop_all() {

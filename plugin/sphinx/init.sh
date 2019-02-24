@@ -25,8 +25,6 @@ function _do_sphinx_plugin_init() {
     _do_log_info "sphinx" "Initialize plugin"
     _do_plugin_cmd "sphinx" _DO_SPHINX_CMDS
 
-    # Listens to init proj repo hook.
-    _do_proj_plugin "sphinx"
     _do_repo_cmd_hook_add "sphinx" "gen help clean build status"
 
     # Adds alias that runs at repository level

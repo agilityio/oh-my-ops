@@ -1,6 +1,3 @@
-# The array of all plugin repo comamnds.
-_DO_SPHINX_REPO_CMDS=( "help" "clean" "build" "start" "watch" "stop" "status" "web" )
-
 
 # Displays helps about how to run a repository sphinx commands.
 #
@@ -266,10 +263,7 @@ function _do_sphinx_repo_init() {
     # Sets up the alias for showing the repo sphinx status
     _do_log_info "sphinx" "Initialize sphinx for '$repo'"
 
-    # Register hooks for command repo life cycle command.
-    _do_repo_plugin "${proj_dir}" "${repo}" "sphinx" _DO_SPHINX_REPO_CMDS 
-
-    _do_hook_after "_do_repo_clean" "_do_sphinx_repo_clean"
+    _do_repo_alias_add $proj_dir $repo "sphinx" "help clean build start watch stop status web" 
 }
 
 

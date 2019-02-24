@@ -192,7 +192,6 @@ function _do_django_repo_init() {
     # Sets up the alias for showing the repo django status
     _do_log_info "django" "Initialize django for '$repo'"
 
-    # Register hooks for command repo life cycle command.
     _do_repo_alias_add $proj_dir $repo "bin" "help clean build start watch stop status web"
 }
 
