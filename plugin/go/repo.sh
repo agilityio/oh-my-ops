@@ -53,15 +53,6 @@ function _do_go_repo_clean() {
     local title="$repo: cleans go build result"
     _do_print_header_2 $title
 
-    if _do_go_is_running; then 
-        _do_print_error "Go is running. ${repo}-go-stop to stop the server first."
-        return 1
-    fi    
-
-    _do_go_build_ensured
-
-    _do_go_repo_cmd $proj_dir $repo "echo TODO: Go Clean"
-
     local err=$?
     _do_error_report $err "$title"
     return $err
@@ -81,8 +72,12 @@ function _do_go_repo_build() {
     local title="$repo: Builds go repository"
     _do_print_header_2 $title
 
+    _do_go_repo_venv_start "$proj_dir" "$repo"
+
     local cmd="_do_go_repo_dep_package_install $proj_dir $repo"
     _do_go_repo_dep_package_walk "$proj_dir" "$repo" "$cmd"
+
+    _do_go_repo_venv_stop "$proj_dir" "$repo"
 
     local err=$?
     _do_error_report $err "$title"
@@ -125,11 +120,14 @@ function _do_go_repo_init() {
 
     # adds the current repository to go path
     export GOPATH="$proj_dir/$repo:$GOPATH"
+
+    # Adds any binary produced by this package to the path.
+    export PATH="$proj_dir/$repo/bin:$PATH"
     
     # Sets up the alias for showing the repo go status
     _do_log_info "go" "Initialize go for '$repo'"
 
-    _do_repo_alias_add $proj_dir $repo "go" "help clean build"
+    _do_repo_alias_add $proj_dir $repo "go" "help clean build cmd"
 }
 
 
@@ -144,8 +142,14 @@ function _do_go_repo_cmd() {
     local repo=$1
     shift
 
-    _do_dir_repo_push $proj_dir $repo
+    _do_go_repo_venv_start "$proj_dir" "$repo"
+
+    _do_repo_dir_push $proj_dir $repo
+
+    _do_print_line_1 "go $@"
     go $@
+
+    _do_go_repo_venv_stop "$proj_dir" "$repo"
 
     _do_dir_pop
     return $?

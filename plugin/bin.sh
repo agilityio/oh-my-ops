@@ -1,7 +1,7 @@
 _do_plugin "proj"
 
 # Docker Supports
-_do_log_level_warn "bin"
+_do_log_level_debug "bin"
 
 
 # ==============================================================================
@@ -36,6 +36,22 @@ function _do_bin_repo_init() {
 
     _do_log_debug "bin" "Initializes bin integration for $repo"
 
+    _do_dir_push $proj_dir/$repo/bin
+
+    local name
+    for name in $(ls -A ); do
+        _do_log_debug "bin" "  $repo/$name"
+
+        if [ -f "./$name" ] && [[ -x "./$name" ]]; then 
+            local cmd=$(echo $name | sed -e 's/\.sh$//g' -e 's/[[:blank:]]/_/g' -e 's/[\/_\.]/-/g')
+            local repo_alias="${repo}-bin-${cmd}"
+
+            _do_repo_alias_add $proj_dir $repo "bin" "${cmd}"
+            alias "${repo_alias}"="_do_bin_repo_cmd ${proj_dir} ${repo} ${name}"
+        fi
+    done
+    _do_dir_pop
+
     _do_repo_alias_add $proj_dir $repo "bin" "help"
 }
 
@@ -49,6 +65,30 @@ function _do_bin_repo_help() {
     echo "  ${repo}-bin-help: See bin command helps"
 }
 
+
+# Runs any go command in docker.
+# Arguments:
+#   1. repo: The repository name.
+#
+function _do_bin_repo_cmd() {
+    local proj_dir=$1
+    shift
+
+    local repo=$1
+    shift
+
+    local file=$1
+    shift
+
+    _do_repo_dir_push $proj_dir $repo
+
+    _do_print_line_1 "bin/$file $@"
+
+    bin/$file $@
+
+    _do_dir_pop
+    return $?
+}
 # ==============================================================================
 # Plugin Init
 # ==============================================================================
