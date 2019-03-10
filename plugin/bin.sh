@@ -23,6 +23,19 @@ function _do_bin_repo_enabled() {
         return 1
     fi
 }
+
+function _do_bin_repo_cmd_name_get() {
+    local name=$1
+
+    # removes the .sh extension from the file if any.
+    # replace all weird characters to make it an alias friendly.
+    # Example: 
+    #   for bin/run_something.hello.sh 
+    #   the cmd will be "bin-run-something-hello"
+    #
+    _do_string_to_dash ${name} | sed -e 's/-sh$//g'
+}
+
  
 # Initializes bin support for a repository.
 #
@@ -39,21 +52,15 @@ function _do_bin_repo_init() {
     _do_dir_push $proj_dir/$repo/bin
 
     local name
-    for name in $(ls -A ); do
+    for name in $(find . -maxdepth 3 -print); do 
         _do_log_debug "bin" "  $repo/$name"
 
-        if [ -f "./$name" ] && [[ -x "./$name" ]]; then 
-            # removes the .sh extension from the file if any.
-            # replace all weird characters to make it an alias friendly.
-            # Example: 
-            #   for bin/run_something.hello.sh 
-            #   the cmd will be "bin-run-something-hello"
-            #
-            local cmd=$(echo $name | sed -e 's/\.sh$//g' -e 's/[[:blank:]]/_/g' -e 's/[\/_\.]/-/g')
-            local repo_alias="${repo}-bin-${cmd}"
+        if [ -f "$name" ] && [[ -x "$name" ]]; then 
+            # Removes the first 2 characters './'.
+            name=$(echo $name | cut -c 3-)
 
-            _do_repo_alias_add $proj_dir $repo "bin" "${cmd}"
-            alias "${repo_alias}"="_do_bin_repo_cmd ${proj_dir} ${repo} ${name}"
+            local cmd=$(_do_bin_repo_cmd_name_get $name)
+            alias "${repo}-bin-${cmd}"="_do_bin_repo_cmd ${proj_dir} ${repo} ${name}"
         fi
     done
     _do_dir_pop
@@ -68,7 +75,25 @@ function _do_bin_repo_help() {
     local proj_dir=$1
     local repo=$2
 
+    if ! _do_bin_repo_enabled "${proj_dir}" "${repo}"; then 
+        return
+    fi
+
     echo "  ${repo}-bin-help: See bin command helps"
+   
+    _do_dir_push "$proj_dir/$repo/bin"
+
+    for name in $(find . -maxdepth 3 -print); do 
+        if [ -f "$name" ] && [[ -x "$name" ]]; then 
+            # Removes the first 2 characters './'.
+            local name=$(echo $name | cut -c 3-)
+            local cmd=$(_do_bin_repo_cmd_name_get $name)
+            echo "  ${repo}-bin-${cmd}:
+    Runs bin/${name} command.
+            "
+        fi
+    done
+    _do_dir_pop 
 }
 
 
