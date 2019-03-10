@@ -128,6 +128,30 @@ function _do_go_repo_init() {
     _do_log_info "go" "Initialize go for '$repo'"
 
     _do_repo_alias_add $proj_dir $repo "go" "help clean build cmd"
+
+    _do_dir_push $proj_dir/$repo/src
+    for name in $(find . -depth 3 -name main.go -print); do 
+        _do_log_debug "go" "  $repo/$name"
+
+        if [ -f "./$name" ]; then 
+            # Removes the main.go out of the command name.
+            name=$(dirname ${name})
+
+            # Removes the first 2 characters './'.
+            name=$(echo $name | cut -c 3-)
+
+            # Example: 
+            #   for master/cmd/main.go 
+            #   the cmd will be "master-cmd"
+            #
+            local cmd=$(_do_string_to_dash ${name})
+
+            local repo_alias="${repo}-go-run-${cmd}"
+
+            alias "${repo_alias}"="_do_go_repo_cmd ${proj_dir} ${repo} run ${name}"
+        fi
+    done
+    _do_dir_pop
 }
 
 

@@ -43,6 +43,12 @@ function _do_bin_repo_init() {
         _do_log_debug "bin" "  $repo/$name"
 
         if [ -f "./$name" ] && [[ -x "./$name" ]]; then 
+            # removes the .sh extension from the file if any.
+            # replace all weird characters to make it an alias friendly.
+            # Example: 
+            #   for bin/run_something.hello.sh 
+            #   the cmd will be "bin-run-something-hello"
+            #
             local cmd=$(echo $name | sed -e 's/\.sh$//g' -e 's/[[:blank:]]/_/g' -e 's/[\/_\.]/-/g')
             local repo_alias="${repo}-bin-${cmd}"
 
