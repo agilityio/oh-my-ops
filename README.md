@@ -1,6 +1,9 @@
 # DevOps
 ========
 
+Important
+=========
+This repository will go open source on its own later.
 
 Get Started
 ===========

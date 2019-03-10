@@ -28,6 +28,10 @@ while [[ $# -gt 0 ]]
 do
     key="$1"
     case $key in
+        -nl|--no-log)
+        _DO_NO_LOG="yes"
+        shift
+        ;;
         -np|--no-plugins)
         _DO_PLUGINS_ENABLED="no"
         shift

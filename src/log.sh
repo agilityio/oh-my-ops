@@ -87,6 +87,10 @@ function _do_log_level_debug() {
 # 3. msg: The log message.
 #
 function _do_log_print() {
+    if [ "${_DO_NO_LOG}" == "yes" ]; then 
+        return
+    fi
+
     local level=$1
     local level_name=$(_do_log_level_name $level)
 

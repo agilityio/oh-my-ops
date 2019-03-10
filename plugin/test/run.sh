@@ -1,5 +1,5 @@
 # Activates the environment with just the test plug
-source ${DO_HOME}/activate.sh --quick --no-plugins
+source ${DO_HOME}/activate.sh --quick --no-log --no-plugins
 
 
 
