@@ -1,4 +1,4 @@
-_do_log_level_debug "git-branch"
+_do_log_level_warn "git-branch"
 
 
 # Gets the current git branch

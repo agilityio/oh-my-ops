@@ -1,6 +1,6 @@
 _do_plugin "python"
 
-_do_log_level_debug "django"
+_do_log_level_warn "django"
 
 _do_src_include_others_same_dir
 

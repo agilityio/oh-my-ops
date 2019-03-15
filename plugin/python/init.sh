@@ -2,7 +2,7 @@ _do_assert_cmd "python"
 
 _do_plugin "docker"
 
-_do_log_level_debug "python"
+_do_log_level_warn "python"
 
 _do_src_include_others_same_dir
 

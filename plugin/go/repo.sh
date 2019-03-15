@@ -1,5 +1,3 @@
-_DO_GO_PATHS=()
-
 # Displays helps about how to run a repository go commands.
 #
 function _do_go_repo_help() {
@@ -20,7 +18,10 @@ function _do_go_repo_help() {
     Cleans go build output
 
   ${repo}-go-build: 
-    Builds go documentation. The result is stored in doc/_build.
+    Builds all go modules or godep packages found in the repository.
+
+  ${repo}-go-test: 
+    Tests all go modules or godep packages found in the repository.
 
   ${repo}-go-start: 
     Starts the go web server as daemon, with live-reloading.
@@ -97,8 +98,51 @@ function _do_go_repo_build() {
 
     _do_go_repo_venv_start "$proj_dir" "$repo"
 
-    local cmd="_do_go_repo_dep_package_install $proj_dir $repo"
-    _do_go_repo_dep_package_walk "$proj_dir" "$repo" "$cmd"
+    if _do_go_repo_mod_enabled $proj_dir $repo; then 
+        # Do go build on all go modules found.
+        local cmd="_do_go_repo_mod_package_install $proj_dir $repo"
+        _do_go_repo_mod_package_walk "$proj_dir" "$repo" "$cmd"
+    fi 
+
+    if _do_go_repo_dep_enabled $proj_dir $repo; then 
+        local cmd="_do_go_repo_dep_package_install $proj_dir $repo"
+        _do_go_repo_dep_package_walk "$proj_dir" "$repo" "$cmd"
+    fi 
+
+    _do_go_repo_venv_stop "$proj_dir" "$repo"
+
+    local err=$?
+    _do_error_report $err "$title"
+    return $err
+}
+
+
+# Test the go repository.
+#
+function _do_go_repo_test() {
+    local proj_dir=$(_do_arg_required $1)
+    local repo=$(_do_arg_required $2)
+
+    if ! _do_go_repo_enabled $proj_dir $repo; then 
+        return
+    fi 
+
+    local title="$repo: Tests go repository"
+    _do_print_header_2 $title
+
+    _do_go_repo_venv_start "$proj_dir" "$repo"
+
+    if _do_go_repo_mod_enabled $proj_dir $repo; then 
+        # Do go build on all go modules found.
+        local cmd="_do_go_repo_mod_package_test $proj_dir $repo"
+        _do_go_repo_mod_package_walk "$proj_dir" "$repo" "$cmd"
+    fi 
+
+    # TODO: Test with go dep
+    # if _do_go_repo_dep_enabled $proj_dir $repo; then 
+    #     local cmd="_do_go_repo_dep_package_install $proj_dir $repo"
+    #     _do_go_repo_dep_package_walk "$proj_dir" "$repo" "$cmd"
+    # fi 
 
     _do_go_repo_venv_stop "$proj_dir" "$repo"
 
@@ -119,7 +163,7 @@ function _do_go_repo_enabled() {
     local proj_dir=$1
     local repo=$2
 
-    if _do_go_repo_dep_enabled ${proj_dir} ${repo}; then 
+    if _do_go_repo_mod_enabled ${proj_dir} ${repo} || _do_go_repo_dep_enabled ${proj_dir} ${repo}; then 
         return 0
         
     else 
@@ -141,16 +185,10 @@ function _do_go_repo_init() {
         return
     fi 
 
-    # adds the current repository to go path
-    export GOPATH="$proj_dir/$repo:$GOPATH"
-
-    # Adds any binary produced by this package to the path.
-    export PATH="$proj_dir/$repo/bin:$PATH"
-    
     # Sets up the alias for showing the repo go status
     _do_log_info "go" "Initialize go for '$repo'"
 
-    _do_repo_alias_add $proj_dir $repo "go" "help clean build cmd"
+    _do_repo_alias_add $proj_dir $repo "go" "help clean build test cmd"
 
     _do_dir_push $proj_dir/$repo/src
 

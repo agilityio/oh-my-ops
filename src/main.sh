@@ -70,6 +70,7 @@ src_files=(
     "alias"
     "color"
     "print"
+    "stack"
     "trap"
     "assert"
     "arg"

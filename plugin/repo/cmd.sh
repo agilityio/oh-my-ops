@@ -19,6 +19,9 @@
 # build: 
 #   Builds the repository.
 #
+# test: 
+#   Test the repository.
+#
 # start: 
 #   Starts the repository in local environment with live-reloading ability.
 #
@@ -35,6 +38,7 @@ _DO_REPO_COMMANDS=(
     "help"
     "clean"
     "build"
+    "test"
     "start"
     "stop"
     "watch"
@@ -119,6 +123,17 @@ function _do_repo_build() {
 
     # Triggers hook call for other plugin.
     _do_hook_call "_do_repo_build" "${proj_dir}" "${repo}"
+
+}
+
+function _do_repo_test() {
+    local proj_dir=$1
+    local repo=$2
+
+    _do_print_header_2 "${repo}-test"
+
+    # Triggers hook call for other plugin.
+    _do_hook_call "_do_repo_test" "${proj_dir}" "${repo}"
 
 }
 
