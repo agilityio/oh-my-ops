@@ -1,4 +1,4 @@
-_do_log_level_warn   "repo"
+_do_log_level_warn "repo"
 
 _do_src_include_others_same_dir
 
@@ -124,7 +124,7 @@ function _do_repo_plugin_ready() {
     # named '_do_hello_world_plugin_init'.
     #
     for repo in "${_DO_REPO_INIT_LIST[@]}"; do 
-        local func="_do_$(_do_string_to_undercase $repo)_repo_init" 
+        local func="_do_$(_do_string_to_undercase $repo)_repo_plugin_init" 
 
         if _do_alias_exist "${func}"; then 
             _do_log_info "repo" "Repo ${repo} initialize"
@@ -135,7 +135,7 @@ function _do_repo_plugin_ready() {
 
     # Also do the same for ready functions, for example, '_do_hello_world_plugin_ready'.
     for repo in "${_DO_REPO_INIT_LIST[@]}"; do 
-        local func="_do_$(_do_string_to_undercase $repo)_repo_ready" 
+        local func="_do_$(_do_string_to_undercase $repo)_repo_plugin_ready" 
 
         if _do_alias_exist "${func}"; then 
             _do_log_info "repo" "Repo ${repo} ready"
