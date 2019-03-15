@@ -1,6 +1,8 @@
-_do_log_level_warn "repo"
+_do_log_level_warn   "repo"
 
 _do_src_include_others_same_dir
+
+declare -ag _DO_REPO_INIT_LIST
 
 # This function looks are a directory and if there is a file named ".do.sh" then
 # devops is enabled for that repository. 
@@ -106,10 +108,38 @@ function _do_repo_cmd() {
 
 # Initializes plugin.
 function _do_repo_plugin_init() {
-    _do_log_info "repo" "Plugin initialize"
+    _do_log_info "repo" "Repo plugin initialize"
 
     alias "do-repo-gen"="_do_repo_gen"
     alias "do-repo-clone"="_do_repo_clone"
     
     _do_hook_after "_do_prompt" "_do_repo_prompt_changed"
+}
+
+function _do_repo_plugin_ready() {
+    _do_log_info "repo" "Repo plugin ready"
+
+    # For all loaded repos, trigger repo init function if that 
+    # exists. For example, for 'hello-world' repo, the init function should be 
+    # named '_do_hello_world_plugin_init'.
+    #
+    for repo in "${_DO_REPO_INIT_LIST[@]}"; do 
+        local func="_do_$(_do_string_to_undercase $repo)_repo_init" 
+
+        if _do_alias_exist "${func}"; then 
+            _do_log_info "repo" "Repo ${repo} initialize"
+            ${func}
+        fi 
+    done
+
+
+    # Also do the same for ready functions, for example, '_do_hello_world_plugin_ready'.
+    for repo in "${_DO_REPO_INIT_LIST[@]}"; do 
+        local func="_do_$(_do_string_to_undercase $repo)_repo_ready" 
+
+        if _do_alias_exist "${func}"; then 
+            _do_log_info "repo" "Repo ${repo} ready"
+            ${func}
+        fi 
+    done    
 }

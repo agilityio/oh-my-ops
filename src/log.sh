@@ -1,5 +1,8 @@
 declare -A _do_log_level_map
 
+# Default root log level is DEBUG
+_do_log_level_map[root]="4"
+
 # ==============================================================================
 # Log Level
 # ==============================================================================
@@ -128,7 +131,7 @@ function _do_log_print() {
 #   2. msg: The log message.
 #
 function _do_log_error() {
-    _do_log_print 1 "$1" "$2"
+    _do_log_print 1 "$@"
 }
 
 
@@ -138,7 +141,7 @@ function _do_log_error() {
 #   2. msg: The log message.
 #
 function _do_log_warn() {
-    _do_log_print 2 "$1" "$2"
+    _do_log_print 2 "$@"
 }
 
 
@@ -148,7 +151,7 @@ function _do_log_warn() {
 #   2. msg: The log message.
 #
 function _do_log_info() {
-    _do_log_print 3 "$1" "$2"
+    _do_log_print 3 "$@"
 }
 
 
@@ -158,5 +161,5 @@ function _do_log_info() {
 #   2. msg: The log message.
 #
 function _do_log_debug() {
-    _do_log_print 4 "$1" "$2"
+    _do_log_print 4 "$@"
 }

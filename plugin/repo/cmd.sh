@@ -57,6 +57,22 @@ function _do_repo_init() {
 
     _do_log_debug "repo" "Init $proj_dir $repo"
 
+    local do_sh="$proj_dir/$repo/.do.sh"
+
+    if [ -f "${do_sh}" ]; then 
+        # Activates the file as a plugin
+        local plugin_name=$(_do_string_to_undercase $repo)
+        if _do_plugin_is_loaded $plugin_name; then 
+            _do_log_warn "repo" "Skips loading repository ${repo} do.sh file because of duplicated with plugin name."
+        else
+            # Include the .do.sh file found.
+            source ${do_sh}
+            _do_log_info "repo" "Loads repository ${repo}/.do.sh file"
+            _DO_REPO_INIT_LIST+=( "$repo" )
+        fi
+    fi 
+
+
     # local proj_dir=$(_do_arg_required $1)
     # local repo=$(_do_arg_required $2)
 
