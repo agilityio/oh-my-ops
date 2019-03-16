@@ -23,8 +23,9 @@ function _do_alias_exist() {
 
 function _do_alias_call_if_exists() {
     local name=$1
+    
     if _do_alias_exist $name; then 
-        eval $name
+        eval "$@"
     fi
 }
 

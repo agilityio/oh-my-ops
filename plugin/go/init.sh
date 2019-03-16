@@ -36,7 +36,7 @@ function _do_go_plugin_init() {
     # Adds alias that runs at repository level
     local cmds=( "clean" "build" )
     for cmd in ${cmds[@]}; do 
-        alias "do-proj-go-${cmd}"="_do_proj_default_exec_all_repo_cmds go-${cmd}"
+        alias "do-all-go-${cmd}"="_do_proj_default_exec_all_repo_cmds go-${cmd}"
     done
 
     # Listens to docker stop all command and stop go as well.

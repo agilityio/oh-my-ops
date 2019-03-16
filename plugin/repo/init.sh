@@ -114,6 +114,13 @@ function _do_repo_plugin_init() {
     alias "do-repo-clone"="_do_repo_clone"
     
     _do_hook_after "_do_prompt" "_do_repo_prompt_changed"
+
+    # Adds alias that runs at repository level
+    local cmds=( "status" "build" "test" "start" "stop" "deploy" )
+    for cmd in ${cmds[@]}; do 
+        alias "do-all-${cmd}"="_do_proj_default_exec_all_repo_cmds ${cmd}"
+    done
+
 }
 
 function _do_repo_plugin_ready() {

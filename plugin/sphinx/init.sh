@@ -30,7 +30,7 @@ function _do_sphinx_plugin_init() {
     # Adds alias that runs at repository level
     local cmds=( "clean" "build" )
     for cmd in ${cmds[@]}; do 
-        alias "do-proj-sphinx-${cmd}"="_do_proj_default_exec_all_repo_cmds sphinx-${cmd}"
+        alias "do-all-sphinx-${cmd}"="_do_proj_default_exec_all_repo_cmds sphinx-${cmd}"
     done
 
     # Listens to docker stop all command and stop sphinx as well.

@@ -34,7 +34,7 @@ function _do_dotnet_plugin_init() {
     # Adds alias that runs at repository level
     local cmds=( "clean" "build" )
     for cmd in ${cmds[@]}; do 
-        alias "do-proj-dotnet-${cmd}"="_do_proj_default_exec_all_repo_cmds dotnet-${cmd}"
+        alias "do-all-dotnet-${cmd}"="_do_proj_default_exec_all_repo_cmds dotnet-${cmd}"
     done
 
     # Listens to docker stop all command and stop dotnet as well.

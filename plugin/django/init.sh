@@ -31,7 +31,7 @@ function _do_django_plugin_init() {
     # Adds alias that runs at repository level
     local cmds=( "clean" "build" )
     for cmd in ${cmds[@]}; do 
-        alias "do-proj-django-${cmd}"="_do_proj_default_exec_all_repo_cmds django-${cmd}"
+        alias "do-all-django-${cmd}"="_do_proj_default_exec_all_repo_cmds django-${cmd}"
     done
 
     # Listens to docker stop all command and stop django as well.

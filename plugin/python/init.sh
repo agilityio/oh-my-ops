@@ -32,7 +32,7 @@ function _do_python_plugin_init() {
     # Adds alias that runs at repository level
     local cmds=( "clean" "build" )
     for cmd in ${cmds[@]}; do 
-        alias "do-proj-python-${cmd}"="_do_proj_default_exec_all_repo_cmds python-${cmd}"
+        alias "do-all-python-${cmd}"="_do_proj_default_exec_all_repo_cmds python-${cmd}"
     done
 
     # Listens to docker stop all command and stop python as well.
