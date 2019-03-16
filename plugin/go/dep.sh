@@ -1,4 +1,3 @@
-
 # Determines if the specified directory has go enabled.
 # Arguments:
 #   1. dir: A directory.
@@ -13,8 +12,12 @@ function _do_go_repo_dep_enabled() {
     # On the first dep package found, return right away.
     local packages=( $(_do_go_repo_dep_package_list $proj_dir $repo) )
     if [ ${#packages[@]} -gt 0 ]; then 
-        # go dep is enabled
-        return 0
+        if _do_alias_exist "dep"; then 
+            # go dep is enabled
+            return 0
+        else
+            _do_log_warn "go" "$repo go dep support is disabled because of missing 'dep' command. Please install go dep to use."
+        fi
     else 
         return 1
     fi

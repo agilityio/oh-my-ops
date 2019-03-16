@@ -1,5 +1,3 @@
-_do_assert_cmd "dotnet" "dep" 
-
 _do_plugin "docker"
 
 _do_log_level_warn "dotnet"
@@ -24,6 +22,10 @@ _DO_DOTNET_DOCKER_CONTAINER_NAME="do_dotnet"
 # Initializes dotnet plugin.
 #
 function _do_dotnet_plugin_init() {
+    if ! _do_alias_feature_check "dotnet" "dotnet"; then 
+        return 
+    fi 
+
     _do_log_info "dotnet" "Initialize plugin"
     _do_plugin_cmd "dotnet" _DO_DOTNET_CMDS
 

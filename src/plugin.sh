@@ -80,6 +80,7 @@ function _do_plugin_cmd() {
 }
 
 
+
 # Initializes plugin module.
 #
 function _do_plugin_init() {

@@ -14,6 +14,11 @@ _do_src_include_others_same_dir
 _DO_DOCKER_CMDS=( "help" "stop-all" )
 
 function _do_docker_plugin_init() {
+    if ! _do_alias_exist "docker"; then 
+        _do_log_warn "docker" "Disable 'docker' supports because missing 'docker' command."
+        return 
+    fi
+
     _do_log_info "docker" "Initialize plugin"
     _do_plugin_cmd "docker" _DO_DOCKER_CMDS
 

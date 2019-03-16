@@ -11,6 +11,10 @@ _do_src_include_others_same_dir
 # ==============================================================================
 
 function _do_git_plugin_init() {
+    if ! _do_alias_feature_check "git" "git"; then 
+        return 
+    fi 
+
     _do_log_info "git" "Initialize plugin"
 
     # Listens to command that generates new repository and 

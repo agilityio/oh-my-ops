@@ -1,5 +1,3 @@
-_do_assert_cmd "go" "dep" 
-
 _do_plugin "docker"
 
 _do_log_level_debug "go"
@@ -24,7 +22,13 @@ _DO_GO_DOCKER_CONTAINER_NAME="do_go"
 # Initializes go plugin.
 #
 function _do_go_plugin_init() {
+    
+    if ! _do_alias_feature_check "go" "go"; then 
+        return 
+    fi 
+
     _do_log_info "go" "Initialize plugin"
+
     _do_plugin_cmd "go" _DO_GO_CMDS
 
     _do_repo_cmd_hook_add "go" "init help clean build test"
