@@ -3,16 +3,26 @@
 function _do_go_repo_help() {
     local proj_dir=$1
     local repo=$2
+    local mode=$3
     
     if ! _do_go_repo_enabled $proj_dir $repo; then 
         return
     fi 
 
+    if [ "${mode}" = "--short" ]; then 
+        echo "  
+  ${repo}-go-help: 
+    See go command helps"
+        return
+    fi 
+
     _do_print_header_2 "$repo: Go help"
+
+    _do_print_line_1 "repository's commands"
 
     echo "  
   ${repo}-go-help: 
-    See go command helps
+    See this help.
 
   ${repo}-go-clean: 
     Cleans go build output
@@ -40,8 +50,10 @@ function _do_go_repo_help() {
 "
     _do_dir_push $proj_dir/$repo/src
 
+    _do_print_line_1 "go run commands"
+
     local name
-    for name in $(find . -depth 3 -name main.go -print); do 
+    for name in $(find . -mindepth 2 -maxdepth 5 -name main.go -print); do 
         if [ -f "$name" ]; then 
             # Removes the main.go out of the command name.
             local name=$(dirname ${name})
@@ -54,13 +66,28 @@ function _do_go_repo_help() {
             #   the cmd will be "master-cmd"
             #
             local cmd=$(_do_string_to_dash ${name})
-            echo "  ${repo}-go-run-${cmd}:
+            echo "  
+  ${repo}-go-run-${cmd}:
     Runs src/${name}/main.go command.
             "
         fi
     done
 
     _do_dir_pop
+
+
+    _do_print_line_1 "global commands"
+
+    echo "  
+  do-all-go-clean: 
+    Cleans all go build output for all repositories.
+
+  do-all-go-build: 
+    Go build for all repositories.
+
+  do-all-go-test: 
+    Go test for all repositories.
+"
 }
 
 
@@ -193,7 +220,7 @@ function _do_go_repo_init() {
     _do_dir_push $proj_dir/$repo/src
 
     local name
-    for name in $(find . -depth 3 -name main.go -print); do 
+    for name in $(find . -mindepth 2 -maxdepth 5 -name main.go -print); do 
         _do_log_debug "go" "  $repo/$name"
 
         if [ -f "$name" ]; then 

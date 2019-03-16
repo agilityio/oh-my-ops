@@ -28,8 +28,33 @@ function _do_tmux_repo_init() {
 function _do_tmux_repo_help() {
     local proj_dir=$1
     local repo=$2
+    local mode=$3
 
-    echo "  ${repo}-tmux-help: See tmux command helps"
+    if ! _do_tmux_repo_enabled "${proj_dir}" "${repo}"; then 
+        return
+    fi
+
+    if [ "${mode}" = "--short" ]; then 
+        echo "
+  ${repo}-tmux-help: 
+    See tmux command helps"
+        return
+    fi 
+
+    _do_print_header_2 "$repo: tmux help"
+
+    _do_print_line_1 "repository's commands"    
+
+    echo "  
+  ${repo}-tmux-help: 
+    See this help.
+
+  ${repo}-tmux-start: 
+    Starts tmux session.
+        
+  ${repo}-tmux-stop:
+    Stops tmux session.
+"
 }
 
 # This function runs tmux section for the given repository.

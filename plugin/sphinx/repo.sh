@@ -4,19 +4,29 @@
 function _do_sphinx_repo_help() {
     local proj_dir=$1
     local repo=$2
+    local mode=$3
 
     if ! _do_sphinx_repo_enabled $proj_dir $repo; then 
         return
     fi 
 
+    if [ "${mode}" = "--short" ]; then 
+        echo "
+  ${repo}-sphinx-help: 
+    See sphinx command helps"
+        return
+    fi 
+
     _do_print_header_2 "$repo: Sphinx help"
+
+    _do_print_line_1 "repository's commands"    
 
     echo "  
   ${repo}-sphinx-help: 
-    See sphinx command helps
+    See this help.
 
   ${repo}-sphinx-clean: 
-    Cleans sphinx build output
+    Cleans sphinx build output.
 
   ${repo}-sphinx-build: 
     Builds sphinx documentation. The result is stored in doc/_build.
@@ -35,6 +45,17 @@ function _do_sphinx_repo_help() {
 
   ${repo}-sphinx-web: 
     Opens the sphinx web page.
+"
+
+    _do_print_line_1 "global commands"    
+
+
+    echo "  
+  do-all-sphinx-clean: 
+    Clean sphinx build output for all repositories.
+
+  do-all-sphinx-build: 
+    Sphinx build for all repositories.
 "
 }
 

@@ -55,15 +55,49 @@ function _do_git_repo_init() {
 function _do_git_repo_help() {
     local proj_dir=$1
     local repo=$2
+    local mode=$3
+    
+    if ! _do_git_repo_enabled $proj_dir $repo; then 
+        return
+    fi 
+
+    if [ "${mode}" = "--short" ]; then 
+        echo "
+  ${repo}-git-help: 
+    See git command helps"
+        return
+    fi 
+
+    _do_print_header_2 "$repo: git help"
+
+    _do_print_line_1 "repository's commands"
 
     echo "  
   ${repo}-git-help: 
-    See git command helps
+    See this help.
 
   ${repo}-git-status: 
-    See the repository git status
+    See the repository git status.
         
   ${repo}-git-add:
-    Stage all modified file."
+    Stage all modified file.
+        
+  ${repo}-git-commit <message>:
+    Git commit all changes with the specifed commit message.
+"
+    
+    _do_print_line_1 "global commands"
+
+    echo "  
+  do-all-git-status: 
+    See git status for all repositories.
+
+  do-all-git-add: 
+    Git add changes for all repositories.
+
+  do-all-git-commit <message>: 
+    Git commit changes for all repositories with the specified commit message.
+
+"
 }
 

@@ -51,11 +51,17 @@ function _do_vg_repo_help() {
     fi
 
     if [ "${mode}" = "--short" ]; then 
-        echo "  ${repo}-vg-help: See vg command helps"
+        echo "  
+  ${repo}-vg-help: 
+    See vagrant command helps"
         return
     fi 
 
-    echo -e "Vagrant Helps
+    _do_print_header_2 "$repo: Vagrant help"
+
+    _do_print_line_1 "repository's commands"    
+
+    echo "  
     ${repo}-vg-help:
         Prints this help.
 
@@ -71,6 +77,15 @@ function _do_vg_repo_help() {
     ${repo}-vg-destroy:
         Destroy the vagrant machine.
     "
+
+    _do_print_line_1 "global commands"    
+    echo "  
+  do-all-vg-start: 
+    Starts all vagrant repositories.
+
+  do-all-vg-stop:
+    Stops all vagrant repositories.
+"
 }
 
 # Starts vagrant machine.
@@ -119,4 +134,10 @@ function _do_vg_repo_destroy() {
 function _do_vg_plugin_init() {
     _do_log_info "vg" "Initialize plugin"
     _do_repo_cmd_hook_add "vg" "init help"
+
+    # Adds alias that runs at repository level
+    local cmds=( "start" "stop" )
+    for cmd in ${cmds[@]}; do 
+        alias "do-all-vg-${cmd}"="_do_proj_default_exec_all_repo_cmds vg-${cmd}"
+    done
 }

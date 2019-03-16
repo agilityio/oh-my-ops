@@ -74,13 +74,21 @@ function _do_bin_repo_init() {
 function _do_bin_repo_help() {
     local proj_dir=$1
     local repo=$2
+    local mode=$3
 
     if ! _do_bin_repo_enabled "${proj_dir}" "${repo}"; then 
         return
     fi
 
-    echo "  ${repo}-bin-help: See bin command helps"
-   
+    if [ "${mode}" = "--short" ]; then 
+        echo "  
+  ${repo}-bin-help: 
+    See bin command helps"
+        return
+    fi 
+
+    _do_print_header_2 "$repo: bin help"
+
     _do_dir_push "$proj_dir/$repo/bin"
 
     for name in $(find . -maxdepth 3 -print); do 
