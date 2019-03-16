@@ -28,7 +28,7 @@ function _do_git_plugin_init() {
     done
 
     # Alias alias that runs at remote level 
-    local cmds=( "fetch" "sync" )
+    local cmds=( "fetch" "sync" "pull" )
     for remote in $( _do_git_get_default_remote_list ); do 
         for cmd in ${cmds[@]}; do 
             alias "do-all-git-${cmd}-$remote"="_do_proj_default_exec_all_repo_cmds git-${cmd}-$remote"
