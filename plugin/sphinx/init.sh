@@ -113,3 +113,11 @@ function _do_sphinx_warn_not_running() {
     fi
 }
 
+
+# Stops postgres server.
+#
+function _do_sphinx_stop() {
+    _do_print_header_2 "Sphinx Stop"
+
+    docker kill ${_DO_SPHINX_DOCKER_CONTAINER_NAME} &> /dev/null
+}

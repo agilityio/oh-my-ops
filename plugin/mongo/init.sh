@@ -10,6 +10,11 @@ _do_log_level_warn "mongo"
 
 # The exposed docker port for mongo server.
 DO_MONGO_PORT=27017
+DO_MONGO_DB=db
+DO_MONGO_PASS=pass
+DO_MONGO_USER=user
+DO_MONGO_ADMIN_USER=admin
+DO_MONGO_ADMIN_PASS=admin
 
 _DO_MONGO_CMDS=( "help" "start" "stop" "logs" "attach" )
 
@@ -44,6 +49,38 @@ function _do_mongo_docker_build() {
 #
 function _do_mongo_help() {
     _do_log_info "mongo" "help"
+
+    _do_print_header_2 "Mongo help"
+
+    _do_print_line_1 "Environment variables"
+
+    echo "
+  DO_MONGO_PORT       : ${DO_MONGO_PORT} 
+  DO_MONGO_DB         : ${DO_MONGO_DB} 
+  DO_MONGO_USER       : ${DO_MONGO_USER} 
+  DO_MONGO_PASS       : ${DO_MONGO_PASS} 
+  DO_MONGO_ADMIN_USER : ${DO_MONGO_ADMIN_USER} 
+  DO_MONGO_ADMIN_PASS : ${DO_MONGO_ADMIN_PASS} 
+    "
+
+    _do_print_line_1 "global commands"
+
+    echo "  
+  do-mongo-help:
+    Show this help.
+
+  do-mongo-start:
+    Starts local mongo server.
+
+  do-mongo-stop:
+    Stops local mongo server.
+
+  do-mongo-logs:
+    Shows local mongo logs.
+
+  do-mongo-attach:
+    Attaches local mongo server.
+"
 }
 
 

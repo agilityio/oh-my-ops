@@ -10,7 +10,7 @@ _do_log_level_warn "postgres"
 DO_POSTGRES_PORT=5432
 DO_POSTGRES_DB=db
 DO_POSTGRES_USER=user
-DO_POSTGRES_PASSWORD=pass
+DO_POSTGRES_PASS=pass
 
 _DO_POSTGRES_CMDS=( "help" "start" "stop" "logs" "attach" )
 
@@ -52,12 +52,12 @@ function _do_postgres_help() {
     _do_print_line_1 "Environment variables"
 
     echo "
-    DO_POSTGRES_PORT    : ${DO_POSTGRES_PORT} 
-    DO_POSTGRES_DB      : ${DO_POSTGRES_DB} 
-    DO_POSTGRES_USER    : ${DO_POSTGRES_USER} 
-    DO_POSTGRES_PASSWORD: ${DO_POSTGRES_PASSWORD} 
+  DO_POSTGRES_PORT : ${DO_POSTGRES_PORT} 
+  DO_POSTGRES_DB   : ${DO_POSTGRES_DB} 
+  DO_POSTGRES_USER : ${DO_POSTGRES_USER} 
+  DO_POSTGRES_PASS : ${DO_POSTGRES_PASS} 
     "
-    
+
     _do_print_line_1 "global commands"
 
     echo "  

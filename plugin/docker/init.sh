@@ -24,7 +24,27 @@ function _do_docker_plugin_init() {
 
 }
 
+
+# Prints out helps for docker supports.
+#
+function _do_docker_help() {
+    _do_log_info "docker" "help"
+
+    _do_print_header_2 "Docker help"
+
+    _do_print_line_1 "global commands"
+
+    echo "  
+  do-docker-help:
+    Show this help.
+
+  do-docker-stop-all:
+    Stop all local docker containers.
+"    
+}
+
 function _do_docker_stop_all() {
     _do_log_info "docker" "Stop all running containers"
     _do_hook_call "_do_docker_stop_all"
 }
+

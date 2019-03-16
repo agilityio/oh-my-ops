@@ -6,6 +6,7 @@
 #
 function _do_git_repo_add() {
     _do_repo_cmd $@ "git add ."
+    _do_repo_cmd $@ "git status"
 }
 
 

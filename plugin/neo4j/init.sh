@@ -7,11 +7,11 @@ _do_log_level_warn "neo4j"
 # ==============================================================================
 
 # The exposed docker port for neo4j server.
-DO_NEO4J_HTTP_PORT=7474
-DO_NEO4J_HTTPS_PORT=7473
-DO_NEO4J_BOLT_PORT=7687
-DO_NEO4J_USER=neo4j
-DO_NEO4J_PASS=pass
+export DO_NEO4J_HTTP_PORT=7474
+export DO_NEO4J_HTTPS_PORT=7473
+export DO_NEO4J_BOLT_PORT=7687
+export DO_NEO4J_USER=neo4j
+export DO_NEO4J_PASS=pass
 
 # The list of commands availble, eg., do-neo4j-help, do-neo4j-build, ...
 _DO_NEO4J_CMDS=( "help" "clean" "build" "start" "stop" "logs" "attach" "admin" )
@@ -21,6 +21,8 @@ _DO_NEO4J_CMDS=( "help" "clean" "build" "start" "stop" "logs" "attach" "admin" )
 _DO_NEO4J_DOCKER_IMG="do_neo4j"
 
 _DO_NEO4J_DOCKER_CONTAINER_NAME="do_neo4j"
+
+_DO_NEO4J_ADMIN_URL="http://localhost:${DO_NEO4J_HTTP_PORT}/browser"
 
 
 # Initializes neo4j plugin.
@@ -60,6 +62,45 @@ function _do_neo4j_build_ensured() {
 #
 function _do_neo4j_help() {
     _do_log_info "neo4j" "help"
+
+    _do_print_header_2 "Neo4j help"
+
+    _do_print_line_1 "Environment variables"
+
+    echo "
+  DO_NEO4J_HTTP_PORT  : ${DO_NEO4J_HTTP_PORT} 
+  DO_NEO4J_HTTPS_PORT : ${DO_NEO4J_HTTPS_PORT} 
+  DO_NEO4J_BOLT_PORT  : ${DO_NEO4J_BOLT_PORT} 
+  DO_NEO4J_USER       : ${DO_NEO4J_USER} 
+  DO_NEO4J_PASS       : ${DO_NEO4J_PASS}
+    "
+
+    _do_print_line_1 "Admin Site"
+    echo "
+  URL  : ${_DO_NEO4J_ADMIN_URL} 
+    "
+
+    _do_print_line_1 "global commands"
+
+    echo "  
+  do-neo4j-help:
+    Show this help.
+
+  do-neo4j-start:
+    Starts local neo4j server.
+
+  do-neo4j-stop:
+    Stops local neo4j server.
+
+  do-neo4j-logs:
+    Shows local neo4j logs.
+
+  do-neo4j-attach:
+    Attaches local neo4j server.
+
+  do-neo4j-admin:
+    Opens the neo4j admin dashboard.
+"    
 }
 
 
@@ -191,5 +232,5 @@ function _do_neo4j_admin() {
 
     _do_print_header_2 "Neo4j Admin Dashboard"
 
-    _do_browser_open "http://localhost:${DO_NEO4J_HTTP_PORT}/browser"
+    _do_browser_open "${_DO_NEO4J_ADMIN_URL}"
 }
