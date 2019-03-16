@@ -8,6 +8,9 @@ _do_log_level_warn "postgres"
 
 # The exposed docker port for postgres server.
 DO_POSTGRES_PORT=5432
+DO_POSTGRES_DB=db
+DO_POSTGRES_USER=user
+DO_POSTGRES_PASSWORD=pass
 
 _DO_POSTGRES_CMDS=( "help" "start" "stop" "logs" "attach" )
 
@@ -43,6 +46,36 @@ function _do_postgres_docker_build() {
 #
 function _do_postgres_help() {
     _do_log_info "postgres" "help"
+
+    _do_print_header_2 "Postgres help"
+
+    _do_print_line_1 "Environment variables"
+
+    echo "
+    DO_POSTGRES_PORT    : ${DO_POSTGRES_PORT} 
+    DO_POSTGRES_DB      : ${DO_POSTGRES_DB} 
+    DO_POSTGRES_USER    : ${DO_POSTGRES_USER} 
+    DO_POSTGRES_PASSWORD: ${DO_POSTGRES_PASSWORD} 
+    "
+    
+    _do_print_line_1 "global commands"
+
+    echo "  
+  do-postgres-help:
+    Show this help.
+
+  do-postgres-start:
+    Starts local postgres server.
+
+  do-postgres-stop:
+    Stops local postgres server.
+
+  do-postgres-logs:
+    Shows local postgres logs.
+
+  do-postgres-attach:
+    Attaches local postgres server.
+"
 }
 
 
