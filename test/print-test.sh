@@ -1,4 +1,7 @@
 function test_do_print_line() {
+    _do_print_blank_line 
+    _do_print_blank_line 5
+
     _do_print_line_1
     _do_print_line_1 "Single line"
 

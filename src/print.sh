@@ -12,6 +12,25 @@ function _do_print_banner() {
 -------------------------------------------------------------------------------${FG_NORMAL}"
 }
 
+# Prints blank line(s)
+#
+# Arguments:
+#   1. (optional) The number of blank lines to print. Default to 1.
+#
+function _do_print_blank_line() {
+    local n=$1
+
+    if [ -z "${n}" ]; then 
+        let n=1
+    fi 
+
+    while (( ${n} > 0 ))
+    do
+        let n=${n}-1
+        echo ""
+    done
+}
+
 function _do_print_line() {
     local char=$1
     local color=$2
