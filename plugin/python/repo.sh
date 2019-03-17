@@ -39,6 +39,7 @@ function _do_python_repo_init() {
 
     # Sets up the alias for showing the repo python status
     _do_log_info "python" "Initialize python for '$repo'"
+    _do_repo_cmd_hook_add "${repo}" "python" "help"
 
     _do_repo_alias_add $proj_dir $repo "python" "venv-start venv-stop"
 }

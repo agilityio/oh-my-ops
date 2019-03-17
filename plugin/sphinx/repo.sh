@@ -283,6 +283,7 @@ function _do_sphinx_repo_init() {
 
     # Sets up the alias for showing the repo sphinx status
     _do_log_info "sphinx" "Initialize sphinx for '$repo'"
+    _do_repo_cmd_hook_add "${repo}" "sphinx" "help clean build status"
 
     _do_repo_alias_add $proj_dir $repo "sphinx" "help clean build start watch stop status web" 
 }

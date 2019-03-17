@@ -72,18 +72,13 @@ function _do_repo_init() {
         fi
     fi 
 
-
-    # local proj_dir=$(_do_arg_required $1)
-    # local repo=$(_do_arg_required $2)
-
-    _do_hook_call "_do_repo_init" "${proj_dir}" "${repo}"
+    _do_repo_hook_call "${proj_dir}" "${repo}" "init"
 
     # Adds alias to quickly go to a repository directory
     for cmd in "${_DO_REPO_COMMANDS[@]}"; do 
         alias "${repo}-${cmd}"="_do_repo_${cmd} ${proj_dir} ${repo}"
     done
 }
-
 
 # Prints out helps for all repo's available commands.
 #
@@ -94,7 +89,7 @@ function _do_repo_help() {
     _do_print_header_2 "${repo}-help"
 
     # Triggers hook call for other plugins
-    _do_hook_call "_do_repo_help" "${proj_dir}" "${repo}" "--short"
+    _do_repo_hook_call "${proj_dir}" "${repo}" "help" "--short"
 }
 
 
@@ -107,7 +102,7 @@ function _do_repo_cd() {
     cd "${proj_dir}/${repo}"
 
     # Triggers hook call for other plugin.
-    _do_hook_call "_do_repo_cd" "${proj_dir}" "${repo}"
+    _do_repo_hook_call "${proj_dir}" "${repo}" "cd"
 }
 
 
@@ -118,7 +113,7 @@ function _do_repo_status() {
     _do_print_header_2 "${repo}-status"
 
     # Triggers hook call for other plugin.
-    _do_hook_call "_do_repo_status" "${proj_dir}" "${repo}"
+    _do_repo_hook_call "${proj_dir}" "${repo}" "status"
 }
 
 function _do_repo_clean() {
@@ -128,7 +123,7 @@ function _do_repo_clean() {
     _do_print_header_2 "${repo}-clean"
 
     # Triggers hook call for other plugin.
-    _do_hook_call "_do_repo_clean" "${proj_dir}" "${repo}"
+    _do_repo_hook_call "${proj_dir}" "${repo}" "clean"
 }
 
 function _do_repo_build() {
@@ -138,8 +133,7 @@ function _do_repo_build() {
     _do_print_header_2 "${repo}-build"
 
     # Triggers hook call for other plugin.
-    _do_hook_call "_do_repo_build" "${proj_dir}" "${repo}"
-
+    _do_repo_hook_call "${proj_dir}" "${repo}" "build"
 }
 
 function _do_repo_test() {
@@ -149,8 +143,7 @@ function _do_repo_test() {
     _do_print_header_2 "${repo}-test"
 
     # Triggers hook call for other plugin.
-    _do_hook_call "_do_repo_test" "${proj_dir}" "${repo}"
-
+    _do_repo_hook_call "${proj_dir}" "${repo}" "test"
 }
 
 function _do_repo_start() {
@@ -160,8 +153,7 @@ function _do_repo_start() {
     _do_print_header_2 "${repo}-start"
 
     # Triggers hook call for other plugin.
-    _do_hook_call "_do_repo_start" "${proj_dir}" "${repo}"
-
+    _do_repo_hook_call "${proj_dir}" "${repo}" "start"
 }
 
 
@@ -172,7 +164,7 @@ function _do_repo_stop() {
     _do_print_header_2 "${repo}-stop"
 
     # Triggers hook call for other plugin.
-    _do_hook_call "_do_repo_stop" "${proj_dir}" "${repo}"
+    _do_repo_hook_call "${proj_dir}" "${repo}" "stop"
 }
 
 
@@ -183,7 +175,7 @@ function _do_repo_watch() {
     _do_print_header_2 "${repo}-watch"
 
     # Triggers hook call for other plugin.
-    _do_hook_call "_do_repo_watch" "${proj_dir}" "${repo}"
+    _do_repo_hook_call "${proj_dir}" "${repo}" "watch"
 }
 
 
@@ -194,5 +186,5 @@ function _do_repo_deploy() {
     _do_print_header_2 "${repo}-deploy"
 
     # Triggers hook call for other plugin.
-    _do_hook_call "_do_repo_deploy" "${proj_dir}" "${repo}"
+    _do_repo_hook_call "${proj_dir}" "${repo}" "deploy"
 }

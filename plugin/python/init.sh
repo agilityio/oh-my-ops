@@ -19,7 +19,7 @@ function _do_python_plugin_init() {
     _do_log_info "python" "Initialize plugin"
     _do_plugin_cmd "python" _DO_PYTHON_CMDS
 
-    _do_repo_cmd_hook_add "python" "init help"
+    _do_repo_init_hook_add "python" "init"
 
     # Adds alias that runs at repository level
     local cmds=( "clean" "build" )

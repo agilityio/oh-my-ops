@@ -1,6 +1,6 @@
 _do_plugin "docker"
 
-_do_log_level_debug "go"
+_do_log_level_warn "go"
 
 _do_src_include_others_same_dir
 
@@ -24,7 +24,7 @@ function _do_go_plugin_init() {
 
     _do_plugin_cmd "go" _DO_GO_CMDS
 
-    _do_repo_cmd_hook_add "go" "init help clean build test"
+    _do_repo_init_hook_add "go" "init"
 
     # Adds alias that runs at repository level
     local cmds=( "clean" "build" )

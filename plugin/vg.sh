@@ -34,6 +34,7 @@ function _do_vg_repo_init() {
     fi
 
     _do_log_debug "vg" "Initializes vg integration for $repo"
+    _do_repo_cmd_hook_add "${repo}" "vg" "help"
 
     _do_repo_alias_add $proj_dir $repo "vg" "help start stop ssh destroy" 
 }
@@ -133,7 +134,7 @@ function _do_vg_repo_destroy() {
 # ==============================================================================
 function _do_vg_plugin_init() {
     _do_log_info "vg" "Initialize plugin"
-    _do_repo_cmd_hook_add "vg" "init help"
+    _do_repo_init_hook_add "vg" "init"
 
     # Adds alias that runs at repository level
     local cmds=( "start" "stop" )

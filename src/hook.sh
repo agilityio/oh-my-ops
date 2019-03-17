@@ -30,7 +30,7 @@ function _do_hook_before() {
 
     local funcs=${_do_hook_map[$hook]}
     if [ ! -z "$funcs" ]; then
-        func=",${funcs}"
+        funcs=",${funcs}"
     fi
     _do_hook_map[$hook]="$func$funcs"
 }

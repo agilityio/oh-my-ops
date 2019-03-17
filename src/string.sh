@@ -18,7 +18,7 @@ function _do_string_to_undercase() {
 
 function _do_string_to_dash() {
     local str="${1}"
-    echo $str | sed -e 's/[^a-zA-Z0-9]/-/g'
+    echo $str | sed -e 's/[^a-zA-Z0-9]/-/g' | sed -e 's/^-*//g' | sed -e 's/-*$//g'
 }
 
 function _do_string_to_env_var() {

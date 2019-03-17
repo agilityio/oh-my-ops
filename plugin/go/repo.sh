@@ -214,6 +214,7 @@ function _do_go_repo_init() {
 
     # Sets up the alias for showing the repo go status
     _do_log_info "go" "Initialize go for '$repo'"
+    _do_repo_cmd_hook_add "${repo}" "go" "help clean build test"
 
     _do_repo_alias_add $proj_dir $repo "go" "help clean build test cmd"
 

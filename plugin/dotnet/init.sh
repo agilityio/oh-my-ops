@@ -21,7 +21,7 @@ function _do_dotnet_plugin_init() {
     _do_log_info "dotnet" "Initialize plugin"
     _do_plugin_cmd "dotnet" _DO_DOTNET_CMDS
 
-    _do_repo_cmd_hook_add "dotnet" "init help clean build"
+    _do_repo_init_hook_add "dotnet" "init"
 
     # Adds alias that runs at repository level
     local cmds=( "clean" "build" )

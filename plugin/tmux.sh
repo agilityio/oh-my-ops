@@ -18,6 +18,7 @@ function _do_tmux_repo_init() {
     fi
 
     _do_log_debug "tmux" "Initializes tmux integration for $repo"
+    _do_repo_cmd_hook_add "${repo}" "tmux" "help"
 
     _do_repo_alias_add $proj_dir $repo "tmux" "help start stop" 
 }
@@ -229,6 +230,6 @@ function _do_tmux_repo_enabled() {
 
 function _do_tmux_plugin_init() {
     _do_log_info "tmux" "Initialize plugin"
-    _do_repo_cmd_hook_add "tmux" "init help"
+    _do_repo_init_hook_add "tmux" "init"
 }
 

@@ -29,32 +29,6 @@ function _do_repo_dir_push() {
 
 
 
-# Registers repo-level command hooks. 
-# Arguments:
-#   1. plugin: The plugin name.
-#   2: The space-delimited list of repo-level commands to add hook for. 
-# 
-# For example, 
-#   _do_repo_cmd_hook_add "django" "clean build"
-#   Will register "_do_django_repo_clean" function for the hook "_do_repo_clean"
-# 
-#
-function _do_repo_cmd_hook_add() {
-    local plugin=$(_do_arg_required $1)
-    local cmds=$2
-    _do_log_info "repo" "Register command hooks for plugin ${plugin}"
-
-    local cmd
-    for cmd in $cmds; do
-        local func="_do_${plugin}_repo_$(_do_string_to_undercase $cmd)"
-        local hook="_do_repo_$(_do_string_to_undercase ${cmd})"
-
-        _do_log_debug "repo" "Register hook '${hook}' to '${func}'"
-
-        _do_hook_after "${hook}" "${func}"
-    done
-}
-
 
 # Registers repo-level command alias. 
 # Arguments:
@@ -62,7 +36,7 @@ function _do_repo_cmd_hook_add() {
 #   2: The space-delimited list of repo-level commands to add aliass for. 
 # 
 # For example, 
-#   _do_repo_cmd_hook_add "django" "clean build"
+#   _do_repo_cmd_hook_add "${repo}" "django" "clean build"
 #   Will register "_do_django_repo_clean" function for the hook "_do_repo_clean"
 # 
 #

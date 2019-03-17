@@ -158,6 +158,7 @@ function _do_dotnet_repo_init() {
 
     # Sets up the alias for showing the repo dotnet status
     _do_log_info "dotnet" "Initialize dotnet for '$repo'"
+    _do_repo_cmd_hook_add "${repo}" "dotnet" "help clean build"
 
     _do_repo_alias_add $proj_dir $repo "dotnet" "help clean build cmd"
 

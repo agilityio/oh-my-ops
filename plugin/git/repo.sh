@@ -44,6 +44,7 @@ function _do_git_repo_init() {
 
     # Sets up the alias for showing the repo git status
     _do_log_info "git" "Initialize git for '$repo'"
+    _do_repo_cmd_hook_add "${repo}" "git" "help gen clone status"
 
     # Register hooks for command repo life cycle command.
     _do_repo_alias_add $proj_dir $repo "git" "help status add commit"

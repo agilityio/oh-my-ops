@@ -19,7 +19,7 @@ function _do_django_plugin_init() {
 
     _do_plugin_cmd "django" _DO_DJANGO_CMDS
 
-    _do_repo_cmd_hook_add "django" "init help clean build"
+    _do_repo_init_hook_add "django" "init"
 
     # Adds alias that runs at repository level
     local cmds=( "clean" "build" )

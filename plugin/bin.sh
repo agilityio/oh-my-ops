@@ -48,6 +48,7 @@ function _do_bin_repo_init() {
     fi
 
     _do_log_debug "bin" "Initializes bin integration for $repo"
+    _do_repo_cmd_hook_add "${repo}" "bin" "help"
 
     _do_dir_push $proj_dir/$repo/bin
 
@@ -133,5 +134,5 @@ function _do_bin_repo_cmd() {
 # ==============================================================================
 function _do_bin_plugin_init() {
     _do_log_info "bin" "Initialize plugin"
-    _do_repo_cmd_hook_add "bin" "init help"
+    _do_repo_init_hook_add "bin" "init"
 }
