@@ -16,17 +16,17 @@ function _do_log_level_name() {
 
     case $level in 
         "1") 
-            echo "${FG_RED}ERROR${FG_NORMAL}"
+            echo "${_DO_FG_RED}ERROR${_DO_FG_NORMAL}"
             ;;
         "2") 
-            echo "${FG_YELLOW} WARN${FG_NORMAL}"
+            echo "${_DO_FG_YELLOW} WARN${_DO_FG_NORMAL}"
             ;; 
             
         "3") 
-            echo "${FG_PURPLE} INFO${FG_NORMAL}"
+            echo "${_DO_FG_PURPLE} INFO${_DO_FG_NORMAL}"
             ;;
         "4") 
-            echo "${FG_BLUE}DEBUG${FG_NORMAL}"
+            echo "${_DO_FG_BLUE}DEBUG${_DO_FG_NORMAL}"
             ;;
     esac
 }
@@ -120,7 +120,7 @@ function _do_log_print() {
     if [ $# -eq 2 ]; then 
         echo -e "$level_name: $msg"
     else 
-        echo -e "$level_name: ${FG_CYAN}$category${FG_NORMAL}: $msg"
+        echo -e "$level_name: ${_DO_FG_CYAN}$category${_DO_FG_NORMAL}: $msg"
     fi 
 }
 

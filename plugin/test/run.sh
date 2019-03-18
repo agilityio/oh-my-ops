@@ -86,7 +86,7 @@ function _do_test_run_file {
         fi 
 
         pad=${line:${#func}}
-        printf "%s ${TX_DIM}%s${FG_NORMAL}" "$func" "${pad}"
+        printf "%s ${_DO_TX_DIM}%s${_DO_FG_NORMAL}" "$func" "${pad}"
 
         # Generates the file that quickly activate the devops framework 
         # and include the orginal test source file and run the current test function.
@@ -121,11 +121,11 @@ exit $?
             # The test has failed.
             total_failed=$((total_failed + 1))
 
-            printf "[${FG_RED}F${FG_NORMAL}]\n"
+            printf "[${_DO_FG_RED}F${_DO_FG_NORMAL}]\n"
             cat $out_f
         else 
             # The test passed.
-            printf "[${FG_GREEN}P${FG_NORMAL}]\n"
+            printf "[${_DO_FG_GREEN}P${_DO_FG_NORMAL}]\n"
 
             if [ ${verbose} == "yes" ]; then 
                 cat $out_f

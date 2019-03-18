@@ -19,15 +19,15 @@ function _do_prompt() {
     # Triggers hook for other plugin to process
     _do_hook_call "_do_prompt" $dir
 
-    local environment="\[${TX_NORMAL} ${TX_BOLD}${FG_ENVIRONMENT}${TX_REVERSED}\] ${DO_ENVIRONMENT} \[${TX_NORMAL}\]"
+    local environment="\[${_DO_TX_NORMAL} ${_DO_TX_BOLD}${_DO_FG_ENVIRONMENT}${_DO_TX_REVERSED}\] ${DO_ENVIRONMENT} \[${_DO_TX_NORMAL}\]"
 
     local text
     if [ -d ".git" ]; then
         local branch=$(git status | grep 'On branch ' | awk {'print $3'})
         local repo=$(basename $dir)
 
-        branch="\[${FG_RED}\]${branch}\[${FG_NORMAL}\]"
-        repo="\[${TX_BOLD}${FG_CYAN}\]${repo}\[${FG_NORMAL}${TX_NORMAL}\]"
+        branch="\[${_DO_FG_RED}\]${branch}\[${_DO_FG_NORMAL}\]"
+        repo="\[${_DO_TX_BOLD}${_DO_FG_CYAN}\]${repo}\[${_DO_FG_NORMAL}${_DO_TX_NORMAL}\]"
         text="${repo}:${branch}"
     else
         # Just prints the current directory.
@@ -36,7 +36,7 @@ function _do_prompt() {
 
 
     PS1="
-\[${FG_GREEN}\]➜ ${environment} ${text} \[${FG_NORMAL}\]"
+\[${_DO_FG_GREEN}\]➜ ${environment} ${text} \[${_DO_FG_NORMAL}\]"
 }
 
 

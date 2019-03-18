@@ -46,11 +46,11 @@ function _do_error_report_line() {
 
     if _do_error $err; then 
         char="F"
-        color=${FG_RED}
+        color=${_DO_FG_RED}
     else 
         char="P"
-        color=${FG_GREEN}
+        color=${_DO_FG_GREEN}
     fi
 
-    printf "${color}%s${FG_NORMAL} ${TX_DIM}%s${FG_NORMAL}[${color}${char}${FG_NORMAL}]\n" "$msg" "${pad}"
+    printf "${color}%s${_DO_FG_NORMAL} ${_DO_TX_DIM}%s${_DO_FG_NORMAL}[${color}${char}${_DO_FG_NORMAL}]\n" "$msg" "${pad}"
 }

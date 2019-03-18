@@ -7,7 +7,7 @@ function _do_assert_fail() {
         msg="Failed"
     fi
 
-    printf "${FG_CYAN}${msg}${FG_NORMAL}\n" >&2
+    printf "${_DO_FG_CYAN}${msg}${_DO_FG_NORMAL}\n" >&2
     _do_assert_stack_trace
     exit 1
 }
@@ -19,7 +19,7 @@ function _do_assert() {
 
     if [ -z "$actual" ]; then 
         if [ ! -z "$msg" ]; then 
-            printf "${FG_CYAN}${msg}.${FG_NORMAL} " >&2
+            printf "${_DO_FG_CYAN}${msg}.${_DO_FG_NORMAL} " >&2
         fi
 
         printf "Expected not empty.\n" >&2
@@ -36,10 +36,10 @@ function _do_assert_eq() {
 
     if [ "$expected" != "$actual" ]; then 
         if [ ! -z "$msg" ]; then 
-            printf "${FG_CYAN}${msg}.${FG_NORMAL} " >&2
+            printf "${_DO_FG_CYAN}${msg}.${_DO_FG_NORMAL} " >&2
         fi
 
-        printf "Expected ${FG_YELLOW}[$expected]${TX_NORMAL} but was ${FG_RED}[$actual]${TX_NORMAL}\n" >&2
+        printf "Expected ${_DO_FG_YELLOW}[$expected]${_DO_TX_NORMAL} but was ${_DO_FG_RED}[$actual]${_DO_TX_NORMAL}\n" >&2
         _do_assert_stack_trace
         exit 1
     fi 
@@ -53,10 +53,10 @@ function _do_assert_neq() {
 
     if [ "$expected" == "$actual" ]; then 
         if [ ! -z "$msg" ]; then 
-            printf "${FG_CYAN}${msg}.${FG_NORMAL} " >&2
+            printf "${_DO_FG_CYAN}${msg}.${_DO_FG_NORMAL} " >&2
         fi
 
-        printf "Expected not ${FG_RED}[$actual]${TX_NORMAL}\n" >&2
+        printf "Expected not ${_DO_FG_RED}[$actual]${_DO_TX_NORMAL}\n" >&2
         _do_assert_stack_trace
         exit 1
     fi
@@ -67,7 +67,7 @@ function _do_assert_neq() {
 #
 function _do_assert_stack_trace() {
     # Print out stack trace.
-    printf "${TX_DIM}" >&2
+    printf "${_DO_TX_DIM}" >&2
     local i=
     while ! [ -z "${BASH_SOURCE[$i]:-}" ]
     do
@@ -79,7 +79,7 @@ function _do_assert_stack_trace() {
         fi
         i=$((i + 1))
     done | grep -v "^$BASH_SOURCE"
-    printf "${TX_NORMAL}" >&2
+    printf "${_DO_TX_NORMAL}" >&2
 }
 
 
