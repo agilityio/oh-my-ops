@@ -4,6 +4,7 @@
 function _do_repo_gen() {
     local repo=$1
     local proj_dir=$(_do_proj_default_get_dir)
+
     _do_log_debug "repo" "proj_dir: $proj_dir"
 
     _do_dir_assert $proj_dir
@@ -24,6 +25,9 @@ function _do_repo_gen() {
     # Creates the repository directory
     mkdir ${repo_dir}
     cd $repo_dir
+
+    # This is the src dir that contains whatever src files.
+    mkdir src
 
     # Makes the .do.sh file so that this repository is picked up 
     # by devops framework.

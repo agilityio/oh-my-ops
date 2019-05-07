@@ -31,7 +31,6 @@ function _do_dotnet_plugin_init() {
 }
 
 
-
 # Prints out helps for dotnet supports.
 #
 function _do_dotnet_help() {
