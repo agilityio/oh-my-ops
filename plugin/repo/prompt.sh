@@ -15,9 +15,7 @@ function _do_repo_prompt_changed() {
     _do_log_info "repo" "Updates aliases for repo '${repo}'"
     
     # Removes all aliases begin with "repo-"
-    for cmd in $(_do_alias_list "repo-"); do
-        unalias "repo-${cmd}"
-    done
+    _do_alias_remove_by_prefix "repo-"
 
     # Creates new aliases for the current repo
     for cmd in $(_do_alias_list "$repo-"); do
