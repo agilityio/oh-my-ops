@@ -26,3 +26,17 @@ function test_do_repo_clone() {
 
     rm -rfd $name
 }
+
+function test_do_list_repo() {
+    # generates a new repository
+    test_do_repo_gen
+
+    for repo in $(_do_list_repo); do 
+        # Try to find it.
+        if [ "${repo}" = "do-test-gen" ]; then 
+            return 0
+        fi 
+    done 
+
+    _do_assert_fail
+}

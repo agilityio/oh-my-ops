@@ -79,6 +79,11 @@ function _do_repo_cmd() {
     return $err
 }
 
+function _do_list_repo() {
+    for repo in "${_DO_REPO_INIT_LIST[@]}"; do 
+        echo "$repo"
+    done
+}
 
 # Initializes plugin.
 function _do_repo_plugin_init() {
@@ -86,6 +91,7 @@ function _do_repo_plugin_init() {
 
     alias "do-repo-gen"="_do_repo_gen"
     alias "do-repo-clone"="_do_repo_clone"
+    alias "do-list-repo"="_do_list_repo"
     
     _do_hook_after "_do_prompt" "_do_repo_prompt_changed"
 
