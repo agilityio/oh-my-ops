@@ -48,8 +48,8 @@ function _do_repo_hook_remove() {
 #
 function _do_repo_cmd_hook_add() {
     local repo=${1?'repo arg required'}
-    local cmd=${2?'cmd arg required'}
-    local func=${3?'func arg required'}
+    local plugin=${2?'plugin arg required'}
+    local cmds=$3
     
     _do_log_info "repo" "Register command hooks for plugin ${plugin}"
 
