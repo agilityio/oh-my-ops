@@ -27,7 +27,16 @@ function _do_repo_gen() {
 
     # Makes the .do.sh file so that this repository is picked up 
     # by devops framework.
-    touch .do.sh
+    local func="_do_$(_do_string_to_undercase $repo)_repo_plugin" 
+    echo "
+_do_log_level_info \"${repo}\"
+
+
+# This function is called when the repository first loaded.
+function ${func}_init() {
+    _do_log_info \"${repo}\" \"Initialized.\"
+}
+" > .do.sh 
 
     # Adds empty README file
     touch README.md
@@ -43,7 +52,7 @@ insert_final_newline = true
     
     echo '* text auto
 *.sh text eol=lf
-    ' > .gitatrributes
+    ' > .gitattributes
 
     echo '' > .gitignore
 

@@ -28,8 +28,6 @@ function _do_repo_dir_push() {
 }
 
 
-
-
 # Registers repo-level command alias. 
 # Arguments:
 #   1. plugin: The plugin name.
