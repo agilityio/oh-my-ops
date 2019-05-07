@@ -1,8 +1,8 @@
 
 function _do_repo_hook_call() {
-    local repo=${1?'repo arg required'}
-    local cmd=${2?'cmd arg required'}
-    local func=${3?'func arg required'}
+    local proj_dir=${1?'proj_dir arg required'}
+    local repo=${2?'repo arg required'}
+    local cmd=${3?'cmd arg required'}
     shift 3
 
     _do_hook_call "_do_repo_${cmd}" "${proj_dir}" "${repo}" "$@"
@@ -28,9 +28,9 @@ function _do_repo_hook_after() {
 
 
 function _do_repo_hook_remove() {
-    local repo=$1
-    local cmd=$2
-    local func=$3
+    local repo=${1?'repo arg required'}
+    local cmd=${2?'cmd arg required'}
+    local func=${3?'func arg required'}
 
     _do_hook_remove "$(_do_string_to_dash ${repo})-$(_do_string_to_dash ${cmd})" "${func}"
 }
@@ -47,9 +47,9 @@ function _do_repo_hook_remove() {
 # 
 #
 function _do_repo_cmd_hook_add() {
-    local repo=$1
-    local plugin=$2
-    local cmds=$3
+    local repo=${1?'repo arg required'}
+    local cmd=${2?'cmd arg required'}
+    local func=${3?'func arg required'}
     
     _do_log_info "repo" "Register command hooks for plugin ${plugin}"
 
@@ -71,8 +71,8 @@ function _do_repo_cmd_hook_add() {
 # 
 #
 function _do_repo_cmd_hook_remove() {
-    local repo=$1
-    local plugin=$2
+    local repo=${1?'repo arg required'}
+    local plugin=${2?'plugin arg required'}
     local cmds=$3
     
     _do_log_info "repo" "Unregister command hooks for plugin ${plugin}"
@@ -86,7 +86,7 @@ function _do_repo_cmd_hook_remove() {
 
 
 function _do_repo_init_hook_add() {
-    local plugin=$1
+    local plugin=${1?'plugin arg required'}
     local cmds=$2
 
     _do_log_info "repo" "Register global hooks for plugin ${plugin}"

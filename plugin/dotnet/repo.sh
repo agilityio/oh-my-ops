@@ -149,11 +149,11 @@ function _do_dotnet_repo_uninit() {
     local repo=$(_do_arg_required $2)
 
     # Removes all unalias
-    _do_alias_remove_by_prefix "${repo}-${dotnet}"
+    _do_alias_remove_by_prefix "${repo}-dotnet"
+    _do_repo_cmd_hook_remove "${repo}" "dotnet" "${_DO_DOTNET_REPO_CMDS}"
 
     # Just keeps init alias so that it can be reinitialized
     _do_repo_alias_add ${proj_dir} ${repo} "dotnet" "init"
-    _do_repo_cmd_hook_remove "${repo}" "dotnet" "${_DO_DOTNET_REPO_CMDS}"
 }
 
 # Initializes dotnet support for a repository.
@@ -163,7 +163,7 @@ function _do_dotnet_repo_init() {
     local repo=${2?'repo argument required'}
 
     # Uninitializes the repository first
-    _do_dotnet_repo_uninit ${proj_dir} ${repo}
+    # _do_dotnet_repo_uninit ${proj_dir} ${repo}
 
     if ! _do_dotnet_repo_enabled ${proj_dir} ${repo}; then 
         # Adds alias for generating dotnet project.

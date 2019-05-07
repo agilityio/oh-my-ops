@@ -39,10 +39,11 @@ function _do_repo_dir_push() {
 # 
 #
 function _do_repo_alias_add() {
-    local proj_dir=$1
-    local repo=$2
-    local plugin=$(_do_arg_required $3)
+    local proj_dir=${1?'proj_dir arg required'}
+    local repo=${2?'repo arg required'}
+    local plugin=${3?'plugin arg required'}
     local cmds=$4
+
     _do_log_info "repo" "Register command alias for plugin ${plugin}"
 
     local cmd
