@@ -63,7 +63,7 @@ function _do_proj_get_repo_list() {
 # Returns: 0 if the project is loaded. Otherwise 1.
 #
 function _do_proj_is_loaded() {
-    local dir=$(_do_arg_required $1)
+    local dir=${1?'dir arg required'}
     dir=$(_do_dir_normalized $dir)
 
     for i in "${_DO_PROJ_DIRS[@]}"; do 
@@ -87,7 +87,7 @@ function _do_proj_is_loaded() {
 #       
 function _do_proj_init() {
 
-    local dir=$(_do_arg_required $1)
+    local dir=${1?'dir arg required'}
     local def_repo=$2
 
     dir=$(_do_dir_normalized $dir)
@@ -123,7 +123,7 @@ function _do_proj_init() {
 #   1. dir: The project directory.
 #
 function _do_proj_repo_get_default() {
-    local dir=$(_do_arg_required $1)
+    local dir=${1?'dir arg required'}
     _do_dir_assert ${dir}
 
     dir=$(_do_dir_normalized ${dir})
@@ -137,11 +137,11 @@ function _do_proj_repo_get_default() {
 #   1. dir: The project directory.
 #
 function _do_proj_repo_set_default() {
-    local dir=$(_do_arg_required $1)
+    local dir=${1?'dir arg required'}
     _do_dir_assert ${dir}
     dir=$(_do_dir_normalized ${dir})
 
-    local repo=$(_do_arg_required $2)
+    local repo=${2?'repo arg required'}
     _do_dir_assert "$dir/$repo"
 
     local proj_var=$(_do_string_to_env_var $dir)

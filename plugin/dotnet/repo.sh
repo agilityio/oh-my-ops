@@ -98,8 +98,8 @@ function _do_dotnet_repo_clean() {
 # Builds the dotnet repository.
 #
 function _do_dotnet_repo_build() {
-    local proj_dir=$(_do_arg_required $1)
-    local repo=$(_do_arg_required $2)
+    local proj_dir=${1?'proj_dir arg required'}
+    local repo=${2?'repo arg required'}
 
     if ! _do_dotnet_repo_enabled $proj_dir $repo; then 
         return
@@ -145,8 +145,8 @@ function _do_dotnet_repo_enabled() {
 }
 
 function _do_dotnet_repo_uninit() {
-    local proj_dir=$(_do_arg_required $1)
-    local repo=$(_do_arg_required $2)
+    local proj_dir=${1?'proj_dir arg required'}
+    local repo=${2?'repo arg required'}
 
     # Removes all unalias
     _do_alias_remove_by_prefix "${repo}-dotnet"

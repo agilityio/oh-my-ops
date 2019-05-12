@@ -28,8 +28,8 @@ function _do_python_repo_help() {
 # Initializes python support for a repository.
 #
 function _do_python_repo_init() {
-    local proj_dir=$(_do_arg_required $1)
-    local repo=$(_do_arg_required $2)
+    local proj_dir=${1?'proj_dir arg required'}
+    local repo=${2?'repo arg required'}
 
     if ! _do_python_repo_venv_enabled ${proj_dir} ${repo}; then 
         _do_log_debug "python" "Skips python support for '$repo'"
