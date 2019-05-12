@@ -1,14 +1,22 @@
 
+_do_log_level_debug "prompt"
+
+
 _DO_PROMPT_DIR=""
+_DO_PROMPT_UPDATE_FORCED="yes"
+
 
 # This function is called whenever the current directory changed. 
 # 
 function _do_prompt() {
     local dir=$(pwd)
 
-
-    if [ "$dir" == "$_DO_PROMPT_DIR" ]; then 
-        return
+    if [ "${_DO_PROMPT_UPDATE_FORCED}" == "yes" ]; then 
+        _DO_PROMPT_UPDATE_FORCED="no"
+    else 
+        if [ "${dir}" == "$_DO_PROMPT_DIR" ]; then 
+            return
+        fi 
     fi 
 
     # Current directory has been changed
@@ -17,7 +25,10 @@ function _do_prompt() {
     # Triggers hook for other plugin to process
     _do_hook_call "_do_prompt" $dir
 
-    local environment="\[${_DO_TX_NORMAL} ${_DO_TX_BOLD}${_DO_FG_ENVIRONMENT}${_DO_TX_REVERSED}\] ${DO_ENV} \[${_DO_TX_NORMAL}\]"
+    local environment=""
+    if [ ! -z "${DO_ENV}" ]; then 
+        environment="\[${_DO_TX_NORMAL} ${_DO_TX_BOLD}${_DO_FG_ENVIRONMENT}${_DO_TX_REVERSED}\] ${DO_ENV} \[${_DO_TX_NORMAL}\]"
+    fi
 
     local text
     if [ -d ".git" ]; then
@@ -37,6 +48,12 @@ function _do_prompt() {
 \[${_DO_FG_GREEN}\]➜ ${environment} ${text} \[${_DO_FG_NORMAL}\]"
 }
 
+function _do_prompt_force_update() {
+    _do_log_debug "prompt" "force update"
+    
+    _DO_PROMPT_UPDATE_FORCED="yes"
+    _do_prompt
+}
 
 # ==============================================================================
 # Plugin Init
@@ -44,5 +61,8 @@ function _do_prompt() {
 
 function _do_prompt_plugin_init() {
     PROMPT_COMMAND=_do_prompt
+
+    # If the environment updated, update the prompt.
+    _do_hook_after "_do_env_login" "_do_prompt_force_update"
 }
 
