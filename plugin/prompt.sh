@@ -1,6 +1,4 @@
 
-# The current working environment.
-DO_ENVIRONMENT="local"
 _DO_PROMPT_DIR=""
 
 # This function is called whenever the current directory changed. 
@@ -19,7 +17,7 @@ function _do_prompt() {
     # Triggers hook for other plugin to process
     _do_hook_call "_do_prompt" $dir
 
-    local environment="\[${_DO_TX_NORMAL} ${_DO_TX_BOLD}${_DO_FG_ENVIRONMENT}${_DO_TX_REVERSED}\] ${DO_ENVIRONMENT} \[${_DO_TX_NORMAL}\]"
+    local environment="\[${_DO_TX_NORMAL} ${_DO_TX_BOLD}${_DO_FG_ENVIRONMENT}${_DO_TX_REVERSED}\] ${DO_ENV} \[${_DO_TX_NORMAL}\]"
 
     local text
     if [ -d ".git" ]; then

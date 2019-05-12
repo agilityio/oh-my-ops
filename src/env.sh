@@ -1,1 +1,0 @@
-DO_ENVIRONMENT="local"

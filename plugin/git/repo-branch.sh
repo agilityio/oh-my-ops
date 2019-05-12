@@ -93,7 +93,8 @@ function _do_git_repo_branch_init() {
         local names=( "checkout" "merge" )
         local name
         for name in ${names[@]}; do
-            local cmd="${repo}-git-${name}-${branch}"
+            local branch_name=$(_do_string_to_dash "${branch}")
+            local cmd="${repo}-git-${name}-${branch_name}"
             _do_log_debug "git-branch" "  Register alias '$cmd'"
 
             alias "${cmd}"="_do_git_repo_branch_${name} ${proj_dir} ${repo} ${branch}"

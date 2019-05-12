@@ -314,7 +314,7 @@ function _do_sphinx_repo_cmd() {
     docker run --rm ${daemon_opts} \
         --name="${_DO_SPHINX_DOCKER_CONTAINER_NAME}"\
         -p=${DO_SPHINX_PORT}:${DO_SPHINX_PORT} \
-        -e DO_ENVIRONMENT=${DO_ENVIRONMENT} \
+        -e DO_ENV=${DO_ENV} \
         -v $(_do_docker_dir_resolved ${repo_dir})/doc:/app/src \
         -w=/app/src \
         ${_DO_SPHINX_DOCKER_IMG} ${cmd}
