@@ -29,14 +29,6 @@ function _do_string_to_env_var() {
     echo "$str"
 }
 
-function _do_string_to_local_var() {
-    local str="$1"
-    str="${str//[^a-zA-Z0-9\-]/-}"
-    str=$(_do_string_to_lower $str)
-    str=$(_do_string_to_undercase $str)
-    echo "$str"
-}
-
 function _do_string_urlencode() {
     # urlencode <string>
     old_lc_collate=$LC_COLLATE
