@@ -1,18 +1,32 @@
 # DevOps
 ========
 
-Important
-=========
+## Important
+
 This repository will go open source on its own later.
 
-Get Started
-===========
+## Get Started
 
 
 
 
-Unit Testing
-============
+## Prerequisites
+
+* Bash 4+
+* Git, Curl
+* Docker
+* MacOSX, Linux, or Windows (Cygwin)
+* Optional:
+
+    * Python
+    * NodeJS
+    * Go
+    * Typescript
+    * Dotnet
+    * Java
+    * Vagrant
+
+## Unit Testing
 
 To test the whole framework run:
 
