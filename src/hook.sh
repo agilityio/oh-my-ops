@@ -29,10 +29,10 @@ function _do_hook_before() {
     _do_log_debug "hook" "Register $func before $hook"
 
     local funcs=${_do_hook_map[$hook]}
-    if [ ! -z "$funcs" ]; then
-        funcs=",${funcs}"
+    if [ -z "$funcs" ]; then
+        funcs=":"
     fi
-    _do_hook_map[$hook]="$func$funcs"
+    _do_hook_map[$hook]=":${func}${funcs}"
 }
 
 
@@ -55,12 +55,10 @@ function _do_hook_after() {
 
     local funcs=${_do_hook_map[$hook]}
     if [ -z "$funcs" ]; then
-        funcs=""
-    else
-        funcs="${funcs},"
+        funcs=":"
     fi
 
-    _do_hook_map[$hook]="$funcs$func"
+    _do_hook_map[$hook]="${funcs}${func}:"
 }
 
 
@@ -76,7 +74,7 @@ function _do_hook_exist() {
     local func=$2
 
     local funcs=${_do_hook_map[$hook]}
-    for i in $(echo "$funcs" | sed 's/,/ /g'); do
+    for i in $(echo "$funcs" | sed 's/:/ /g'); do
         if [ "$i" = "$func" ]; then
             # The hook is found
             return 0
@@ -87,6 +85,36 @@ function _do_hook_exist() {
     return 1
 }
 
+# Removes a function from a hook, if that exists.
+# Arguments:
+#   1. hook: The hook name.
+#   2. func: The function name.
+#
+function _do_hook_remove() {
+    local hook=$1
+    local func=$2
+
+    local funcs=${_do_hook_map[$hook]}
+
+    funcs=$(echo "$funcs" | sed "s/:${func}:/:/g")
+    _do_hook_map[${hook}]="${funcs}"
+}
+
+
+# Removes all functions starting with a prefix from a hook
+# Arguments:
+#   1. hook: The hook name.
+#   2. prefix: The prefix to search for
+# 
+function _do_hook_remove_by_prefix() {
+    local hook=$1
+    local prefix=$2
+
+    local funcs=${_do_hook_map[$hook]}
+
+    funcs=$(echo "$funcs" | sed "s/:${prefix}[^:]*:/:/g")
+    _do_hook_map[${hook}]="${funcs}"
+}
 
 # Trigers all registered function for the specified hook
 # and list of argument.s
@@ -107,7 +135,7 @@ function _do_hook_call() {
     # argument list.
     local funcs=${_do_hook_map[$hook]}
 
-    for func in $(echo "$funcs" | sed 's/,/ /g'); do
+    for func in $(echo "$funcs" | sed 's/:/ /g'); do
         _do_log_debug "hook" "Call $func $args"
 
         ${func} ${args}

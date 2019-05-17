@@ -28,8 +28,6 @@ function _do_repo_dir_push() {
 }
 
 
-
-
 # Registers repo-level command alias. 
 # Arguments:
 #   1. plugin: The plugin name.
@@ -41,10 +39,11 @@ function _do_repo_dir_push() {
 # 
 #
 function _do_repo_alias_add() {
-    local proj_dir=$1
-    local repo=$2
-    local plugin=$(_do_arg_required $3)
+    local proj_dir=${1?'proj_dir arg required'}
+    local repo=${2?'repo arg required'}
+    local plugin=${3?'plugin arg required'}
     local cmds=$4
+
     _do_log_info "repo" "Register command alias for plugin ${plugin}"
 
     local cmd
@@ -79,6 +78,11 @@ function _do_repo_cmd() {
     return $err
 }
 
+function _do_list_repo() {
+    for repo in "${_DO_REPO_INIT_LIST[@]}"; do 
+        echo "$repo"
+    done
+}
 
 # Initializes plugin.
 function _do_repo_plugin_init() {
@@ -86,6 +90,7 @@ function _do_repo_plugin_init() {
 
     alias "do-repo-gen"="_do_repo_gen"
     alias "do-repo-clone"="_do_repo_clone"
+    alias "do-list-repo"="_do_list_repo"
     
     _do_hook_after "_do_prompt" "_do_repo_prompt_changed"
 

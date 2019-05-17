@@ -30,11 +30,10 @@ function _do_git_repo_gen() {
             if [ ! -z "$uri" ]; then 
                 _do_log_debug "git-gen" "Add git remote '$remote': '$uri'"
                 git remote add $remote $uri
+                echo "Add git remote '${remote}'=${uri}"
             fi
         done 
     fi
-
-    
 
     _do_dir_pop
 }

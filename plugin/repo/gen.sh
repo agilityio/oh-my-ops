@@ -4,6 +4,7 @@
 function _do_repo_gen() {
     local repo=$1
     local proj_dir=$(_do_proj_default_get_dir)
+
     _do_log_debug "repo" "proj_dir: $proj_dir"
 
     _do_dir_assert $proj_dir
@@ -25,9 +26,21 @@ function _do_repo_gen() {
     mkdir ${repo_dir}
     cd $repo_dir
 
+    # This is the src dir that contains whatever src files.
+    mkdir src
+
     # Makes the .do.sh file so that this repository is picked up 
     # by devops framework.
-    touch .do.sh
+    local func="_do_$(_do_string_to_undercase $repo)_repo_plugin" 
+    echo "
+_do_log_level_info \"${repo}\"
+
+
+# This function is called when the repository first loaded.
+function ${func}_init() {
+    _do_log_info \"${repo}\" \"Initialized.\"
+}
+" > .do.sh 
 
     # Adds empty README file
     touch README.md
@@ -43,7 +56,7 @@ insert_final_newline = true
     
     echo '* text auto
 *.sh text eol=lf
-    ' > .gitatrributes
+    ' > .gitattributes
 
     echo '' > .gitignore
 

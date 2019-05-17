@@ -62,6 +62,7 @@ fi
 
 # Loads core libraries
 src_files=(
+    "version"
     "os"
     "src"
     "dir"

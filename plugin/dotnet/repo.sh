@@ -1,3 +1,4 @@
+_DO_DOTNET_REPO_CMDS="help clean build"
 _DO_DOTNET_PATHS=()
 
 # Displays helps about how to run a repository dotnet commands.
@@ -143,14 +144,31 @@ function _do_dotnet_repo_enabled() {
     fi 
 }
 
+function _do_dotnet_repo_uninit() {
+    local proj_dir=$(_do_arg_required $1)
+    local repo=$(_do_arg_required $2)
+
+    # Removes all unalias
+    _do_alias_remove_by_prefix "${repo}-dotnet"
+    _do_repo_cmd_hook_remove "${repo}" "dotnet" "${_DO_DOTNET_REPO_CMDS}"
+
+    # Just keeps init alias so that it can be reinitialized
+    _do_repo_alias_add ${proj_dir} ${repo} "dotnet" "init"
+}
 
 # Initializes dotnet support for a repository.
 #
 function _do_dotnet_repo_init() {
-    local proj_dir=$(_do_arg_required $1)
-    local repo=$(_do_arg_required $2)
+    local proj_dir=${1?'proj_dir argument required'}
+    local repo=${2?'repo argument required'}
+
+    # Uninitializes the repository first
+    # _do_dotnet_repo_uninit ${proj_dir} ${repo}
 
     if ! _do_dotnet_repo_enabled ${proj_dir} ${repo}; then 
+        # Adds alias for generating dotnet project.
+        _do_repo_alias_add $proj_dir $repo "dotnet" "gen"
+        
         _do_log_debug "dotnet" "Skips dotnet support for '$repo'"
         # This directory does not have dotnet support.
         return
@@ -158,9 +176,9 @@ function _do_dotnet_repo_init() {
 
     # Sets up the alias for showing the repo dotnet status
     _do_log_info "dotnet" "Initialize dotnet for '$repo'"
-    _do_repo_cmd_hook_add "${repo}" "dotnet" "help clean build"
+    _do_repo_cmd_hook_add "${repo}" "dotnet" "${_DO_DOTNET_REPO_CMDS}"
 
-    _do_repo_alias_add $proj_dir $repo "dotnet" "help clean build cmd"
+    _do_repo_alias_add $proj_dir $repo "dotnet" "uninit help clean build cmd"
 
     _do_dir_push $proj_dir/$repo/src
 
