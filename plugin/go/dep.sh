@@ -28,7 +28,7 @@ function _do_go_repo_dep_package_cmd() {
     local proj_dir=${1?'proj_dir arg required'}
     shift 
 
-    local repo=$1?'repo arg required'}
+    local repo=${1?'repo arg required'}
     shift 
 
     local package=${1?'package arg required'}
@@ -69,7 +69,7 @@ function _do_go_repo_dep_package_walk() {
     local proj_dir=${1?'proj_dir arg required'}
     shift 
 
-    local repo=$1?'repo arg required'}
+    local repo=${1?'repo arg required'}
     shift
 
     # Looks for all 

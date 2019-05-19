@@ -10,7 +10,7 @@ function _do_git_repo_commit() {
     local proj_dir=${1?'proj_dir arg required'}
     shift 
 
-    local repo=$1?'repo arg required'}    
+    local repo=${1?'repo arg required'}    
     shift
 
     _do_repo_cmd $proj_dir $repo "git status"
