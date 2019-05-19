@@ -42,8 +42,8 @@ function _do_git_repo_get_remote_uri() {
 # Gets the list of all remotes registered for the specified repositories.
 # 
 function _do_git_repo_get_remote_list() {
-    local proj_dir=$(_do_arg_required $1)
-    local repo=$(_do_arg_required $2)
+    local proj_dir=${1?'proj_dir arg required'}
+    local repo=${2?'repo arg required'}
     
     _do_repo_dir_push $proj_dir $repo 
 
@@ -69,9 +69,9 @@ function _do_git_get_default_remote_list() {
 #   2. repo: The repository name.
 #
 function _do_git_repo_remote_fetch() {
-    local proj_dir=$(_do_arg_required $1)
-    local repo=$(_do_arg_required $2)    
-    local remote=$(_do_arg_required $3)    
+    local proj_dir=${1?'proj_dir arg required'}
+    local repo=${2?'repo arg required'}    
+    local remote=${3?'remote arg required'}    
 
     local title="${repo}: Git fetch '${remote}'"
     _do_print_header_2 "${title}"
@@ -91,9 +91,9 @@ function _do_git_repo_remote_fetch() {
 #   2. repo: The repository name.
 #
 function _do_git_repo_remote_pull() {
-    local proj_dir=$(_do_arg_required $1)
-    local repo=$(_do_arg_required $2)    
-    local remote=$(_do_arg_required $3)    
+    local proj_dir=${1?'proj_dir arg required'}
+    local repo=${2?'repo arg required'}    
+    local remote=${3?'remote arg required'}    
     
     local branch=$(_do_git_repo_get_branch $proj_dir $repo)
 
@@ -115,9 +115,9 @@ function _do_git_repo_remote_pull() {
 #   2. repo: The repository name.
 #
 function _do_git_repo_remote_sync() {
-    local proj_dir=$(_do_arg_required $1)
-    local repo=$(_do_arg_required $2)
-    local remote=$(_do_arg_required $3)
+    local proj_dir=${1?'proj_dir arg required'}
+    local repo=${2?'repo arg required'}
+    local remote=${3?'remote arg required'}
 
     # Display header.
     local title="${repo}: Git sync '${remote}' at branch ${branch}"
@@ -169,8 +169,8 @@ function _do_git_repo_remote_sync() {
 #       For sync code with origin remote.
 #
 function _do_git_repo_remote_init() {
-    local proj_dir=$(_do_arg_required $1)
-    local repo=$(_do_arg_required $2)
+    local proj_dir=${1?'proj_dir arg required'}
+    local repo=${2?'repo arg required'}
 
     # For all git remotes, register additional command such as git fetch, git sync, ...
     for remote in $(_do_git_repo_get_remote_list $proj_dir $repo); do 

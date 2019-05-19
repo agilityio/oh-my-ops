@@ -1,7 +1,7 @@
 # Create a new stack.
 #
 # Arguments:
-#   1. stack_name: The stack variable to be set.
+#   1. name: The stack variable to be set.
 #
 function _do_stack_new() {
     local name=${1?'Stack name required'}

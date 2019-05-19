@@ -1,7 +1,7 @@
 #
 #
 function _do_repo_clone() {
-    local repo=$1
+    local repo=${1:-}
     local proj_dir=$(_do_proj_default_get_dir)
 
     _do_print_header_2 "Clone new repository"

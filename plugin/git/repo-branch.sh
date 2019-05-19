@@ -4,8 +4,8 @@ _do_log_level_warn "git-branch"
 # Gets the current git branch
 #
 function _do_git_repo_get_branch() {
-    local proj_dir=$(_do_arg_required $1)
-    local repo=$(_do_arg_required $2)
+    local proj_dir=${1?'proj_dir arg required'}
+    local repo=${2?'repo arg required'}
     
     _do_repo_dir_push $proj_dir $repo
     echo "$(git status | grep 'On branch ' | awk {'print $3'})"
@@ -17,8 +17,8 @@ function _do_git_repo_get_branch() {
 # Gets the current git branch
 #
 function _do_git_repo_get_branch_list() {
-    local proj_dir=$(_do_arg_required $1)
-    local repo=$(_do_arg_required $2)
+    local proj_dir=${1?'proj_dir arg required'}
+    local repo=${2?'repo arg required'}
     
     _do_repo_dir_push $proj_dir $repo
     
@@ -34,9 +34,9 @@ function _do_git_repo_get_branch_list() {
 #   2. branch: The git branch name.
 #
 function _do_git_repo_has_branch() {
-    local proj_dir=$(_do_arg_required $1)
-    local repo=$(_do_arg_required $2)
-    local branch=$(_do_arg_required $3)
+    local proj_dir=${1?'proj_dir arg required'}
+    local repo=${2?'repo arg required'}
+    local branch=${3?'branch arg required'}
         
     local err=0
 
@@ -59,9 +59,9 @@ function _do_git_repo_has_branch() {
 #   2. repo: The repository name.
 #
 function _do_git_repo_branch_checkout() {
-    local proj_dir=$(_do_arg_required $1)
-    local repo=$(_do_arg_required $2)
-    local branch=$(_do_arg_required $3)
+    local proj_dir=${1?'proj_dir arg required'}
+    local repo=${2?'repo arg required'}
+    local branch=${3?'branch arg required'}
 
     _do_repo_cmd $proj_dir $repo "echo git checkout $branch"
 }
@@ -72,17 +72,17 @@ function _do_git_repo_branch_checkout() {
 #   2. repo: The repository name.
 #
 function _do_git_repo_branch_merge() {
-    local proj_dir=$(_do_arg_required $1)
-    local repo=$(_do_arg_required $2)
-    local branch=$(_do_arg_required $3)
+    local proj_dir=${1?'proj_dir arg required'}
+    local repo=${2?'repo arg required'}
+    local branch=${3?'branch arg required'}
 
     _do_repo_cmd $proj_dir $repo "echo git merge $branch"
 }
 
 
 function _do_git_repo_branch_init() {
-    local proj_dir=$(_do_arg_required $1)
-    local repo=$(_do_arg_required $2)
+    local proj_dir=${1?'proj_dir arg required'}
+    local repo=${2?'repo arg required'}
 
     # For all git remotes, register additional command such as git fetch, git sync, ...
     for branch in $(_do_git_repo_get_branch_list $proj_dir $repo); do 
@@ -93,7 +93,8 @@ function _do_git_repo_branch_init() {
         local names=( "checkout" "merge" )
         local name
         for name in ${names[@]}; do
-            local cmd="${repo}-git-${name}-${branch}"
+            local branch_name=$(_do_string_to_dash "${branch}")
+            local cmd="${repo}-git-${name}-${branch_name}"
             _do_log_debug "git-branch" "  Register alias '$cmd'"
 
             alias "${cmd}"="_do_git_repo_branch_${name} ${proj_dir} ${repo} ${branch}"

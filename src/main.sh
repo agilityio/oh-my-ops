@@ -68,6 +68,7 @@ src_files=(
     "dir"
     "file"
     "string"
+    "array"
     "alias"
     "color"
     "print"

@@ -1,7 +1,5 @@
 _do_plugin "docker"
 
-_do_plugin "docker"
-
 _do_log_level_warn "mongo"
 
 # ==============================================================================

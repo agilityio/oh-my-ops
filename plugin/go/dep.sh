@@ -25,13 +25,13 @@ function _do_go_repo_dep_enabled() {
 
 function _do_go_repo_dep_package_cmd() {
     _do_log_debug "go" "_do_go_repo_dep_package_cmd $@"
-    local proj_dir=$(_do_arg_required $1)
+    local proj_dir=${1?'proj_dir arg required'}
     shift 
 
-    local repo=$(_do_arg_required $1)
+    local repo=${1?'repo arg required'}
     shift 
 
-    local package=$(_do_arg_required $1)
+    local package=${1?'package arg required'}
     shift
 
     _do_dir_push "${proj_dir}/${repo}/src/${package}"
@@ -41,9 +41,9 @@ function _do_go_repo_dep_package_cmd() {
 }
 
 function _do_go_repo_dep_package_install() {
-    local proj_dir=$(_do_arg_required $1)
-    local repo=$(_do_arg_required $2)
-    local package=$(_do_arg_required $3)
+    local proj_dir=${1?'proj_dir arg required'}
+    local repo=${2?'repo arg required'}
+    local package=${3?'package arg required'}
 
     local title="Update '${package}' go dep dependencies"
     _do_print_line_1 "$title"
@@ -66,10 +66,10 @@ function _do_go_repo_dep_package_list() {
 function _do_go_repo_dep_package_walk() {
     _do_log_debug "go" "_do_go_repo_dep_package_walk $@"
 
-    local proj_dir=$(_do_arg_required $1)
+    local proj_dir=${1?'proj_dir arg required'}
     shift 
 
-    local repo=$(_do_arg_required $1)
+    local repo=${1?'repo arg required'}
     shift
 
     # Looks for all 

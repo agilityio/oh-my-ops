@@ -57,10 +57,4 @@ _DO_TX_HIDDEN="\033[8m"
 
 _DO_FG_NORMAL="${_DO_FG_BLACK}"
 
-# Highlight the environment if not local.
-# if [ "${ENVIRONMENT}" == "local" ]; then
-    export _DO_FG_ENVIRONMENT=${_DO_FG_GREEN}
-# else
-    # export _DO_FG_ENVIRONMENT=${_DO_FG_RED}
-# fi
-
+_DO_FG_ENVIRONMENT=${_DO_FG_GREEN}

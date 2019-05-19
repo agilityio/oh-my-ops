@@ -31,7 +31,7 @@ CONFIG_TYPE_WARNING = "The config value `{name}' has type `{current.__name__}', 
 
 
 # Check environment to define prefix
-environment = environ['DO_ENVIRONMENT']
+environment = environ['DO_ENV']
 environment_prefix = ""
 
 # Prod environment without prefix
@@ -43,7 +43,7 @@ PLATFORM_TEXT = """
 .. role:: raw-html(raw)
    :format: html
 
-.. |DO_ENVIRONMENT| replace:: :raw-html:`%(ENV_PREFIX)s`
+.. |DO_ENV| replace:: :raw-html:`%(ENV_PREFIX)s`
 
 """ % { 'ENV_PREFIX': environment_prefix } 
 

@@ -272,8 +272,8 @@ function _do_sphinx_repo_enabled() {
 # Initializes sphinx support for a repository.
 #
 function _do_sphinx_repo_init() {
-    local proj_dir=$(_do_arg_required $1)
-    local repo=$(_do_arg_required $2)
+    local proj_dir=${1?'proj_dir arg required'}
+    local repo=${2?'repo arg required'}
 
     if ! _do_sphinx_repo_enabled ${proj_dir} ${repo}; then 
         _do_log_debug "sphinx" "Skips sphinx support for '$repo'"
@@ -314,7 +314,7 @@ function _do_sphinx_repo_cmd() {
     docker run --rm ${daemon_opts} \
         --name="${_DO_SPHINX_DOCKER_CONTAINER_NAME}"\
         -p=${DO_SPHINX_PORT}:${DO_SPHINX_PORT} \
-        -e DO_ENVIRONMENT=${DO_ENVIRONMENT} \
+        -e DO_ENV=${DO_ENV} \
         -v $(_do_docker_dir_resolved ${repo_dir})/doc:/app/src \
         -w=/app/src \
         ${_DO_SPHINX_DOCKER_IMG} ${cmd}

@@ -4,9 +4,9 @@ _do_log_level_warn "go"
 # Listens to the _do_repo_gen hook and generates go support.
 #
 function _do_go_repo_gen() {
-    local proj_dir=$(_do_arg_required $1)
+    local proj_dir=${1?'proj_dir arg required'}
 
-    local repo=$(_do_arg_required $2)
+    local repo=${2?'repo arg required'}
         
     _do_print_line_1 "Generates go support"
 

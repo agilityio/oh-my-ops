@@ -19,7 +19,7 @@ function _do_git_plugin_init() {
 
     # Listens to command that generates new repository and 
     # generate git support.
-    _do_repo_init_hook_add "git" "init gen"
+    _do_repo_init_hook_add "git" "init gen clone"
 
     # Adds alias that runs at repository level
     local cmds=( "status" "add" "commit" )

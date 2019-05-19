@@ -4,8 +4,8 @@ _do_log_level_warn "sphinx"
 # Listens to the _do_repo_gen hook and generates sphinx support.
 #
 function _do_sphinx_repo_gen() {
-    local proj_dir=$(_do_arg_required $1)
-    local repo=$(_do_arg_required $2)
+    local proj_dir=${1?'proj_dir arg required'}
+    local repo=${2?'repo arg required'}
         
     _do_log_info "sphinx" "Generates sphinx support"
 
