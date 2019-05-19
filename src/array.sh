@@ -2,6 +2,7 @@
 #
 # Arguments:
 #  1. name: Required. The array name.
+#  ... values: Optional. The array values
 #
 function _do_array_new() {
     local name=${1?'name arg required'}
@@ -11,6 +12,11 @@ function _do_array_new() {
 
     local var_name=$(_do_array_var_name ${name})
     declare -ag "${var_name}"
+
+    if [[ $# -gt 1 ]]; then 
+        # if there array value is passed in then append that to the array
+        _do_array_append $@
+    fi
 }
 
 
@@ -39,9 +45,9 @@ function _do_array_exists() {
     local name=${1?'name arg required'}
     local var_name=$(_do_array_var_name ${name})
 
-    if [[ -v "${var_name}" ]]; then
+    if declare -p "${var_name}" &> /dev/null; then 
         return 0
-    else
+    else 
         return 1
     fi
 }
@@ -58,9 +64,21 @@ function _do_array_exists() {
 #   Otherwise, return 1.
 # 
 function _do_array_contains() {
-   echo "TODO" 
+    local name=${1?'name arg required'}
+    local val=${2?'val arg required'}
 
+    local arr="$(_do_array_var_name ${name})[@]"
+
+    for v in ${!arr}; do 
+        if [ "${v}" == "${val}" ]; then 
+            return 0
+        fi
+    done
+
+    # Not found the element
+    return 1
 }
+
 
 # Gets the index of the specified value in an array data structure.
 # 
@@ -150,7 +168,7 @@ function _do_array_var_name() {
 function _do_array_var_name_required() {
     local name=${1?'name arg required'}
 
-    # _do_array_exists "${name}" || _do_assert_fail "${name} array doest not exist"
+    _do_array_exists "${name}" || _do_assert_fail "${name} array doest not exist"
 
     echo "$(_do_array_var_name ${name})"
 }
