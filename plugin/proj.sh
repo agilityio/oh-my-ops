@@ -98,7 +98,7 @@ function _do_proj_init() {
     fi 
 
     # This is the default repository for the current repository.
-    local proj_var=$(_do_string_to_env_var $dir)
+    local proj_var=$(_do_string_to_uppercase_var $dir)
     _DO_PROJ_REPO_MAP[${proj_var}]="${def_repo}"
 
     # Initializes all sub directories as a code repository
@@ -127,7 +127,7 @@ function _do_proj_repo_get_default() {
     _do_dir_assert ${dir}
 
     dir=$(_do_dir_normalized ${dir})
-    local proj_var=$(_do_string_to_env_var $dir)
+    local proj_var=$(_do_string_to_uppercase_var $dir)
     echo "${_DO_PROJ_REPO_MAP[${proj_var}]}"
 }
 
@@ -144,7 +144,7 @@ function _do_proj_repo_set_default() {
     local repo=${2?'repo arg required'}
     _do_dir_assert "$dir/$repo"
 
-    local proj_var=$(_do_string_to_env_var $dir)
+    local proj_var=$(_do_string_to_uppercase_var $dir)
     _DO_PROJ_REPO_MAP[${proj_var}]=$repo
 }
 

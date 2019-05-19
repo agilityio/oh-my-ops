@@ -1,32 +1,70 @@
 # See: https://www.gnu.org/software/gawk/manual/html_node/String-Functions.html
 #
  
+# Convers a string to uppercase.
+# Arguments:
+# - 1. The string to convert.
+#
 function _do_string_to_upper() {
-    local str="${1}"
-    echo $str | awk '{print toupper($0)}'
+    echo "${1^^}"
 }
 
+# Convers a string to lowercase.
+# Arguments:
+# - 1. The string to convert.
+#
 function _do_string_to_lower() {
-    local str="${1}"
-    echo $str | awk '{print tolower($0)}'
+    echo "${1,,}"
 }
 
+
+# Converts a string to undercase string
+# Rules:
+# - non alphabet or digits will be converted to _ 
+# - __ will be converted to _
+# - leading & trailing _ will be removed.
+#
 function _do_string_to_undercase() {
-    local str="${1}"
-    echo $str | sed -e 's/[[:blank:]]/_/g' -e 's/-/_/g'
+    echo "$1" | sed -e 's/[^a-zA-Z0-9]/_/g' | sed -e 's/___*/_/g' | sed -e 's/^_*//g' | sed -e 's/_*$//g'
 }
 
+
+# Converts a string to a dash string
+# Rules:
+# - non alphabet or digits will be converted to _ 
+# - __ will be converted to _
+# - leading & trailing _ will be removed.
+#
 function _do_string_to_dash() {
-    local str="${1}"
-    echo $str | sed -e 's/[^a-zA-Z0-9]/-/g' | sed -e 's/^-*//g' | sed -e 's/-*$//g'
+    echo "$1" | sed -e 's/[^a-zA-Z0-9]/-/g' | sed -e 's/\-\-\-*/-/g' | sed -e 's/^\-*//g' | sed -e 's/\-*$//g' 
 }
 
-function _do_string_to_env_var() {
-    local str="$1"
-    str="${str//[^a-zA-Z0-9\-]/-}"
-    str=$(_do_string_to_upper $str)
-    str=$(_do_string_to_undercase $str)
-    echo "$str"
+
+# Converts a string to a environment variable uppercase var.
+# Rules:
+# - non alphabet or digits will be converted to _ 
+# - __ will be converted to _
+# - leading & trailing _ will be removed.
+# - all characters will be converted to upper case.
+#
+function _do_string_to_uppercase_var() {
+    _do_string_to_undercase "$1" | awk '{print toupper($0)}'
+}
+
+
+# Converts a string to a lower case var.
+# Rules:
+# - non alphabet or digits will be converted to _ 
+# - __ will be converted to _
+# - leading & trailing _ will be removed.
+# - all characters will be converted to lower case.
+#
+function _do_string_to_lowercase_var() {
+    _do_string_to_undercase "$1" | awk '{print tolower($0)}'
+}
+
+function _do_string_to_alias_name() {
+    _do_string_to_dash "$1" | awk '{print tolower($0)}'
 }
 
 function _do_string_urlencode() {

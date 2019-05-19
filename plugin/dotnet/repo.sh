@@ -52,7 +52,7 @@ function _do_dotnet_repo_help() {
             #   for master/cmd/main.dotnet 
             #   the cmd will be "master-cmd"
             #
-            local cmd=$(_do_string_to_dash ${name})
+            local cmd=$(_do_string_to_alias_name ${name})
             echo "  
   ${repo}-dotnet-clean-${cmd}:
     Runs dotnet clean on $name
@@ -197,7 +197,7 @@ function _do_dotnet_repo_init() {
             #   for master/cmd/main.dotnet 
             #   the cmd will be "master-cmd"
             #
-            local cmd=$(_do_string_to_dash ${name})
+            local cmd=$(_do_string_to_alias_name ${name})
 
             # Adds command to build a sub project
             alias "${repo}-dotnet-build-${cmd}"="_do_dotnet_repo_proj_cmd ${proj_dir} ${repo} $name dotnet build"
