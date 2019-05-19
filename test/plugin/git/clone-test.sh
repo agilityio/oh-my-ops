@@ -47,7 +47,7 @@ function test_clone() {
     _do_git_repo_is_dirty $repo_opts || _do_assert_fail
 
     # Makes sure the git repository is dirty after adding the file
-    _do_git_repo_commit $repo_opts "-m a sample message" || _do_assert_fail
+    _do_git_repo_commit $repo_opts "a sample message" || _do_assert_fail
 
     # After commit the repository should be clean again
     ! _do_git_repo_is_dirty $repo_opts|| _do_assert_fail
