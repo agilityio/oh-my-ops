@@ -2,7 +2,9 @@ _do_log_level_warn "git-clone"
 
 
 # Listens to the _do_repo_clone hook and generates git support.
-#
+# Arguments:
+# 1. proj_dir: Required. The project directory.
+# 2. repo: Required. The repository name.
 function _do_git_repo_clone() {
     local proj_dir=${1?'proj_dir arg required'}
     _do_dir_assert "${proj_dir}"
