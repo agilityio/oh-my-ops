@@ -40,7 +40,7 @@ function _do_dotnet_repo_help() {
     _do_dir_push $proj_dir/$repo/src
 
     local name
-    for name in $(find . -depth 2 -name *.csproj -print); do 
+    for name in $(find . -maxdepth 2 -type f -name '*.csproj' -print); do 
         if [ -f "$name" ]; then 
             # Removes the main.dotnet out of the command name.
             local name=$(dirname ${name})
@@ -183,7 +183,7 @@ function _do_dotnet_repo_init() {
     _do_dir_push $proj_dir/$repo/src
 
     local name
-    for name in $(find . -depth 2 -name *.csproj -print); do 
+    for name in $(find . -maxdepth 2 -type f -name '*.csproj' -print); do 
         _do_log_debug "dotnet" "  $repo/$name"
 
         if [ -f "$name" ]; then 
