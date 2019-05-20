@@ -15,19 +15,19 @@ echo "Initializes empty ${DO_REPO}"
 mkdir ${DO_REPO}
 cd ${DO_REPO}
 
-echo "Add devops as git sub module"
+echo "Add oh-my-ops as git sub module"
 git init
 
 echo "* text=auto
 *.sh text eol=lf" > .gitattributes
 
-echo "Pull devops framework"
+echo "Pull oh-my-ops framework"
 
 mkdir vendor
 cd vendor
 
 # Initializes devops as the submodule of the current repository
-git submodule add git@gitlab.asoft-python.com:lime/devops.git
+git submodule add git@github.com:agilityio/oh-my-ops.git
 
 # Pull the submodule
 git submodule init
@@ -47,7 +47,7 @@ src_files=(
 
 # Loads all core source files.
 for src_file in "${src_files[@]}"; do
-    source "vendor/devops/src/${src_file}.sh"
+    source "vendor/oh-my-ops/src/${src_file}.sh"
 done
 
 
@@ -99,7 +99,7 @@ echo '# The array of plugin name to be included. If this variable is not specifi
 # than the above plugins list.
 # DO_PLUGINS_EXCLUDED=slack
 
-source vendor/devops/activate.sh $@
+source vendor/oh-my-ops/activate.sh $@
 ' > "activate.sh"
 
 
