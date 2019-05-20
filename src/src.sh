@@ -19,12 +19,17 @@ function _do_src_file() {
 
 
 # Gets the base dir of the calling script.
+# Arguments: None
+#
 function _do_src_dir() {
     local file=$(_do_src_file)
     dirname $file
 }
 
+
 # Gets the file name of the calling script.
+# Arguments: None
+#
 function _do_src_name() {
     local file=$(_do_src_file)
     basename $file
@@ -32,6 +37,8 @@ function _do_src_name() {
 
 
 # Includes other bash scripts in the same directory.
+# Arguments: None
+#
 function _do_src_include_others_same_dir() {
     local dir=$(_do_src_dir)
     local excluded=$(_do_src_name)
@@ -44,5 +51,41 @@ function _do_src_include_others_same_dir() {
             source ./$name
         fi
     done
+    _do_dir_pop
+}
+
+
+# Loads all source files that match the search condition.
+# Arguments:
+# - ...: Required. The list of files, directories, or search pattern to load
+# the source files.
+#
+function _do_src_include() {
+    # Makes sure there is at least 1 source file to load
+    : ${1?'files arg required'}
+
+    # This is the source directory of the file that 
+    # call this script.
+    local dir=$(_do_src_dir)
+
+    # Changes to the directory relative to the calling script.
+    _do_dir_push "${dir}" 
+
+    while (( $# > 0 )); do
+        if [ -f "$1" ]; then 
+            # This is a file to include.
+            source "$1"
+        else 
+            # This is directory to include
+            for name in $(ls -A $1); do
+                if [ -f "./$name" ];  then 
+                    source ./$name
+                fi
+            done
+        fi
+
+        shift 1
+    done
+
     _do_dir_pop
 }
