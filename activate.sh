@@ -23,3 +23,4 @@ export DO_HOME="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )";
 # Activates the main source file.
 source "$DO_HOME/src/main.sh" $@
 
+_do_alias_call_if_exists "do-version" || _do_assert_fail
