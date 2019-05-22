@@ -99,6 +99,18 @@ echo '# The array of plugin name to be included. If this variable is not specifi
 # than the above plugins list.
 # DO_PLUGINS_EXCLUDED=slack
 
+
+# Updates submodules like oh-my-ops framework
+#
+function do-update() {
+    _do_print_header_2 "Update dependencies"
+
+    eval do-cd
+
+    git submodule update --recursive
+}
+
+
 source vendor/oh-my-ops/activate.sh $@
 ' > "activate.sh"
 
