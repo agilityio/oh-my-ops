@@ -27,7 +27,7 @@ mkdir vendor
 cd vendor
 
 # Initializes devops as the submodule of the current repository
-git submodule add git@gitlab.asoft-python.com:lime/devops.git
+git submodule add https://github.com/agilityio/oh-my-ops.git
 
 # Pull the submodule
 git submodule init
