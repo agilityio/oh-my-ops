@@ -7,7 +7,8 @@ This repository will go open source on its own later.
 
 ## Get Started
 
-
+To install this framework, runs:
+curl -L https://raw.githubusercontent.com/agilityio/oh-my-ops/master/install.sh | bash
 
 
 ## Prerequisites
