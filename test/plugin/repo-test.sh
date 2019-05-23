@@ -51,3 +51,31 @@ function test_do_list_repo() {
 
     _do_assert_fail
 }
+
+function test_repo_dir_array() {
+    test_do_repo_gen
+
+    local dir="${proj_dir}/do-test-gen/src"
+    mkdir -p "${dir}/p1"
+    touch "${dir}/p1/do1.txt"
+
+    mkdir -p "${dir}/p2"
+    touch "${dir}/p2/do2.txt"
+
+
+    # Find all directories that contains 'nothing.txt'. There should be none of that.
+    ! _do_repo_dir_array_exists "do-test-gen" "t1" || _do_assert_fail
+    _do_repo_dir_array_new "${proj_dir}" "do-test-gen" "t1" "nothing.txt" || _do_assert_fail
+
+    _do_repo_dir_array_exists "do-test-gen" "t1" || _do_assert_fail
+    _do_repo_dir_array_is_empty "do-test-gen" "t1" || _do_assert_fail
+
+
+    # Find all directories that contains '*.txt'. There should be two of that.
+    ! _do_repo_dir_array_exists "do-test-gen" "t2" || _do_assert_fail
+    _do_repo_dir_array_new "${proj_dir}" "do-test-gen" "t2" "*.txt" || _do_assert_fail
+
+    _do_repo_dir_array_exists "do-test-gen" "t2" || _do_assert_fail
+    ! _do_repo_dir_array_is_empty "do-test-gen" "t2" || _do_assert_fail
+    _do_repo_dir_array_print "do-test-gen" "t2" || _do_assert_fail
+}

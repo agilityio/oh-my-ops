@@ -1,5 +1,4 @@
-_DO_DOTNET_REPO_CMDS="help clean build"
-_DO_DOTNET_PATHS=()
+_DO_DOTNET_REPO_CMDS="help clean build test"
 
 # Displays helps about how to run a repository dotnet commands.
 #
@@ -18,10 +17,10 @@ function _do_dotnet_repo_help() {
     See dotnet command helps
 
   ${repo}-dotnet-clean: 
-    Cleans dotnet build output
+    Cleans dotnet build output.
 
   ${repo}-dotnet-build: 
-    Builds dotnet documentation. The result is stored in doc/_build.
+    Builds dotnet repository.
 
   ${repo}-dotnet-start: 
     Starts the dotnet web server as daemon, with live-reloading.
@@ -37,21 +36,10 @@ function _do_dotnet_repo_help() {
 
   ${repo}-dotnet-web: 
     Opens the dotnet web page."
-    _do_dir_push $proj_dir/$repo/src
 
-    local name
-    for name in $(find . -maxdepth 2 -type f -name '*.csproj' -print); do 
-        if [ -f "$name" ]; then 
-            # Removes the main.dotnet out of the command name.
-            local name=$(dirname ${name})
-
-            # Removes the first 2 characters './'.
-            name=$(echo $name | cut -c 3-)
-
-            # Example: 
-            #   for master/cmd/main.dotnet 
-            #   the cmd will be "master-cmd"
-            #
+    # Prints out all aliases for solution files
+    for name in $(_do_repo_dir_array_print "${repo}" "dotnet-sln"); do
+        if [ "$name" != "." ]; then 
             local cmd=$(_do_string_to_alias_name ${name})
             echo "  
   ${repo}-dotnet-clean-${cmd}:
@@ -65,33 +53,31 @@ function _do_dotnet_repo_help() {
         fi
     done
 
-    _do_dir_pop
+
+    # Prints out all aliases for project files
+    for name in $(_do_repo_dir_array_print "${repo}" "dotnet-csproj"); do
+        if [ "$name" != "." ]; then 
+            local cmd=$(_do_string_to_alias_name ${name})
+            echo "  
+  ${repo}-dotnet-clean-${cmd}:
+    Runs dotnet clean on $name
+
+  ${repo}-dotnet-build-${cmd}:
+    Runs dotnet build on $name
+
+  ${repo}-dotnet-test-${cmd}:
+    Runs dotnet test on $name"
+        fi
+    done
 }
 
-
-# Cleans the repository dotnet output.
+# Builds the dotnet repository.
 #
 function _do_dotnet_repo_clean() {
-    local proj_dir=$1
-    local repo=$2
+    local proj_dir=${1?'proj_dir arg required'}
+    local repo=${2?'repo arg required'}
 
-    if ! _do_dotnet_repo_enabled $proj_dir $repo; then 
-        return
-    fi 
-
-    local title="$repo: cleans dotnet build result"
-    _do_print_header_2 $title
-
-    _do_repo_dir_push ${proj_dir} ${repo}
-
-    _do_print_line_1 "dotnet clean"
-    dotnet build 
-
-    _do_dir_pop
-
-    local err=$?
-    _do_error_report $err "$title"
-    return $err
+    _do_dotnet_repo_cmd "${proj_dir}" "${repo}" dotnet clean
 }
 
 
@@ -101,28 +87,17 @@ function _do_dotnet_repo_build() {
     local proj_dir=${1?'proj_dir arg required'}
     local repo=${2?'repo arg required'}
 
-    if ! _do_dotnet_repo_enabled $proj_dir $repo; then 
-        return
-    fi 
-
-    local title="$repo: Builds dotnet repository"
-    _do_print_header_2 $title
-
-    _do_dotnet_repo_venv_start "$proj_dir" "$repo"
-
-    _do_repo_dir_push ${proj_dir} ${repo}
-
-    _do_print_line_1 "dotnet build"
-    dotnet build 
-
-    _do_dir_pop
-
-    _do_dotnet_repo_venv_stop "$proj_dir" "$repo"
+    _do_dotnet_repo_cmd "${proj_dir}" "${repo}" dotnet build
+}
 
 
-    local err=$?
-    _do_error_report $err "$title"
-    return $err
+# Builds the dotnet repository.
+#
+function _do_dotnet_repo_test() {
+    local proj_dir=${1?'proj_dir arg required'}
+    local repo=${2?'repo arg required'}
+
+    _do_dotnet_repo_cmd "${proj_dir}" "${repo}" dotnet test
 }
 
 
@@ -137,12 +112,13 @@ function _do_dotnet_repo_enabled() {
     local proj_dir=$1
     local repo=$2
 
-    if [ -f "${proj_dir}/${repo}/dotnet.sln" ]; then 
+    if _do_repo_dir_array_exists "${repo}" "dotnet-sln" || _do_repo_dir_array_exists "${repo}" "dotnet-csproj"; then 
         return 0
     else 
         return 1
     fi 
 }
+
 
 function _do_dotnet_repo_uninit() {
     local proj_dir=${1?'proj_dir arg required'}
@@ -154,6 +130,14 @@ function _do_dotnet_repo_uninit() {
 
     # Just keeps init alias so that it can be reinitialized
     _do_repo_alias_add ${proj_dir} ${repo} "dotnet" "init"
+
+    if _do_repo_dir_array_exists "${repo}" "dotnet-sln"; then 
+        _do_repo_dir_array_destroy "${repo}" "dotnet-sln"
+    fi
+
+    if _do_repo_dir_array_exists "${repo}" "dotnet-csproj"; then 
+        _do_repo_dir_array_destroy "${repo}" "dotnet-csproj"
+    fi
 }
 
 # Initializes dotnet support for a repository.
@@ -162,8 +146,13 @@ function _do_dotnet_repo_init() {
     local proj_dir=${1?'proj_dir argument required'}
     local repo=${2?'repo argument required'}
 
-    # Uninitializes the repository first
-    # _do_dotnet_repo_uninit ${proj_dir} ${repo}
+    # Uninits the repository first.
+    _do_dotnet_repo_uninit ${proj_dir} ${repo}
+
+    # Scans the repository to find all dotnet projects and solution files.
+    _do_repo_dir_array_new "${proj_dir}" "${repo}" "dotnet-csproj" "*.csproj"
+
+    _do_repo_dir_array_new "${proj_dir}" "${repo}" "dotnet-sln" "*.sln"
 
     if ! _do_dotnet_repo_enabled ${proj_dir} ${repo}; then 
         # Adds alias for generating dotnet project.
@@ -178,25 +167,14 @@ function _do_dotnet_repo_init() {
     _do_log_info "dotnet" "Initialize dotnet for '$repo'"
     _do_repo_cmd_hook_add "${repo}" "dotnet" "${_DO_DOTNET_REPO_CMDS}"
 
-    _do_repo_alias_add $proj_dir $repo "dotnet" "uninit help clean build cmd"
+    _do_repo_alias_add ${proj_dir} $repo "dotnet" "uninit help clean build test cmd"
 
-    _do_dir_push $proj_dir/$repo/src
 
     local name
-    for name in $(find . -maxdepth 2 -type f -name '*.csproj' -print); do 
+    for name in $(_do_repo_dir_array_print "${repo}" "dotnet-sln"); do
         _do_log_debug "dotnet" "  $repo/$name"
 
-        if [ -f "$name" ]; then 
-            # Removes the main.dotnet out of the command name.
-            local name=$(dirname ${name})
-
-            # Removes the first 2 characters './'.
-            name=$(echo $name | cut -c 3-)
-
-            # Example: 
-            #   for master/cmd/main.dotnet 
-            #   the cmd will be "master-cmd"
-            #
+        if [ "$name" != "." ]; then 
             local cmd=$(_do_string_to_alias_name ${name})
 
             # Adds command to build a sub project
@@ -209,7 +187,47 @@ function _do_dotnet_repo_init() {
             alias "${repo}-dotnet-test-${cmd}"="_do_dotnet_repo_proj_cmd ${proj_dir} ${repo} $name dotnet test"
         fi
     done
-    _do_dir_pop
+
+
+    local name
+    for name in $(_do_repo_dir_array_print "${repo}" "dotnet-csproj"); do
+        _do_log_debug "dotnet" "  $repo/$name"
+
+        if [ "$name" != "." ]; then 
+            local cmd=$(_do_string_to_alias_name ${name})
+
+            # Adds command to build a sub project
+            alias "${repo}-dotnet-build-${cmd}"="_do_dotnet_repo_proj_cmd ${proj_dir} ${repo} $name dotnet build"
+
+            # Adds command to clean a sub project
+            alias "${repo}-dotnet-clean-${cmd}"="_do_dotnet_repo_proj_cmd ${proj_dir} ${repo} $name dotnet clean"
+
+            # Adds command to test a sub project
+            alias "${repo}-dotnet-test-${cmd}"="_do_dotnet_repo_proj_cmd ${proj_dir} ${repo} $name dotnet test"
+        fi
+    done
+}
+
+
+
+# Builds the dotnet repository.
+#
+function _do_dotnet_repo_cmd() {
+    local proj_dir=${1?'proj_dir arg required'}
+    local repo=${2?'repo arg required'}
+    shift 2
+
+    if ! _do_dotnet_repo_enabled $proj_dir $repo; then 
+        return
+    fi 
+
+    local err=0
+    for dir in $(_do_repo_dir_array_print "${repo}" "dotnet-sln"); do
+        _do_npm_repo_proj_cmd \"${proj_dir}\" \"${repo}\" \"${dir}\" $@ || err=1
+    done
+
+    _do_error_report $err "$title"
+    return $err
 }
 
 
@@ -218,24 +236,24 @@ function _do_dotnet_repo_init() {
 #   1. repo: The repository name.
 #
 function _do_dotnet_repo_proj_cmd() {
-    local proj_dir=$1
+    local proj_dir=${1?'proj_dir arg required'}
     shift
 
-    local repo=$1
+    local repo=${1?'repo arg required'}
     shift
 
-    local proj=$1
+    local dir=${1?'dir arg required'}
     shift
 
-    _do_dotnet_repo_venv_start "$proj_dir" "$repo"
+    local title="$repo: Runs $@ at ${dir}"
+    _do_print_header_2 $title
 
-    _do_dir_push "$proj_dir/$repo/src/$proj"
-
+    _do_dir_push "${proj_dir}/${repo}/${dir}"
     _do_print_line_1 "$@"
-    eval "$@"
 
-    _do_dotnet_repo_venv_stop "$proj_dir" "$repo"
+    eval "$@"
+    local err=$?
 
     _do_dir_pop
-    return $?
+    return $err
 }

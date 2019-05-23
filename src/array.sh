@@ -106,11 +106,19 @@ function _do_array_size() {
     local name=${1?'name arg required'}
     local var_name=$(_do_array_var_name_required ${name})
 
-    _do_assert ${var_name}
-
     local size
     eval "size"='$'"{#${var_name}[@]}"
     echo "${size}"
+}
+
+function _do_array_is_empty() {
+    local name=${1?'name arg required'}
+
+    if [ "$(_do_array_size ${name})" == "0" ]; then 
+        return 0
+    else 
+        return 1
+    fi
 }
 
 

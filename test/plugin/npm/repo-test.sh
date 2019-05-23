@@ -46,18 +46,12 @@ function test_scan() {
   "license": "ISC"
 }' > ${repo_dir}/src/proj2/package.json
 
-    # Scans and found 3 npm sub projects
-    local subprojs=( $(_do_npm_repo_scan "${proj_dir}" "${repo}") )
-    _do_assert_eq "3" "${#subprojs[@]}"
-
     _do_npm_repo_uninit "${proj_dir}" "${repo}"
     _do_npm_repo_init "${proj_dir}" "${repo}"
 
     _do_npm_repo_help "${proj_dir}" "${repo}" || _do_assert_fail
 
     _do_npm_repo_build "${proj_dir}" "${repo}" || _do_assert_fail
-    # _do_npm_repo_proj_cmd "${proj_dir}" "${repo}" "proj1" || _do_assert_fail
-    # _do_npm_repo_proj_cmd "${proj_dir}" "${repo}" "src/proj2" || _do_assert_fail
 }
 
 function test_help() {

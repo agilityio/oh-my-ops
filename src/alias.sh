@@ -87,3 +87,12 @@ function _do_alias_remove_by_prefix() {
         unalias "${prefix}${cmd}"
     done    
 }
+
+# Asserts that the specified alias exists.
+# Arguments:
+# 1. name: Required. The alias name.
+#
+function _do_alias_assert() {
+    local name=${1?'name required'}
+    _do_alias_exist "${name}" || _do_assert_fail "'${name}' alias does not exist"
+}

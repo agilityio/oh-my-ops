@@ -39,3 +39,4 @@ function _do_dir_assert_not() {
     local dir=$1
     [ ! -d $dir ] || _do_assert_fail "Expected $dir is not a directory"
 }
+
