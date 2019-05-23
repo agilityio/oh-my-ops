@@ -152,7 +152,7 @@ function _do_array_append() {
 #
 function _do_array_var_name() {
     local name=${1?'name arg required'}
-    echo "__do_array_${name}"
+    echo "__do_array_$(_do_string_to_lowercase_var ${name})"
 }
 
 
@@ -173,3 +173,16 @@ function _do_array_var_name_required() {
     echo "$(_do_array_var_name ${name})"
 }
 
+
+# Print a stack to stdout.
+# Arguments:
+#   1. The stack name.
+#
+function _do_array_print() {
+    local name=${1?'Stack name required'}
+    local arr="$(_do_array_var_name ${name})[@]"
+
+    for v in ${!arr}; do 
+        echo "${v}"
+    done
+}

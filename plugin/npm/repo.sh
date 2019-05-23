@@ -1,6 +1,7 @@
 _DO_NPM_REPO_CMDS="help clean build"
 _DO_NPM_PATHS=()
 
+
 # Displays helps about how to run a repository npm commands.
 #
 function _do_npm_repo_help() {
@@ -21,37 +22,16 @@ function _do_npm_repo_help() {
     Cleans npm build output
 
   ${repo}-npm-build: 
-    Builds npm documentation. The result is stored in doc/_build.
-
-  ${repo}-npm-start: 
-    Starts the npm web server as daemon, with live-reloading.
-
-  ${repo}-npm-watch: 
-    Watches the npm web server, with live-reloading.
-
-  ${repo}-npm-stop: 
-    Stops the npm web server.
+    Runs 'npm install'
 
   ${repo}-npm-status: 
-    Displays the npm status.
+    Displays the npm status."
 
-  ${repo}-npm-web: 
-    Opens the npm web page."
     _do_dir_push $proj_dir/$repo
 
-    local name
-    for name in $(find . -maxdepth 3 -type f -name 'package.json' -print); do 
-        if [ -f "$name" ]; then 
+    for dir in $(_do_npm_repo_dir_print "${repo}"); do
+        if [ "$name" != '.' ]; then 
             # Removes the main.npm out of the command name.
-            local name=$(dirname ${name})
-
-            # Removes the first 2 characters './'.
-            name=$(echo $name | cut -c 3-)
-
-            # Example: 
-            #   for master/cmd/main.npm 
-            #   the cmd will be "master-cmd"
-            #
             local cmd=$(_do_string_to_alias_name ${name})
             echo "  
   ${repo}-npm-clean-${cmd}:
@@ -64,8 +44,17 @@ function _do_npm_repo_help() {
     Runs npm test on $name"
         fi
     done
+}
 
-    _do_dir_pop
+
+# Prints out all sub directories in a repo that can be run 
+# with npm.
+# Arguments:
+# 1. repo: Required. The repository name.
+#
+function _do_npm_repo_dir_print() {
+    local repo=${1?'repo arg required'}
+    _do_array_print "npm_${repo}"
 }
 
 
@@ -79,15 +68,9 @@ function _do_npm_repo_clean() {
         return
     fi 
 
-    local title="$repo: cleans npm build result"
-    _do_print_header_2 $title
-
-    _do_repo_dir_push ${proj_dir} ${repo}
-
-    _do_print_line_1 "npm clean"
-    npm run clean 
-
-    _do_dir_pop
+    for dir in $(_do_npm_repo_dir_print "${repo}"); do
+        _do_npm_repo_proj_cmd \"${proj_dir}\" \"${repo}\" \"${dir}\" npm install
+    done
 
     local err=$?
     _do_error_report $err "$title"
@@ -101,26 +84,34 @@ function _do_npm_repo_build() {
     local proj_dir=${1?'proj_dir arg required'}
     local repo=${2?'repo arg required'}
 
-    if ! _do_npm_repo_enabled $proj_dir $repo; then 
+    if ! _do_npm_repo_enabled "${proj_dir}" "${repo}"; then 
         return
     fi 
 
-    local title="$repo: Builds npm repository"
-    _do_print_header_2 $title
+    local err=0
+    for dir in $(_do_npm_repo_dir_print "${repo}"); do
+        _do_npm_repo_proj_cmd \"${proj_dir}\" \"${repo}\" \"${dir}\" npm install || err=1
+    done
 
-    _do_npm_repo_venv_start "$proj_dir" "$repo"
+    _do_error_report $err "$title"
+    return $err
+}
 
-    _do_repo_dir_push ${proj_dir} ${repo}
+# Test the npm repository.
+#
+function _do_npm_repo_test() {
+    local proj_dir=${1?'proj_dir arg required'}
+    local repo=${2?'repo arg required'}
 
-    _do_print_line_1 "npm install"
-    npm install 
+    if ! _do_npm_repo_enabled "${proj_dir}" "${repo}"; then 
+        return
+    fi 
 
-    _do_dir_pop
+    local err=0
+    for dir in $(_do_npm_repo_dir_print "${repo}"); do
+        _do_npm_repo_proj_cmd \"${proj_dir}\" \"${repo}\" \"${dir}\" npm run test || err=1
+    done
 
-    _do_npm_repo_venv_stop "$proj_dir" "$repo"
-
-
-    local err=$?
     _do_error_report $err "$title"
     return $err
 }
@@ -137,8 +128,7 @@ function _do_npm_repo_enabled() {
     local proj_dir=$1
     local repo=$2
 
-    return 0
-    if [ -f "${proj_dir}/${repo}/npm.sln" ]; then 
+    if _do_array_exists "npm_${repo}"; then 
         return 0
     else 
         return 1
@@ -155,13 +145,46 @@ function _do_npm_repo_uninit() {
 
     # Just keeps init alias so that it can be reinitialized
     _do_repo_alias_add ${proj_dir} ${repo} "npm" "init"
+
+    # Destroy the array that keep npm projects
+    if _do_array_exists "npm_${repo}"; then 
+        _do_array_destroy "npm_${repo}"
+    fi
 }
+
+# Scans the specified repository to find all sub directories that contains the
+# package.json files (those from node_modules will be ignored)
+# Arguments:
+# 1. proj_dir: Required. The project directory.
+# 2. repo: Required. The repository name.
+#
+function _do_npm_repo_scan() {
+    local proj_dir=${1?'proj_dir argument required'}
+    local repo=${2?'repo argument required'}
+
+    _do_dir_push $proj_dir/$repo
+
+    # Finds all directories that contains a package.json file and 
+    # ignore node_modules directory if any.
+    for name in $(find . -maxdepth 3 -type f -name 'package.json' ! -path '*/node_modules/*' -print); do 
+        echo "$(dirname ${name})"
+    done
+
+    _do_dir_pop
+} 
 
 # Initializes npm support for a repository.
 #
 function _do_npm_repo_init() {
     local proj_dir=${1?'proj_dir argument required'}
     local repo=${2?'repo argument required'}
+
+    local subs=( $(_do_npm_repo_scan "${proj_dir}" "${repo}") )
+    if [ ${#subs[@]} -eq 0 ]; then 
+        return 
+    fi 
+
+    _do_array_new "npm_${repo}" ${subs[@]}
 
     # Uninitializes the repository first
     # _do_npm_repo_uninit ${proj_dir} ${repo}
@@ -179,37 +202,28 @@ function _do_npm_repo_init() {
     _do_log_info "npm" "Initialize npm for '$repo'"
     _do_repo_cmd_hook_add "${repo}" "npm" "${_DO_NPM_REPO_CMDS}"
 
-    _do_repo_alias_add $proj_dir $repo "npm" "uninit help clean build cmd"
+    _do_repo_alias_add $proj_dir $repo "npm" "uninit help clean build test"
 
     _do_dir_push $proj_dir/$repo
 
-    local name
-    for name in $(find . -maxdepth 3 -type f -name 'package.json' -print); do 
+
+    for name in $(_do_array_print "npm_${repo}"); do
         _do_log_debug "npm" "  $repo/$name"
 
-        if [ -f "$name" ]; then 
-            # Removes the main.npm out of the command name.
-            local name=$(dirname ${name})
-
-            # Removes the first 2 characters './'.
-            name=$(echo $name | cut -c 3-)
-
-            # Example: 
-            #   for master/cmd/main.npm 
-            #   the cmd will be "master-cmd"
-            #
+        if [ "$name" != "." ]; then 
             local cmd=$(_do_string_to_alias_name ${name})
 
             # Adds command to build a sub project
-            alias "${repo}-npm-build-${cmd}"="_do_npm_repo_proj_cmd ${proj_dir} ${repo} $name npm install"
+            alias "${repo}-npm-build-${cmd}"="_do_npm_repo_proj_cmd \"${proj_dir}\" \"${repo}\" \"${name}\" npm install"
 
             # Adds command to clean a sub project
-            alias "${repo}-npm-clean-${cmd}"="_do_npm_repo_proj_cmd ${proj_dir} ${repo} $name npm run clean"
+            alias "${repo}-npm-clean-${cmd}"="_do_npm_repo_proj_cmd \"${proj_dir}\" \"${repo}\" \"${name}\" npm run clean"
 
             # Adds command to test a sub project
-            alias "${repo}-npm-test-${cmd}"="_do_npm_repo_proj_cmd ${proj_dir} ${repo} $name npm run test"
+            alias "${repo}-npm-test-${cmd}"="_do_npm_repo_proj_cmd \"${proj_dir}\" \"${repo}\" \"${name}\" npm run test"
         fi
     done
+
     _do_dir_pop
 }
 
@@ -219,24 +233,24 @@ function _do_npm_repo_init() {
 #   1. repo: The repository name.
 #
 function _do_npm_repo_proj_cmd() {
-    local proj_dir=$1
+    local proj_dir=${1?'proj_dir arg required'}
     shift
 
-    local repo=$1
+    local repo=${1?'repo arg required'}
     shift
 
-    local proj=$1
+    local dir=${1?'dir arg required'}
     shift
 
-    _do_npm_repo_venv_start "$proj_dir" "$repo"
+    local title="$repo: Runs $@ at ${dir}"
+    _do_print_header_2 $title
 
-    _do_dir_push "$proj_dir/$repo/$proj"
-
+    _do_dir_push "${proj_dir}/${repo}/${dir}"
     _do_print_line_1 "$@"
-    eval "$@"
 
-    _do_npm_repo_venv_stop "$proj_dir" "$repo"
+    eval "$@"
+    local err=$?
 
     _do_dir_pop
-    return $?
+    return $err
 }

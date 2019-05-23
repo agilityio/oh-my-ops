@@ -18,8 +18,7 @@ function _do_npm_repo_gen() {
     _do_dir_push "${repo_dir}"
 
     # Creates an empty npm solution
-    npm new solution --name npm
-    echo "npm.sln file added"
+    npm init --yes
     local err=$?
 
     _do_dir_pop

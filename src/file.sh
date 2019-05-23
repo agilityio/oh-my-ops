@@ -54,16 +54,21 @@ function _do_file_assert_not() {
 # Arguments:
 # 1. dir: Required. The directory to get the file for.
 # 2. pattern: Required. The file name pattern expected by 'find' program.
+#
 function _do_file_scan() {
     local dir=${1?'dir arg required'}
+    _do_dir_assert "${dir}"
+
+
     local pattern=${2?'pattern arg required'}
+
+    _do_dir_push "${dir}"
 
     local name
     for name in $(find . -maxdepth 3 -type f -name "${pattern}" -print); do 
-        # Removes the main.npm out of the command name.
-        local name=$(dirname ${name})
-
         # Removes the first 2 characters './'.
         echo $name | cut -c 3-
     done
+
+    _do_dir_pop
 }
