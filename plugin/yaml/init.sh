@@ -1,6 +1,6 @@
 _do_plugin "yaml"
 
-_do_log_level_debug "yaml"
+_do_log_level_warn "yaml"
 _do_src_include_others_same_dir
 
 

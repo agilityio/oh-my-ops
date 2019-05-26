@@ -33,6 +33,13 @@ function _do_array_destroy() {
 }
 
 
+function _do_array_clear() {
+    local name=${1?'name arg required'}
+    local var_name=$(_do_array_var_name_required ${name})
+
+    eval "${var_name}=()"
+}
+
 # Checks if an array exists.
 #
 # Arguments:
