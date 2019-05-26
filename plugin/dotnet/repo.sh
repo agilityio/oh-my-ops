@@ -112,10 +112,10 @@ function _do_dotnet_repo_enabled() {
     local proj_dir=$1
     local repo=$2
 
-    if _do_repo_dir_array_exists "${repo}" "dotnet-sln" || _do_repo_dir_array_exists "${repo}" "dotnet-csproj"; then 
-        return 0
-    else 
+    if _do_repo_dir_array_is_empty "${repo}" "dotnet-sln" || _do_repo_dir_array_exists "${repo}" "dotnet-csproj"; then 
         return 1
+    else 
+        return 0
     fi 
 }
 

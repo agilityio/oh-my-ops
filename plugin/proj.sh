@@ -110,8 +110,8 @@ function _do_proj_init() {
     _do_hook_call "_do_proj_init" "$dir" 
 
     local name
-    for name in $( _do_proj_get_repo_list $dir ); do 
-        if _do_repo_is_enabled $dir $name; then 
+    for name in $( _do_proj_get_repo_list "${dir}" ); do 
+        if _do_repo_is_enabled "${dir}" "${name}"; then 
             _do_repo_init $dir $name
         fi
     done

@@ -27,6 +27,7 @@ function _do_npm_repo_help() {
   ${repo}-npm-status: 
     Displays the npm status."
 
+    local name
     for name in $(_do_repo_dir_array_print "${repo}" "npm"); do
         if [ "$name" != '.' ]; then 
             # Removes the main.npm out of the command name.
@@ -75,6 +76,7 @@ function _do_npm_repo_build() {
     fi 
 
     local err=0
+    local dir
     for dir in $(_do_repo_dir_array_print "${repo}" "npm"); do
         _do_npm_repo_proj_cmd \"${proj_dir}\" \"${repo}\" \"${dir}\" npm install || err=1
     done
@@ -94,6 +96,7 @@ function _do_npm_repo_test() {
     fi 
 
     local err=0
+    local dir
     for dir in $(_do_repo_dir_array_print "${repo}" "npm"); do
         _do_npm_repo_proj_cmd \"${proj_dir}\" \"${repo}\" \"${dir}\" npm run test || err=1
     done
@@ -114,10 +117,10 @@ function _do_npm_repo_enabled() {
     local proj_dir=$1
     local repo=$2
 
-    if _do_repo_dir_array_exists "${repo}" "npm"; then 
-        return 0
-    else 
+    if _do_repo_dir_array_is_empty "${repo}" "npm"; then 
         return 1
+    else 
+        return 0
     fi 
 }
 

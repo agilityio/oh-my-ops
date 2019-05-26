@@ -15,6 +15,7 @@ function _do_repo_dir_array_new() {
     fi
 
     local arr=()
+    local dir
     for dir in $(find . -type f -name "${pattern}" ! -path '.git/*' ! -path '*/node_modules/*' ${opts} -print); do 
         arr+=( "$(dirname ${dir})" )
     done

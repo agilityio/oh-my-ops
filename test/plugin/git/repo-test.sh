@@ -31,6 +31,14 @@ function test_do_git_repo_add_status_commit() {
     # Display helps
     _do_git_repo_help $repo_opts || _do_assert_fail
 
+    # Makes sure all git alias are available
+    _do_alias_assert "do-test-clone-git-status"
+    _do_alias_assert "do-test-clone-git-help"
+    _do_alias_assert "do-test-clone-git-commit"
+    _do_alias_assert "do-all-git-status"
+    _do_alias_assert "do-all-git-add"
+    _do_alias_assert "do-all-git-status"
+
     # After generated , the files not yet been add. 
     # The repository should be cleaned.
     ! _do_git_repo_is_dirty $repo_opts|| _do_assert_fail
@@ -45,7 +53,7 @@ function test_do_git_repo_add_status_commit() {
     _do_git_repo_is_dirty $repo_opts || _do_assert_fail
 
     # Makes sure the git repository is dirty after adding the file
-    _do_git_repo_commit $repo_opts "-m a sample message" || _do_assert_fail
+    _do_git_repo_commit $repo_opts "sample message" || _do_assert_fail
 
     # After commit the repository should be clean again
     ! _do_git_repo_is_dirty $repo_opts|| _do_assert_fail
