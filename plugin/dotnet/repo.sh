@@ -223,7 +223,7 @@ function _do_dotnet_repo_cmd() {
 
     local err=0
     for dir in $(_do_repo_dir_array_print "${repo}" "dotnet-sln"); do
-        _do_npm_repo_proj_cmd \"${proj_dir}\" \"${repo}\" \"${dir}\" $@ || err=1
+        _do_dotnet_repo_proj_cmd \"${proj_dir}\" \"${repo}\" \"${dir}\" $@ || err=1
     done
 
     _do_error_report $err "$title"
@@ -237,13 +237,10 @@ function _do_dotnet_repo_cmd() {
 #
 function _do_dotnet_repo_proj_cmd() {
     local proj_dir=${1?'proj_dir arg required'}
-    shift
+    local repo=${2?'repo arg required'}
+    local dir=${3?'dir arg required'}
+    shift 3
 
-    local repo=${1?'repo arg required'}
-    shift
-
-    local dir=${1?'dir arg required'}
-    shift
 
     local title="$repo: Runs $@ at ${dir}"
     _do_print_header_2 $title
