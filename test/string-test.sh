@@ -58,3 +58,24 @@ function test_do_string_to_alias_name() {
    _do_assert_eq "ab-c" $(_do_string_to_alias_name "AB/C") 
    _do_assert_eq "ab-c" $(_do_string_to_alias_name ".AB/C ") 
 }
+
+function test_do_string_to_alias_prefix() {
+   _do_assert_eq "" $(_do_string_to_alias_prefix "") 
+   _do_assert_eq "" $(_do_string_to_alias_prefix ".") 
+   _do_assert_eq "" $(_do_string_to_alias_prefix "  ") 
+   _do_assert_eq "abc-" $(_do_string_to_alias_prefix "ABC") 
+   _do_assert_eq "ab-c-" $(_do_string_to_alias_prefix "AB C") 
+   _do_assert_eq "ab-c-" $(_do_string_to_alias_prefix "AB.C") 
+   _do_assert_eq "ab-c-" $(_do_string_to_alias_prefix "AB/C") 
+   _do_assert_eq "ab-c-" $(_do_string_to_alias_prefix ".AB/C ") 
+}
+function test_do_string_to_alias_suffix() {
+   _do_assert_eq "" $(_do_string_to_alias_suffix "") 
+   _do_assert_eq "" $(_do_string_to_alias_suffix ".") 
+   _do_assert_eq "" $(_do_string_to_alias_suffix "  ") 
+   _do_assert_eq "-abc" $(_do_string_to_alias_suffix "ABC") 
+   _do_assert_eq "-ab-c" $(_do_string_to_alias_suffix "AB C") 
+   _do_assert_eq "-ab-c" $(_do_string_to_alias_suffix "AB.C") 
+   _do_assert_eq "-ab-c" $(_do_string_to_alias_suffix "AB/C") 
+   _do_assert_eq "-ab-c" $(_do_string_to_alias_suffix ".AB/C ") 
+}
