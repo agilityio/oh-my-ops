@@ -47,6 +47,15 @@ function test_array_append() {
 }
 
 
+function test_array_clear() {
+    # Creates a new array
+    _do_array_new "b" "A" "B" "C"
+    ! _do_array_is_empty "b" || _do_assert_fail
+    _do_array_clear "b"
+    _do_array_is_empty "b" || _do_assert_fail
+}
+
+
 function test_array_contains() {
     # Creates a new array
     _do_array_new "b" "A" "B" "C"
