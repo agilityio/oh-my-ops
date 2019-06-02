@@ -1,6 +1,6 @@
 _do_plugin "docker"
 
-_do_log_level_debug "npm"
+_do_log_level_warn "npm"
 
 _do_src_include_others_same_dir
 

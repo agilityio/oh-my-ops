@@ -82,13 +82,17 @@ src_files=(
     "hook"
     "curl"
     "browser"
+    "timer"
     "plugin"
 )
+
 
 # Loads all core source files.
 for src_file in "${src_files[@]}"; do
     source "${DO_HOME}/src/${src_file}.sh"
 done
+
+_do_timer_start
 
 _do_log_level_warn "main"
 
@@ -113,6 +117,7 @@ fi
 # Initializes all plugins registered
 _do_plugin_init
 
+echo "Activated in $(_do_timer_end) seconds."
 
 # Display banner for full activation.
 if [ "$_DO_MAIN_QUICK" == "no" ]; then 
