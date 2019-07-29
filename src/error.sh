@@ -26,7 +26,7 @@ function _do_error_report() {
         _do_print_error "ERROR!" $@
 
     else 
-        _do_print_finished "SUCCESS!" $@
+        _do_print_success "SUCCESS!" $@
     fi
 }
 

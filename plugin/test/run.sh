@@ -217,6 +217,6 @@ if [ $total_failed -gt 0 ]; then
     _do_print_error "Fail ${total_failed} of total ${total_tests} tests!"
     exit 1
 else 
-    _do_print_finished "All ${total_tests} tests passed!"
+    _do_print_success "All ${total_tests} tests passed!"
     exit 0
 fi 

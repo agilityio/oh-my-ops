@@ -60,6 +60,22 @@ function _do_print_line_2() {
     _do_print_line "=" "${_DO_FG_BLUE}" "$@"
 }
 
+
+function _do_print_color {
+  local color=$1
+  shift 1
+  echo -e "${color}$@${_DO_FG_BLACK}"
+}
+
+function _do_print_blue {
+  _do_print_color ${_DO_FG_BLUE} $@
+}
+
+function _do_print_yellow {
+  _do_print_color ${_DO_FG_YELLOW} $@
+}
+
+
 function _do_print_header_1() {
     echo -e "${_DO_FG_BLUE}-------------------------------------------------------------------------------
     $@
@@ -88,7 +104,7 @@ function _do_print_no_support() {
     _do_print_warn -e "${_DO_FG_YELLOW}WARNING! Skipped, no support for $ENVIRONMENT environment${_DO_FG_NORMAL}"
 }
 
-function _do_print_finished() {
+function _do_print_success() {
 
     echo -e "${_DO_FG_GREEN}------------------------------------------------------------------------------
     $@

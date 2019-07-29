@@ -28,10 +28,12 @@ function _do_yaml_parse() {
     fs="$(echo @|tr @ '\034')"
 
     (
-        sed -ne '/^--/s|--||g; s|\"|\\\"|g; s/\s*$//g;' \
+        sed -e '/- [^\“]'"[^\']"'.*: /s|\([ ]*\)- \([[:space:]]*\)|\1-\'$'\n''  \1\2|g' |
+
+        sed -ne '/^--/s|--||g; s|\"|\\\"|g; s/[[:space:]]*$//g;' \
             -e "/#.*[\"\']/!s| #.*||g; /^#/s|#.*||g;" \
             -e "s|^\($s\)\($w\)$s:$s\"\(.*\)\"$s\$|\1$fs\2$fs\3|p" \
-            -e "s|^\($s\)\($w\)$s:$s\(.*\)$s\$|\1$fs\2$fs\3|p" |
+            -e "s|^\($s\)\($w\)${s}[:-]$s\(.*\)$s\$|\1$fs\2$fs\3|p" |
 
         awk -F"$fs" '{
             indent = length($1)/2;
@@ -44,11 +46,17 @@ function _do_yaml_parse() {
                 }
             }' |
 
-        sed -e 's/_=/+=/g' \
-            -e '/\..*=/s|\.|_|' \
-            -e '/\-.*=/s|\-|_|'
+        sed -e 's/_=/+=/g' |
 
-    ) < "${file}"
+        awk 'BEGIN {
+                FS="=";
+                OFS="="
+            }
+            /(-|\.).*=/ {
+                gsub("-|\\.", "_", $1)
+            }
+            { print }'
+    ) < "$file"
 }
 
 function _do_yaml_export_uppercase_var() {

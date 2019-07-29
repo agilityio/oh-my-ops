@@ -1,4 +1,4 @@
-_DO_FIREBASE_REPO_CMDS="help status start"
+_DO_FIREBASE_REPO_CMDS="help status emulator-start"
 
 
 # Displays helps about how to run a repository firebase commands.
@@ -18,33 +18,15 @@ function _do_firebase_repo_help() {
     See firebase command helps
 
   ${repo}-firebase-status: 
-    Show firebase information.
- 
-  ${repo}-firebase-start: 
-    Starts the firebase web server as daemon, with live-reloading.
-
-  ${repo}-firebase-watch: 
-    Watches the firebase web server, with live-reloading.
-
-  ${repo}-firebase-stop: 
-    Stops the firebase web server.
-
-  ${repo}-firebase-status: 
-    Displays the firebase status."
+    Show firebase information."
 
     # Prints out all aliases for solution files
     for name in $(_do_repo_dir_array_print "${repo}" "firebase-sln"); do
         if [ "$name" != "." ]; then 
             local cmd=$(_do_string_to_alias_name ${name})
             echo "  
-  ${repo}-firebase-status-${cmd}:
-    Runs firebase clean on $name
-
-  ${repo}-firebase-start-${cmd}:
-    Runs firebase build on $name
-
-  ${repo}-firebase-test-${cmd}:
-    Runs firebase test on $name"
+  ${repo}-firebase-emulator-start-${cmd}:
+    Runs firebase build on $name"
         fi
     done
 }
@@ -57,17 +39,6 @@ function _do_firebase_repo_status() {
 
     _do_print_header_1 "Firebase status"
     echo "  GOOGLE_APPLICATION_CREDENTIALS: ${GOOGLE_APPLICATION_CREDENTIALS}"
-
-}
-
-
-# Builds the firebase repository.
-#
-function _do_firebase_repo_start() {
-    local proj_dir=${1?'proj_dir arg required'}
-    local repo=${2?'repo arg required'}
-
-    _do_firebase_repo_cmd "${proj_dir}" "${repo}" firebase emulators:start 
 }
 
 
@@ -129,45 +100,53 @@ function _do_firebase_repo_init() {
     _do_log_info "firebase" "Initialize firebase for '$repo'"
     _do_repo_cmd_hook_add "${repo}" "firebase" "${_DO_FIREBASE_REPO_CMDS}"
 
-    _do_repo_alias_add ${proj_dir} $repo "firebase" "uninit help start test"
+    _do_repo_alias_add ${proj_dir} $repo "firebase" "uninit help"
 
 
     local name
     for name in $(_do_repo_dir_array_print "${repo}" "firebase-sln"); do
         _do_log_debug "firebase" "  $repo/$name"
 
-        if [ "$name" != "." ]; then 
-            local cmd=$(_do_string_to_alias_name ${name})
+        local cmd="-$(_do_string_to_alias_name_suffix ${name})"
 
-            # Adds command to build a sub project
-            alias "${repo}-firebase-start-${cmd}"="_do_firebase_repo_cmd "${proj_dir}" "${repo}" firebase emulators:start"
-
-            # Adds command to clean a sub project
-            alias "${repo}-firebase-status-${cmd}"="_do_firebase_repo_proj_cmd ${proj_dir} ${repo} $name firebase clean"
-        fi
+        # Adds command to build a sub project
+        alias "${repo}-firebase-emulator-start${cmd}"="_do_firebase_emulator_start ${proj_dir} ${repo} ${name}"
+        alias "${repo}-firebase-emulator-stop${cmd}"="_do_firebase_emulator_stop ${proj_dir} ${repo} ${name}"
     done
 }
 
 
-
-# Builds the firebase repository.
+# Starts firebase emulator a firebase project.
 #
-function _do_firebase_repo_cmd() {
+function _do_firebase_emulator_start() {
     local proj_dir=${1?'proj_dir arg required'}
     local repo=${2?'repo arg required'}
-    shift 2
+    local dir=${3?'dir arg required'}
 
-    if ! _do_firebase_repo_enabled $proj_dir $repo; then 
-        return
-    fi 
+    _do_print_header_1 "${repo}:Runs emulator at ${dir}"
+    _do_dir_push "${proj_dir}/${repo}/${dir}"
 
-    local err=0
-    for dir in $(_do_repo_dir_array_print "${repo}" "firebase-sln"); do
-        _do_firebase_repo_proj_cmd ${proj_dir} ${repo} ${dir} $@ || err=1
-    done
+    # Starts the firebase emulator.
+    firebase emulators:start
 
-    _do_error_report $err "$title"
-    return $err
+    _do_dir_pop
+
+    local err=$?
+}
+
+
+# Stops firebase emulator for a firebase project.
+function _do_firebase_emulator_stop() {
+    local proj_dir=${1?'proj_dir arg required'}
+    local repo=${2?'repo arg required'}
+    local dir=${3?'dir arg required'}
+
+    _do_print_header_2 "${repo}:Runs emulator at ${dir}"
+    _do_dir_push "${proj_dir}/${repo}/${dir}"
+    echo "TODO"
+    _do_dir_pop
+
+    local err=$?
 }
 
 

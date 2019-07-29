@@ -219,7 +219,7 @@ function _do_sphinx_repo_status() {
     local url=$(_do_sphinx_repo_get_url $proj_dir $repo)
     if _do_sphinx_is_running; then 
         docker logs ${_DO_SPHINX_DOCKER_CONTAINER_NAME}    
-        _do_print_finished "Sphinx is running at $url"
+        _do_print_success "Sphinx is running at $url"
     else
         _do_print_warn "Sphinx is not running"
         return 0
