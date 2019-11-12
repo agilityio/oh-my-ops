@@ -27,7 +27,7 @@ mkdir vendor
 cd vendor
 
 # Initializes devops as the submodule of the current repository
-git submodule add https://github.com/agilityio/oh-my-ops.git
+git submodule add https://github.com/trungngo/oh-my-ops.git
 
 # Pull the submodule
 git submodule init

@@ -32,7 +32,10 @@ function _do_plugin() {
 
     for plugin_name in $1; do
 
-        if ! _do_plugin_is_loaded $plugin_name; then 
+        if _do_plugin_is_loaded $plugin_name; then 
+            _do_log_debug "plug" "Skip loaded plugin ${plugin_name}"
+
+        else
             _do_log_debug "plugin" "Loads plugin ${plugin_name}"
 
             # Add the plugin into the loaded list.

@@ -22,14 +22,14 @@ function test_setup() {
 
     _do_dotnet_repo_gen "${proj_dir}" "${repo}" || _do_assert_fail
     _do_file_assert "${repo_dir}/dotnet.sln"
-
-    ls -la ${repo_dir}
 }
+
 
 function test_teardown() {
     # Removes the newly generated dotnet repository
     rm -rfd "${repo_dir}"
 }
+
 
 function test_multi_projs() {
     mkdir ${repo_dir}/proj1
