@@ -1,3 +1,5 @@
+_do_plugin "env"
+
 function test_help() {
     _do_env_help
 }

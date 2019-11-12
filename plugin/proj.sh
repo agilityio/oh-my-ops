@@ -12,6 +12,8 @@ declare -A _DO_PROJ_REPO_MAP
 
 
 
+# List out all projects loaded.
+#
 function _do_proj_list() {
     echo ${_DO_PROJ_DIRS[@]}
 }
@@ -124,9 +126,10 @@ function _do_proj_init() {
 #
 function _do_proj_repo_get_default() {
     local dir=${1?'dir arg required'}
-    _do_dir_assert ${dir}
 
     dir=$(_do_dir_normalized ${dir})
+    _do_dir_assert ${dir}
+
     local proj_var=$(_do_string_to_uppercase_var $dir)
     echo "${_DO_PROJ_REPO_MAP[${proj_var}]}"
 }

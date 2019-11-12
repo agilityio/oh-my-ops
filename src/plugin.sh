@@ -5,6 +5,8 @@ _do_log_level_warn "plugin"
 # This is the array of loaded plugins
 declare -a _DO_PLUGIN_LIST
 
+_DO_PLUGIN_INITIALIZED="no"
+
 
 # Determines if a plugin is loaded.
 # $1. plugin_name: string
@@ -29,7 +31,12 @@ function _do_plugin() {
     local plugin_name
 
     for plugin_name in $1; do
-        if ! _do_plugin_is_loaded $plugin_name; then 
+
+        if _do_plugin_is_loaded $plugin_name; then 
+            _do_log_debug "plug" "Skip loaded plugin ${plugin_name}"
+
+        else
+            _do_log_debug "plugin" "Loads plugin ${plugin_name}"
 
             # Add the plugin into the loaded list.
             _DO_PLUGIN_LIST+=( "$plugin_name" )
@@ -42,6 +49,19 @@ function _do_plugin() {
 
             if [ -f "${init_file}" ]; then 
                 source "${init_file}"
+            fi
+
+            if [ "${_DO_PLUGIN_INITIALIZED}" == "yes" ]; then 
+                # Triggers init & ready func
+                local func="_do_${plugin_name}_plugin_init" 
+                if _do_alias_exist "${func}"; then 
+                    ${func}
+                fi 
+
+                func="_do_${plugin_name}_plugin_ready" 
+                if _do_alias_exist "${func}"; then 
+                    ${func}
+                fi 
             fi
 
             _do_log_debug "plugin" "load $plugin_name"
@@ -105,4 +125,6 @@ function _do_plugin_init() {
             ${func}
         fi 
     done
+
+    _DO_PLUGIN_INITIALIZED="yes"
 }

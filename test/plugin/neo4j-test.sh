@@ -1,3 +1,5 @@
+_do_plugin "neo4j"
+
 function test_do_neo4j() {
     local img=${_DO_NEO4J_DOCKER_IMG}
     

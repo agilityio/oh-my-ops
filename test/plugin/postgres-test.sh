@@ -1,3 +1,5 @@
+_do_plugin "postgres"
+
 function test_do_postgres() {
     # Removes the image
     local img=${_DO_POSTGRES_DOCKER_IMG}

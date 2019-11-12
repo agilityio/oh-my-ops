@@ -1,3 +1,5 @@
+_do_plugin "sphinx"
+
 proj_dir=$(_do_dir_normalized $DO_HOME/..)
 repo="devops"
 

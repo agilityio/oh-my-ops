@@ -18,13 +18,13 @@ function _do_git_repo_add() {
 #   0 if git enabled, 1 otherwise.
 #
 function _do_git_repo_enabled() {
-    local proj_dir=$1
-    local repo=$2
+    local proj_dir=${1?'proj_dir arg required'}
+    local repo=${2?'repo arg required'}
 
-    if [ -d "$proj_dir/$repo/.git" ]; then 
+    if [ -d "${proj_dir}/${repo}/.git" ]; then 
         return 0
     else 
-        # Git is enabled for the specified directory
+        # Git is not enabled for the specified directory
         return 1
     fi 
 }

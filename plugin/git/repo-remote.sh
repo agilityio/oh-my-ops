@@ -10,23 +10,22 @@ _do_log_level_warn "git-remote"
 #   3. remote: The remote name.
 #
 function _do_git_repo_get_remote_uri() {
-    local proj_dir=$1
-    local repo=$2
-    local remote=$3
-
-    _do_dir_assert $proj_dir
+    local proj_dir=${1?'proj_dir arg required.'}
+    local repo=${2?'repo arg required'}
+    local remote=${3?'remote arg required'}
 
     # Makes sure that the default repository is available for the current project
     local default_repo=$(_do_proj_repo_get_default ${proj_dir})
-    _do_assert $default_repo
+    _do_assert "${default_repo}"
 
-    _do_repo_dir_push $proj_dir $default_repo
+    _do_repo_dir_push "${proj_dir}" "${default_repo}"
     
     # Remove the last .git
     # For example, if a remote is ssh://git@bitbucket.org/abc/devops.git
     # The result would be ssh://git@bitbucket.org/abc
     # local uri=$( git config --local --get "remote.${remote}.url" | sed -e 's/\/[^\/]*\.git$//' )
     local uri=$( git config --local --get "remote.${remote}.url" | sed -e "s/${default_repo}.git$/${repo}.git/" )
+
     _do_dir_pop
 
     if [ -z "$uri" ]; then 
@@ -57,9 +56,10 @@ function _do_git_repo_get_remote_list() {
 # at devops repository. 
 #
 function _do_git_get_default_remote_list() {
-    _do_dir_push $DO_HOME
-    git remote
-    _do_dir_pop
+    local proj_dir=${1?'proj_dir arg required.'}
+    local repo=$(_do_proj_repo_get_default "${proj_dir}")
+
+    _do_git_repo_get_remote_list "${proj_dir}" "${repo}"
 }
 
 

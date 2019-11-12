@@ -27,12 +27,17 @@ function _do_git_plugin_init() {
         alias "do-all-git-${cmd}"="_do_proj_default_exec_all_repo_cmds git-${cmd}"
     done
 
-    # Alias alias that runs at remote level 
-    local cmds=( "fetch" "sync" "pull" )
-    for remote in $( _do_git_get_default_remote_list ); do 
-        for cmd in ${cmds[@]}; do 
-            alias "do-all-git-${cmd}-$remote"="_do_proj_default_exec_all_repo_cmds git-${cmd}-$remote"
+    # FIXME: Fix this in the case that there is more than 
+    # one project loaded.
+    local proj_dir=$(_do_proj_default_get_dir)
+    if  [ ! -z "${proj_dir}" ]; then 
+        # Alias alias that runs at remote level 
+        local cmds=( "fetch" "sync" "pull" )
+        for remote in $( _do_git_get_default_remote_list "${proj_dir}" ); do 
+            for cmd in ${cmds[@]}; do 
+                alias "do-all-git-${cmd}-$remote"="_do_proj_default_exec_all_repo_cmds git-${cmd}-$remote"
+            done
         done
-    done
+    fi
 }
 

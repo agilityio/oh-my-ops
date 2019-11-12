@@ -76,7 +76,7 @@ function _do_repo_init() {
 
     # Adds alias to quickly go to a repository directory
     for cmd in "${_DO_REPO_COMMANDS[@]}"; do 
-        alias "${repo}-${cmd}"="_do_repo_${cmd} ${proj_dir} ${repo}"
+        alias "do-${repo}-${cmd}"="_do_repo_${cmd} ${proj_dir} ${repo}"
     done
 }
 
