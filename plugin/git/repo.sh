@@ -65,7 +65,7 @@ function _do_git_repo_help() {
 
     if [ "${mode}" = "--short" ]; then 
         echo "
-  ${repo}-git-help: 
+  do-${repo}-git-help: 
     See git command helps"
         return
     fi 
@@ -75,16 +75,16 @@ function _do_git_repo_help() {
     _do_print_line_1 "repository's commands"
 
     echo "  
-  ${repo}-git-help: 
+  do-${repo}-git-help: 
     See this help.
 
-  ${repo}-git-status: 
+  do-${repo}-git-status: 
     See the repository git status.
         
-  ${repo}-git-add:
+  do-${repo}-git-add:
     Stage all modified file.
         
-  ${repo}-git-commit <message>:
+  do-${repo}-git-commit <message>:
     Git commit all changes with the specifed commit message.
 "
     
@@ -99,7 +99,6 @@ function _do_git_repo_help() {
 
   do-all-git-commit <message>: 
     Git commit changes for all repositories with the specified commit message.
-
 "
 }
 

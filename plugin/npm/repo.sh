@@ -56,7 +56,7 @@ function _do_npm_repo_clean() {
     fi 
 
     for dir in $(_do_repo_dir_array_print "${repo}" "npm"); do
-        _do_npm_repo_proj_cmd \"${proj_dir}\" \"${repo}\" \"${dir}\" npm install
+        _do_npm_repo_proj_cmd ${proj_dir} ${repo} ${dir} npm install
     done
 
     local err=$?
@@ -78,7 +78,7 @@ function _do_npm_repo_build() {
     local err=0
     local dir
     for dir in $(_do_repo_dir_array_print "${repo}" "npm"); do
-        _do_npm_repo_proj_cmd \"${proj_dir}\" \"${repo}\" \"${dir}\" npm install || err=1
+        _do_npm_repo_proj_cmd ${proj_dir} ${repo} ${dir} npm install || err=1
     done
 
     _do_error_report $err "$title"
@@ -98,7 +98,7 @@ function _do_npm_repo_test() {
     local err=0
     local dir
     for dir in $(_do_repo_dir_array_print "${repo}" "npm"); do
-        _do_npm_repo_proj_cmd \"${proj_dir}\" \"${repo}\" \"${dir}\" npm run test || err=1
+        _do_npm_repo_proj_cmd ${proj_dir} ${repo} ${dir} npm run test || err=1
     done
 
     _do_error_report $err "$title"
@@ -170,19 +170,19 @@ function _do_npm_repo_init() {
 
     local name
     for name in $(_do_repo_dir_array_print "${repo}" "npm"); do
-        _do_log_debug "npm" "  $repo/$name"
+        _do_log_debug "npm" "$repo/$name"
 
         if [ "$name" != "." ]; then 
             local cmd=$(_do_string_to_alias_name ${name})
 
             # Adds command to build a sub project
-            alias "${repo}-npm-build-${cmd}"="_do_npm_repo_proj_cmd \"${proj_dir}\" \"${repo}\" \"${name}\" npm install"
+            alias "${repo}-npm-build-${cmd}"="_do_npm_repo_proj_cmd ${proj_dir} ${repo} ${name} npm install"
 
             # Adds command to clean a sub project
-            alias "${repo}-npm-clean-${cmd}"="_do_npm_repo_proj_cmd \"${proj_dir}\" \"${repo}\" \"${name}\" npm run clean"
+            alias "${repo}-npm-clean-${cmd}"="_do_npm_repo_proj_cmd ${proj_dir} ${repo} ${name} npm run clean"
 
             # Adds command to test a sub project
-            alias "${repo}-npm-test-${cmd}"="_do_npm_repo_proj_cmd \"${proj_dir}\" \"${repo}\" \"${name}\" npm run test"
+            alias "${repo}-npm-test-${cmd}"="_do_npm_repo_proj_cmd ${proj_dir} ${repo} ${name} npm run test"
         fi
     done
 }
