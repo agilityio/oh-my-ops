@@ -95,7 +95,7 @@ function do-update() {
     _do_print_header_2 "Update dependencies"
 
     _do_dir_push $(_do_src_dir)
-    git submodule update --recursive
+    git submodule update --remote --merge
     _do_dir_pop
 }
 ' > ".do.sh"
@@ -109,18 +109,6 @@ echo '# The array of plugin name to be included. If this variable is not specifi
 # The array of plugin name to be excluded. This list have higher priority
 # than the above plugins list.
 # DO_PLUGINS_EXCLUDED=slack
-
-
-# Updates submodules like oh-my-ops framework
-#
-function do-update() {
-    _do_print_header_2 "Update dependencies"
-
-    eval do-cd
-
-    git submodule update --remote
-}
-
 
 source vendor/oh-my-ops/activate.sh $@
 ' > "activate.sh"
