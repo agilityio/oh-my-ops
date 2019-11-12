@@ -1,3 +1,5 @@
+_do_plugin "npm"
+
 proj_dir=$(_do_proj_default_get_dir)
 repo="test-gen"
 repo_dir="${proj_dir}/${repo}"
@@ -5,8 +7,8 @@ repo_dir="${proj_dir}/${repo}"
 function test_setup() {
     rm -rfd "${repo_dir}"
     # Generates the new npm repository
-    _do_repo_gen ${repo}
-    _do_dir_assert ${repo_dir}
+    _do_repo_gen "${proj_dir}" "${repo}"
+    _do_dir_assert "${repo_dir}"
 
     _do_npm_repo_gen "${proj_dir}" "${repo}" || _do_assert_fail
     _do_file_assert "${repo_dir}/package.json"

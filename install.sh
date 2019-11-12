@@ -87,6 +87,17 @@ echo 'function _do_do_repo_plugin_ready() {
     _do_log_level_debug "do"
     _do_log_info "do" "do repo is ready"
 }
+
+
+# Updates submodules like oh-my-ops framework
+#
+function do-update() {
+    _do_print_header_2 "Update dependencies"
+
+    _do_dir_push $(_do_src_dir)
+    git submodule update --recursive
+    _do_dir_pop
+}
 ' > ".do.sh"
 
 

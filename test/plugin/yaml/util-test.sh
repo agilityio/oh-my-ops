@@ -1,3 +1,4 @@
+_do_plugin "yaml"
 
 function test_parse() {
     local dir="$(_do_src_dir)"

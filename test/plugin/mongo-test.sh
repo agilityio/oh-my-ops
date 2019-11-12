@@ -1,3 +1,5 @@
+_do_plugin "mongo"
+
 function test_do_mongo() {
     # Removes the image
     local img=${_DO_MONGO_DOCKER_IMG}

@@ -49,7 +49,7 @@ function _do_repo_alias_add() {
     local cmd
     for cmd in $cmds; do
         local func="_do_${plugin}_repo_$(_do_string_to_undercase $cmd)"
-        local repo_alias="${repo}-${plugin}-$(_do_string_to_dash ${cmd})"
+        local repo_alias="do-${repo}-${plugin}-$(_do_string_to_dash ${cmd})"
 
         _do_log_debug "repo" "Register alias '${repo_alias}' to '${func}'"
 

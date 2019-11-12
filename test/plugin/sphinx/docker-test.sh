@@ -1,3 +1,5 @@
+_do_plugin "sphinx"
+
 img=${_DO_SPHINX_DOCKER_IMG}
 
 

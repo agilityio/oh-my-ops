@@ -8,7 +8,8 @@ function _do_dir_pop() {
 }
 
 function _do_dir_normalized() {
-    _do_dir_push $1 
+    local dir=${1?'dir arg required'}
+    _do_dir_push "${dir}" 
     echo $(pwd)
     _do_dir_pop
 }

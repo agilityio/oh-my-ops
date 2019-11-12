@@ -13,28 +13,28 @@ function _do_dotnet_repo_help() {
     _do_print_header_2 "$repo: Dotnet help"
 
     echo "  
-  ${repo}-dotnet-help: 
+  do-${repo}-dotnet-help: 
     See dotnet command helps
 
-  ${repo}-dotnet-clean: 
+  do-${repo}-dotnet-clean: 
     Cleans dotnet build output.
 
-  ${repo}-dotnet-build: 
+  do-${repo}-dotnet-build: 
     Builds dotnet repository.
 
-  ${repo}-dotnet-start: 
+  do-${repo}-dotnet-start: 
     Starts the dotnet web server as daemon, with live-reloading.
 
-  ${repo}-dotnet-watch: 
+  do-${repo}-dotnet-watch: 
     Watches the dotnet web server, with live-reloading.
 
-  ${repo}-dotnet-stop: 
+  do-${repo}-dotnet-stop: 
     Stops the dotnet web server.
 
-  ${repo}-dotnet-status: 
+  do-${repo}-dotnet-status: 
     Displays the dotnet status.
 
-  ${repo}-dotnet-web: 
+  do-${repo}-dotnet-web: 
     Opens the dotnet web page."
 
     # Prints out all aliases for solution files
@@ -42,13 +42,13 @@ function _do_dotnet_repo_help() {
         if [ "$name" != "." ]; then 
             local cmd=$(_do_string_to_alias_name ${name})
             echo "  
-  ${repo}-dotnet-clean-${cmd}:
+  do-${repo}-dotnet-clean-${cmd}:
     Runs dotnet clean on $name
 
-  ${repo}-dotnet-build-${cmd}:
+  do-${repo}-dotnet-build-${cmd}:
     Runs dotnet build on $name
 
-  ${repo}-dotnet-test-${cmd}:
+  do-${repo}-dotnet-test-${cmd}:
     Runs dotnet test on $name"
         fi
     done
@@ -59,13 +59,13 @@ function _do_dotnet_repo_help() {
         if [ "$name" != "." ]; then 
             local cmd=$(_do_string_to_alias_name ${name})
             echo "  
-  ${repo}-dotnet-clean-${cmd}:
+  do-${repo}-dotnet-clean-${cmd}:
     Runs dotnet clean on $name
 
-  ${repo}-dotnet-build-${cmd}:
+  do-${repo}-dotnet-build-${cmd}:
     Runs dotnet build on $name
 
-  ${repo}-dotnet-test-${cmd}:
+  do-${repo}-dotnet-test-${cmd}:
     Runs dotnet test on $name"
         fi
     done
@@ -112,7 +112,7 @@ function _do_dotnet_repo_enabled() {
     local proj_dir=$1
     local repo=$2
 
-    if _do_repo_dir_array_is_empty "${repo}" "dotnet-sln" || _do_repo_dir_array_exists "${repo}" "dotnet-csproj"; then 
+    if _do_repo_dir_array_is_empty "${repo}" "dotnet-sln" && _do_repo_dir_array_is_empty "${repo}" "dotnet-csproj"; then 
         return 1
     else 
         return 0
@@ -139,6 +139,7 @@ function _do_dotnet_repo_uninit() {
         _do_repo_dir_array_destroy "${repo}" "dotnet-csproj"
     fi
 }
+
 
 # Initializes dotnet support for a repository.
 #
@@ -178,13 +179,13 @@ function _do_dotnet_repo_init() {
             local cmd=$(_do_string_to_alias_name ${name})
 
             # Adds command to build a sub project
-            alias "${repo}-dotnet-build-${cmd}"="_do_dotnet_repo_proj_cmd ${proj_dir} ${repo} $name dotnet build"
+            alias "do-${repo}-dotnet-build-${cmd}"="_do_dotnet_repo_proj_cmd ${proj_dir} ${repo} $name dotnet build"
 
             # Adds command to clean a sub project
-            alias "${repo}-dotnet-clean-${cmd}"="_do_dotnet_repo_proj_cmd ${proj_dir} ${repo} $name dotnet clean"
+            alias "do-${repo}-dotnet-clean-${cmd}"="_do_dotnet_repo_proj_cmd ${proj_dir} ${repo} $name dotnet clean"
 
             # Adds command to test a sub project
-            alias "${repo}-dotnet-test-${cmd}"="_do_dotnet_repo_proj_cmd ${proj_dir} ${repo} $name dotnet test"
+            alias "do-${repo}-dotnet-test-${cmd}"="_do_dotnet_repo_proj_cmd ${proj_dir} ${repo} $name dotnet test"
         fi
     done
 
@@ -197,13 +198,13 @@ function _do_dotnet_repo_init() {
             local cmd=$(_do_string_to_alias_name ${name})
 
             # Adds command to build a sub project
-            alias "${repo}-dotnet-build-${cmd}"="_do_dotnet_repo_proj_cmd ${proj_dir} ${repo} $name dotnet build"
+            alias "do-${repo}-dotnet-build-${cmd}"="_do_dotnet_repo_proj_cmd ${proj_dir} ${repo} $name dotnet build"
 
             # Adds command to clean a sub project
-            alias "${repo}-dotnet-clean-${cmd}"="_do_dotnet_repo_proj_cmd ${proj_dir} ${repo} $name dotnet clean"
+            alias "do-${repo}-dotnet-clean-${cmd}"="_do_dotnet_repo_proj_cmd ${proj_dir} ${repo} $name dotnet clean"
 
             # Adds command to test a sub project
-            alias "${repo}-dotnet-test-${cmd}"="_do_dotnet_repo_proj_cmd ${proj_dir} ${repo} $name dotnet test"
+            alias "do-${repo}-dotnet-test-${cmd}"="_do_dotnet_repo_proj_cmd ${proj_dir} ${repo} $name dotnet test"
         fi
     done
 }
@@ -223,7 +224,7 @@ function _do_dotnet_repo_cmd() {
 
     local err=0
     for dir in $(_do_repo_dir_array_print "${repo}" "dotnet-sln"); do
-        _do_npm_repo_proj_cmd \"${proj_dir}\" \"${repo}\" \"${dir}\" $@ || err=1
+        _do_dotnet_repo_proj_cmd "${proj_dir}" "${repo}" "${dir}" $@ || err=1
     done
 
     _do_error_report $err "$title"
