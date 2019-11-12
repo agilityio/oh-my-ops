@@ -176,13 +176,13 @@ function _do_npm_repo_init() {
             local cmd=$(_do_string_to_alias_name ${name})
 
             # Adds command to build a sub project
-            alias "${repo}-npm-build-${cmd}"="_do_npm_repo_proj_cmd ${proj_dir} ${repo} ${name} npm install"
+            alias "do-${repo}-npm-build-${cmd}"="_do_npm_repo_proj_cmd ${proj_dir} ${repo} ${name} npm install"
 
             # Adds command to clean a sub project
-            alias "${repo}-npm-clean-${cmd}"="_do_npm_repo_proj_cmd ${proj_dir} ${repo} ${name} npm run clean"
+            alias "do-${repo}-npm-clean-${cmd}"="_do_npm_repo_proj_cmd ${proj_dir} ${repo} ${name} npm run clean"
 
             # Adds command to test a sub project
-            alias "${repo}-npm-test-${cmd}"="_do_npm_repo_proj_cmd ${proj_dir} ${repo} ${name} npm run test"
+            alias "do-${repo}-npm-test-${cmd}"="_do_npm_repo_proj_cmd ${proj_dir} ${repo} ${name} npm run test"
         fi
     done
 }

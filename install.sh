@@ -118,7 +118,7 @@ function do-update() {
 
     eval do-cd
 
-    git submodule update --recursive
+    git submodule update --remote --merge
 }
 
 
