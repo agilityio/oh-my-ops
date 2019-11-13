@@ -5,7 +5,7 @@
 #
 # See: https://www.artificialworlds.net/blog/2012/10/17/bash-associative-array-examples/
 
-_do_log_level_warn "hook"
+_do_log_level_warn 'hook'
 
 
 # Declares an associate array (or map)
@@ -19,14 +19,14 @@ declare -A _do_hook_map
 # Notes that the function list is delimited by comma.
 #
 function _do_hook_before() {
-    local hook=$1
-    local func=$2
+    local hook=${1?'hook arg required'}
+    local func=${2?'func arg required'}
 
-    if _do_hook_exist "$hook" "$func"; then
+    if _do_hook_exist "${hook}" "${func}"; then
         return
     fi
 
-    _do_log_debug "hook" "Register $func before $hook"
+    _do_log_debug 'hook' "Register ${func} before ${hook}"
 
     local funcs=${_do_hook_map[$hook]}
     if [ -z "$funcs" ]; then
@@ -43,10 +43,10 @@ function _do_hook_before() {
 # Notes that the function list is delimited by comma.
 #
 function _do_hook_after() {
-    local hook=$1
-    local func=$2
+    local hook=${1?'hook arg required'}
+    local func=${2?'func arg required'}
 
-    if _do_hook_exist "$hook" "$func"; then
+    if _do_hook_exist "${hook}" "${func}"; then
         _do_log_debug "hook" "$func is already registered in $hook"
         return
     fi
