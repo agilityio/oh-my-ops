@@ -12,7 +12,4 @@ function _do_npm_plugin_init() {
     fi 
 
     _do_log_info "npm" "Initialize plugin"    
-
-    # Provides shortcuts for developer
-    alias _do_npm="_do_npm_repo_add"
 }

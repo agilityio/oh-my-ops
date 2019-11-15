@@ -8,18 +8,18 @@ function _do_openapi_repo_cmd() {
 
     _do_dir_push "${dir}" || return 1
 
-    local lang=''
     local out_dir='.'
+    local generator=''
     local config_file
     local schema_file
 
     {
         { 
             case "${cmd}" in 
-            build-dart-client)
-                lang='dart'
-                config_file=${1:-}
-                schema_file=${2:-}
+            generate)
+                generator=${1?'generator arg is required'}
+                config_file=${2:-}
+                schema_file=${3:-}
                 shift 2
 
                 if [ -z "${config_file}" ]; then 
@@ -36,7 +36,7 @@ function _do_openapi_repo_cmd() {
             esac
         } &&
         openapi-generator generate \
-            -g "${lang}" -c "${config_file}" \
+            -g "${generator}" -c "${config_file}" \
             -i "${schema_file}" -o ${out_dir}
     } || {
         err=1

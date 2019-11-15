@@ -3,9 +3,16 @@
 #   1. dir: The project directories
 #   2. name: The project custom name.
 #
-function _do_npm_repo_add() {
+function _do_npm() {
     local name=${1?'name arg required'}
     shift 1
 
-    _do_repo_plugin_cmd_add "${name}" 'npm' "install" "clean"
+    _do_repo_plugin_cmd_add "${name}" 'npm' "install" "clean" $@
+}
+
+function _do_npm_angular() {
+    local name=${1?'name arg required'}
+    shift 1
+
+    _do_repo_plugin_cmd_add "${name}" 'npm' 'clean' 'start' 'build' 'test' 'lint' 'e2e' $@
 }
