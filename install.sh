@@ -106,9 +106,6 @@ echo '# The array of plugin name to be included. If this variable is not specifi
 # all plugins found will be included by default.
 # DO_PLUGINS="proj git prompt"
 
-# The array of plugin name to be excluded. This list have higher priority
-# than the above plugins list.
-# DO_PLUGINS_EXCLUDED=slack
 
 source vendor/oh-my-ops/activate.sh $@
 ' > "activate.sh"

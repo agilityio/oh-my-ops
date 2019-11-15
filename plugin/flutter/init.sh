@@ -12,8 +12,4 @@ function _do_flutter_plugin_init() {
     fi 
 
     _do_log_info 'flutter' 'Initialize plugin'
-
-    # Provides shortcuts for developer
-    alias _do_flutter=_do_flutter_repo_add
-    alias _do_flutter_mobile=_do_flutter_repo_mobile_add
 }

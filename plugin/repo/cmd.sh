@@ -1,3 +1,5 @@
+declare -Ag _DO_REPO_PLUGIN_CMD_OPTS
+
 # Adds plugin commands for a repository. This will register alias for 
 # trigger the plugin command easily in shell.
 # For example, register plugin 'npm' , 'build' command on repository 'lime'
@@ -38,6 +40,23 @@ function _do_repo_plugin_cmd_add() {
 
         shift 1
     done
+}
+
+
+function _do_repo_plugin_cmd_opts() {
+    local repo=${1?'repo arg required'}
+    local plugin=${2?'plugin arg required'}
+    local cmd=${3?'cmd arg required'}
+    shift 3
+
+    if [[ $# -lt 0 ]]; then  
+        return
+    fi
+
+    # Stores the command ops for later use
+    local key="${repo}-${plugin}-${cmd}"
+   _DO_REPO_PLUGIN_CMD_OPTS[${key}]="$@"
+
 }
 
 
@@ -95,7 +114,6 @@ function __do_repo_plugin_cmd_alias() {
     local name="do-${repo}-${plugin}-${cmd}"
     _do_log_debug 'repo' "Adds cmd '${cmd}' alias '${name}' for repo: ${repo}, at dir: ${dir}"
 
-    local handler="${name}"
     if type "${name}" &>/dev/null; then
         # The function dedicated for this command is provided.
         # Nothing has to be done.
@@ -103,28 +121,27 @@ function __do_repo_plugin_cmd_alias() {
     fi
 
     # First, looks for the exact command handler to run.
+    local handler=''
+
     local exact_handler="_do_${plugin}_repo_cmd_${cmd}"
+    local generic_handler="_do_${plugin}_repo_cmd"
+
     if type "${exact_handler}" &>/dev/null; then
-        # The function handler exists, execute it.
-        eval "function ${name}() {
-            ${exact_handler} ${dir} ${repo} ${cmd}
-        }"
-        return
+        handler="${exact_handler}"
+    elif type "${generic_handler}" &>/dev/null; then
+        handler="${generic_handler}"
     fi
 
-    # If the exact command handler to run does not exists, 
-    # Try the general command handler for the plugin in.
-    local generic_handler="_do_${plugin}_repo_cmd"
-    if type "${generic_handler}" &>/dev/null; then
+    if [ -z "${handler}" ]; then 
+        _do_log_warn 'repo' "No command handler found for ${name}. Please add '${name}', '${exact_handler}', or '${generic_handler}' function to handle it."
+        return 1
+    else
         # The function handler exists, execute it.
         eval "function ${name}() { 
-            ${generic_handler} ${dir} ${repo} ${cmd}
+            ${handler} ${dir} ${repo} ${cmd} \${_DO_REPO_PLUGIN_CMD_OPTS[${repo}-${plugin}-${cmd}]}
         }"
         return
     fi
-
-    _do_log_warn 'repo' "No command handler found for ${name}. Please add '${name}', '${exact_handler}', or '${generic_handler}' function to handle it."
-    return 1
 }
 
 function _do_repo_plugin_list() {
