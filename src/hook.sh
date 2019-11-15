@@ -5,7 +5,7 @@
 #
 # See: https://www.artificialworlds.net/blog/2012/10/17/bash-associative-array-examples/
 
-_do_log_level_warn 'hook'
+_do_log_level_debug 'hook'
 
 
 # Declares an associate array (or map)

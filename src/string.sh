@@ -64,7 +64,7 @@ function _do_string_to_lowercase_var() {
 }
 
 function _do_string_to_alias_name() {
-    _do_string_to_dash "$1" | awk '{print tolower($0)}'
+    _do_string_to_dash "$1" | awk '{print tolower($0)}' | sed -E 's/(src|bin)-//g'
 }
 
 function _do_string_urlencode() {
@@ -89,4 +89,39 @@ function _do_string_urldecode() {
 
     local url_encoded="${1//+/ }"
     printf '%b' "${url_encoded//%/\\x}"
+}
+
+
+# Checks if the specified string start with the specified prefix.
+# 
+# Arguments: 
+#   1. s1: The string to check.
+#   2. prefix: The prefix to check.
+#
+function _do_string_startswith() {
+    local s1=${1?'s1 arg required'}
+    local prefix=${2?'prefix arg required'}
+
+    if  [[ "${s1}" == "${prefix}"* ]]; then
+        return 0
+    else    
+        return 1
+    fi
+}
+
+# Checks if the specified string ends with the specified suffix.
+# 
+# Arguments: 
+#   1. s1: The string to check.
+#   2. suffix: The prefix to check.
+#
+function _do_string_endswith() {
+    local s1=${1?'s1 arg required'}
+    local suffix=${2?'suffix arg required'}
+
+    if  [[ "${s1}" == *"${suffix}" ]]; then
+        return 0
+    else    
+        return 1
+    fi
 }
