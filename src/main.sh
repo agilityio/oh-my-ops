@@ -118,9 +118,3 @@ fi
 _do_plugin_init
 
 echo "Activated in $(_do_timer_end) seconds."
-
-# Display banner for full activation.
-if [ "$_DO_MAIN_QUICK" == "no" ]; then 
-    _do_print_banner
-fi 
-

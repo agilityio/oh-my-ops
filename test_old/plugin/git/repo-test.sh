@@ -1,4 +1,4 @@
-source "$(_do_src_dir)/util.sh"
+_do_src_include 'util.sh'
 
 
 function test_setup() {

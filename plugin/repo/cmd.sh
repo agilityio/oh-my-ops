@@ -1,190 +1,223 @@
+declare -Ag _DO_REPO_PLUGIN_CMD_OPTS
 
-# ==============================================================================
-# Project Repository Support
-#
-# Basic Life Cycle Command
+# Adds plugin commands for a repository. This will register alias for 
+# trigger the plugin command easily in shell.
+# For example, register plugin 'npm' , 'build' command on repository 'lime'
+# will result in an alias named 'do-lime-npm-build'.
 # 
-# init:
-#   Initializes devops supports.
+# Arguments:
+#   1. repo: The repository to add the command for.
+#   2. plugin: The plugin that going to handle the command. 
+#   3. names: The command name to add.
 #
-# cd: 
-#   Changes the working directory to the repository's directory.
-#
-# help:
-#   Prints out helps for available devops commands.
-# 
-# clean:
-#   Cleans the repository built artifact.
-# 
-# build: 
-#   Builds the repository.
-#
-# test: 
-#   Test the repository.
-#
-# start: 
-#   Starts the repository in local environment with live-reloading ability.
-#
-# deploy:
-#   Deploys the repository.
-#
-# ==============================================================================
+function _do_repo_plugin_cmd_add() {
+    local repo=${1?'repo arg required'}
+    local plugin=${2?'plugin arg required'}
+    shift 2
 
-# The list of commands available to any project repository.
-_DO_REPO_COMMANDS=(
-    "init"
-    "cd"
-    "status"
-    "help"
-    "clean"
-    "build"
-    "test"
-    "start"
-    "stop"
-    "watch"
-    "deploy"
-)
+    [[ $# -gt 0 ]] || _do_assert_fail 'cmds arg required'
 
+    _do_plugin_is_loaded "${plugin}" || _do_assert_fail "Invalid or not loaded plugin '${plugin}'"
 
-# Initializes project repository support.
-# Other plugins will register hooks on this function to implement
-# additional behaviors. For example, the git plugin would add hooks to this 
-# function to provides more git-specific command likes `repo-git-status`, etc.
-#
-function _do_repo_init() {
-    local proj_dir=$1
-    local repo=$2
+    # Gets the directory where the repostory is at.
+    local dir=$(_do_repo_dir_get "${repo}")
 
-    _do_log_debug "repo" "Init $proj_dir $repo"
+    local plugins=$(_do_plugin_array_name "${repo}")
+    local cmds=$(_do_plugin_cmd_array_name "${repo}" "${plugin}")
 
-    local do_sh="$proj_dir/$repo/.do.sh"
+    _do_array_exists "${plugins}" ||_do_array_new "${plugins}"
+    _do_array_exists "${cmds}" ||_do_array_new "${cmds}"
 
-    if [ -f "${do_sh}" ]; then 
-        # Activates the file as a plugin
-        local plugin_name=$(_do_string_to_undercase $repo)
-        if _do_plugin_is_loaded $plugin_name; then 
-            _do_log_warn "repo" "Skips loading repository ${repo} do.sh file because of duplicated with plugin name."
-        else
-            # Include the .do.sh file found.
-            source ${do_sh}
-            _do_log_info "repo" "Loads repository ${repo}/.do.sh file"
-            _DO_REPO_INIT_LIST+=( "$repo" )
-        fi
-    fi 
+    _do_array_contains "${plugins}" "${plugin}" || _do_array_append "${plugins}" "${plugin}"
 
-    _do_repo_hook_call "${proj_dir}" "${repo}" "init"
+    # Appends the new commands to it and make sure no duplicate
+    while (( $# > 0 )); do
+        local cmd="$1"
+        _do_array_contains "${cmds}" "${cmd}" || _do_array_append "${cmds}" "${cmd}"
 
-    # Adds alias to quickly go to a repository directory
-    for cmd in "${_DO_REPO_COMMANDS[@]}"; do 
-        alias "do-${repo}-${cmd}"="_do_repo_${cmd} ${proj_dir} ${repo}"
+        # Registers alias for execute the command.
+        __do_repo_plugin_cmd_alias "${dir}" "${repo}" "${plugin}" "${cmd}"
+
+        shift 1
     done
 }
 
-# Prints out helps for all repo's available commands.
+
+function _do_repo_plugin_cmd_opts() {
+    local repo=${1?'repo arg required'}
+    local plugin=${2?'plugin arg required'}
+    local cmd=${3?'cmd arg required'}
+    shift 3
+
+    if [[ $# -lt 0 ]]; then  
+        return
+    fi
+
+    # Stores the command ops for later use
+    local key="${repo}-${plugin}-${cmd}"
+   _DO_REPO_PLUGIN_CMD_OPTS[${key}]="$@"
+
+}
+
+
+function _do_repo_plugin_exists() {
+    local repo=${1?'repo arg required'}
+    local plugin=${2?'plugin arg required'}
+
+    local plugins=$(_do_plugin_array_name "${repo}")
+    if _do_array_exists "${plugins}" && _do_array_contains "${plugins}" "${plugin}"; then 
+        return 0
+    else 
+        return 1
+    fi
+}
+
+function _do_repo_plugin_cmd_exists() {
+    local repo=${1?'repo arg required'}
+    local plugin=${2?'plugin arg required'}
+    local cmd=${3?'cmd arg required'}
+
+    local cmds=$(_do_plugin_cmd_array_name "${repo}" "${plugin}")
+    if _do_array_exists "${cmds}" && _do_array_contains "${cmds}" "${cmd}"; then 
+        return 0
+    else 
+        return 1
+    fi
+}
+
+
+# Handles the change directory command.
+# This command be registered automatically for all repository.
 #
-function _do_repo_help() {
-    local proj_dir=$1
-    local repo=$2
-
-    _do_print_header_2 "${repo}-help"
-
-    # Triggers hook call for other plugins
-    _do_repo_hook_call "${proj_dir}" "${repo}" "help" "--short"
+function _do_repo_repo_cmd_cd() {
+    local dir=${1?'dir arg required'}
+    cd ${dir} &> /dev/null
 }
 
 
-# Changes the current directory to the project's repo root.
+# Internal function to build alias for a single plugin command on 
+# the specified repository.
 #
-function _do_repo_cd() {
-    local proj_dir=$1
-    local repo=$2
+# Arguments:
+#   1. dir: The directory where the repository is at.
+#   2. repo: The repository to add the alias for.
+#   3. plugin: The plugin to register.
+#   4. cmd: The command to register.
+#
+function __do_repo_plugin_cmd_alias() {
+    local dir=${1?'repo arg required'}
+    local repo=${2?'repo arg required'}
+    local plugin=${3?'plugin arg required'}
+    local cmd=${4?'cmd arg required'}
 
-    cd "${proj_dir}/${repo}"
+    # Builds the alias to executes the command
+    local name="do-${repo}-${plugin}-${cmd}"
+    _do_log_debug 'repo' "Adds cmd '${cmd}' alias '${name}' for repo: ${repo}, at dir: ${dir}"
 
-    # Triggers hook call for other plugin.
-    _do_repo_hook_call "${proj_dir}" "${repo}" "cd"
+    if type "${name}" &>/dev/null; then
+        # The function dedicated for this command is provided.
+        # Nothing has to be done.
+        return
+    fi
+
+    # First, looks for the exact command handler to run.
+    local handler=''
+
+    local exact_handler="_do_${plugin}_repo_cmd_${cmd}"
+    local generic_handler="_do_${plugin}_repo_cmd"
+
+    if type "${exact_handler}" &>/dev/null; then
+        handler="${exact_handler}"
+    elif type "${generic_handler}" &>/dev/null; then
+        handler="${generic_handler}"
+    fi
+
+    if [ -z "${handler}" ]; then 
+        _do_log_warn 'repo' "No command handler found for ${name}. Please add '${name}', '${exact_handler}', or '${generic_handler}' function to handle it."
+        return 1
+    else
+        # The function handler exists, execute it.
+        eval "function ${name}() { 
+            ${handler} ${dir} ${repo} ${cmd} \${_DO_REPO_PLUGIN_CMD_OPTS[${repo}-${plugin}-${cmd}]}
+        }"
+        return
+    fi
+}
+
+function _do_repo_plugin_list() {
+    local repo=${1?'repo arg required'}
+
+    local plugins=$(_do_plugin_array_name "${repo}")
+    _do_array_print "${plugins}"
 }
 
 
-function _do_repo_status() {
-    local proj_dir=$1
-    local repo=$2
+# Gets out the list of command available for a repository.
+#
+# Arguments: 
+#   1. repo: The repository to get the command.
+#   2. plugin: The plugin to get the command.
+#
+function _do_repo_plugin_cmd_list() {
+    local repo=${1?'repo arg required'}
+    local plugin=${2?'plugin arg required'}
 
-    _do_print_header_2 "${repo}-status"
-
-    # Triggers hook call for other plugin.
-    _do_repo_hook_call "${proj_dir}" "${repo}" "status"
-}
-
-function _do_repo_clean() {
-    local proj_dir=$1
-    local repo=$2
-
-    _do_print_header_2 "${repo}-clean"
-
-    # Triggers hook call for other plugin.
-    _do_repo_hook_call "${proj_dir}" "${repo}" "clean"
-}
-
-function _do_repo_build() {
-    local proj_dir=$1
-    local repo=$2
-
-    _do_print_header_2 "${repo}-build"
-
-    # Triggers hook call for other plugin.
-    _do_repo_hook_call "${proj_dir}" "${repo}" "build"
-}
-
-function _do_repo_test() {
-    local proj_dir=$1
-    local repo=$2
-
-    _do_print_header_2 "${repo}-test"
-
-    # Triggers hook call for other plugin.
-    _do_repo_hook_call "${proj_dir}" "${repo}" "test"
-}
-
-function _do_repo_start() {
-    local proj_dir=$1
-    local repo=$2
-
-    _do_print_header_2 "${repo}-start"
-
-    # Triggers hook call for other plugin.
-    _do_repo_hook_call "${proj_dir}" "${repo}" "start"
+    local arr=$(_do_plugin_cmd_array_name "${repo}" "${plugin}")
+    _do_array_print "${arr}"
 }
 
 
-function _do_repo_stop() {
-    local proj_dir=$1
-    local repo=$2
+# Executes all commands for the specified repository and plugins.
+#
+# Arguments:
+#   1. repo: The repo to run 
+#   2. plugin: The plugin to run.
+#   3. cmds: The list of commands to run
+#
+function _do_repo_plugin_cmd_run() {
+    local repo=${1?'repo arg required'}
+    local plugin=${2?'plugin arg required'}
+    shift 2
 
-    _do_print_header_2 "${repo}-stop"
+    # Makes sure at least one command to run.
+    [[ $# -gt 0 ]] || _do_assert_fail 'cmds arg required'
 
-    # Triggers hook call for other plugin.
-    _do_repo_hook_call "${proj_dir}" "${repo}" "stop"
+    local arr=$(_do_plugin_cmd_array_name "${repo}" "${plugin}")
+
+    # Gets the directory where the repostory is at.
+    local dir=$(_do_repo_dir_get "${repo}")
+
+
+    # Appends the new commands to it and make sure no duplicate
+    while (( $# > 0 )); do
+        local cmd="$1"
+
+        # Makes sure that the command has already registered.
+        _do_array_contains "${arr}" "${cmd}" || \
+            _do_assert_fail "${plugin}-${cmd} is not available for repository ${repo}"
+
+        # Executes the command handler
+        local handler="do-${repo}-${plugin}-${cmd}"
+        _do_print_line_1 "Runs ${handler}"
+
+        local dir=$(_do_repo_dir_get "${repo}")
+
+
+        ${handler} "${dir}" "${repo}" ${cmd} || _do_assert_fail "Fail to executes ${handler}"
+
+        shift 1
+    done
 }
 
 
-function _do_repo_watch() {
-    local proj_dir=$1
-    local repo=$2
-
-    _do_print_header_2 "${repo}-watch"
-
-    # Triggers hook call for other plugin.
-    _do_repo_hook_call "${proj_dir}" "${repo}" "watch"
+function _do_plugin_array_name() {
+    local repo=${1?'repo arg required'}
+    echo "_repo_${repo}"
 }
 
 
-function _do_repo_deploy() {
-    local proj_dir=$1
-    local repo=$2
-
-    _do_print_header_2 "${repo}-deploy"
-
-    # Triggers hook call for other plugin.
-    _do_repo_hook_call "${proj_dir}" "${repo}" "deploy"
+function _do_plugin_cmd_array_name() {
+    local repo=${1?'repo arg required'}
+    local plugin=${2?'plugin arg required'}
+    echo "_repo_${repo}_${plugin}"
 }

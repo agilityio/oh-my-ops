@@ -20,6 +20,12 @@ function _do_array_new() {
 }
 
 
+function _do_array_new_if_not_exists() {
+    local name=${1?'name arg required'}
+    _do_array_exists "${name}" || _do_array_new "${name}"
+}
+
+
 # Destroys an array data structure
 #
 # Arguments:
@@ -98,8 +104,24 @@ function _do_array_contains() {
 #   Otherwise, echo -1.
 # 
 function _do_array_index_of() {
-    local name=$(_do_array_var_name_required $1)
+    local name=${1?'name arg required'}
     local val=${2?'val arg required'}
+
+    local arr="$(_do_array_var_name ${name})[@]"
+
+    local i=0
+    for v in ${!arr}; do 
+        if [ "${v}" == "${val}" ]; then 
+            echo "${i}"
+            return 0
+        fi
+
+        let i+=1
+    done
+
+    # Not found the element
+    echo "-1"
+    return 1
 }
 
 
@@ -154,6 +176,25 @@ function _do_array_append() {
 
         shift 1
     done
+}
+
+function _do_array_get() {
+    local name=${1?'name arg required'}
+    local var_name=$(_do_array_var_name_required "${name}")
+
+    local idx=${2?'idx arg required'}
+    local expr="${var_name}[${idx}]"
+    echo "${!expr}"
+}
+
+function _do_array_set() {
+    local name=${1?'name arg required'}
+    local var_name=$(_do_array_var_name_required "${name}")
+
+    local idx=${2?'idx arg required'}
+    local value=${3?'value arg required'}
+
+    eval "${var_name}[${idx}]='${value}'"
 }
 
 

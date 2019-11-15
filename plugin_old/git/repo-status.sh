@@ -1,16 +1,18 @@
+_do_log_level_warn "git"
 
-# Gets the git root directory of the current dir
+
+# Runs git status on the specified repository.
+# Arguments: 
+#   1. proj_dir: The project home directory.
+#   2. repo: The repository name.
 #
-function _do_git_util_get_root() {
-    local dir=$(git rev-parse --show-toplevel)
-    local err=$?
+function _do_git_repo_status() {
+    local proj_dir=${1?'proj_dir arg required'}
+    local repo=${2?'repo arg required'}    
 
-    if _do_error $error; then
-        echo ""
-    else
-        echo "$dir"
-    fi
+    _do_repo_cmd $proj_dir $repo "git status"
 }
+
 
 
 # Checks if the given git repository is up to date or not.
