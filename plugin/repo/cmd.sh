@@ -41,6 +41,32 @@ function _do_repo_plugin_cmd_add() {
 }
 
 
+function _do_repo_plugin_exists() {
+    local repo=${1?'repo arg required'}
+    local plugin=${2?'plugin arg required'}
+
+    local plugins=$(_do_plugin_array_name "${repo}")
+    if _do_array_exists "${plugins}" && _do_array_contains "${plugins}" "${plugin}"; then 
+        return 0
+    else 
+        return 1
+    fi
+}
+
+function _do_repo_plugin_cmd_exists() {
+    local repo=${1?'repo arg required'}
+    local plugin=${2?'plugin arg required'}
+    local cmd=${3?'cmd arg required'}
+
+    local cmds=$(_do_plugin_cmd_array_name "${repo}" "${plugin}")
+    if _do_array_exists "${cmds}" && _do_array_contains "${cmds}" "${cmd}"; then 
+        return 0
+    else 
+        return 1
+    fi
+}
+
+
 # Handles the change directory command.
 # This command be registered automatically for all repository.
 #

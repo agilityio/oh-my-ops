@@ -1,6 +1,6 @@
 _do_plugin 'repo'
 
-_do_log_level_debug 'proj'
+_do_log_level_warn 'proj'
 _do_src_include_others_same_dir
 
 
