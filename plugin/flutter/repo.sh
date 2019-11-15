@@ -11,5 +11,5 @@ function _do_flutter_lib() {
 }
 
 function _do_flutter_mobile() {
-    _do_flutter_lib $@ 'run' 'build-ios' 'build-android'
+    _do_flutter_lib $@ 'run' 'build:ios' 'build:android'
 }

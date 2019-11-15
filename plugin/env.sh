@@ -1,11 +1,5 @@
 _do_log_level_warn "env"
 
-# ==============================================================================
-# Plugin Init
-# ==============================================================================
-
-_DO_ENV_CMDS=( "help" "logout" )
-
 # The current working environment.
 DO_ENV=""
 
@@ -14,6 +8,13 @@ DO_ENV_LOCAL="local"
 
 # This is the default production environment
 DO_ENV_PROD="prod"
+
+_DO_ENV_CMDS=( "help" "logout" )
+
+# ==============================================================================
+# Plugin Init
+# ==============================================================================
+
 
 # Initializes env plugin.
 # Arguments: None.

@@ -10,9 +10,19 @@ function _do_npm() {
     _do_repo_plugin_cmd_add "${name}" 'npm' "install" "clean" $@
 }
 
+
 function _do_npm_angular() {
     local name=${1?'name arg required'}
     shift 1
 
     _do_repo_plugin_cmd_add "${name}" 'npm' 'clean' 'start' 'build' 'test' 'lint' 'e2e' $@
+}
+
+
+function _do_npm_api() {
+    local name=${1?'name arg required'}
+    shift 1
+
+    _do_repo_plugin_cmd_add "${name}" 'npm' 'clean' 'start' 'lint' \
+        'build' 'test' 'lint' 'e2e' $@
 }

@@ -31,10 +31,10 @@ function _do_flutter_repo_cmd() {
             install)
                 run="flutter pub get"
             ;;
-            build-android)
+            build:android)
                 run="flutter build apk"
             ;;
-            build-ios)
+            build:ios)
                 run="flutter build ios"
             ;;
             esac

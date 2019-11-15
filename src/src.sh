@@ -77,9 +77,9 @@ function _do_src_include() {
             source "$1"
         else 
             # This is directory to include
-            for name in $(ls -A $1); do
+            for name in $(ls -A $1/*.sh); do
                 if [ -f "./$name" ];  then 
-                    source ./$name
+                    source "$name"
                 fi
             done
         fi

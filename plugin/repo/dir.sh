@@ -73,7 +73,7 @@ function _do_repo_dir_add() {
     fi
 
     # Triggers hook so that other plugins can response to it.
-    # _do_hook_call 'before_repo_dir_add' "${dir}" "${repo}"
+    _do_hook_call 'before_repo_dir_add' "${dir}" "${repo}"
 
     _do_array_append '_repo_dir' "${dir}"
     _do_array_append '_repo_name' "${repo}"
@@ -82,7 +82,7 @@ function _do_repo_dir_add() {
     alias "do-${repo}-cd"="cd ${dir}"
 
     # Triggers hook so that other plugins can response to it.
-    # _do_hook_call 'after_repo_dir_add_' "${dir}" "${repo}"
+    _do_hook_call 'after_repo_dir_add_' "${dir}" "${repo}"
 }
 
 

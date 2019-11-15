@@ -1,9 +1,22 @@
 
-_do_log_level_debug "prompt"
+_do_log_level_warn "prompt"
 
 
 _DO_PROMPT_DIR=""
 _DO_PROMPT_UPDATE_FORCED="yes"
+
+
+# ==============================================================================
+# Plugin Init
+# ==============================================================================
+
+function _do_prompt_plugin_init() {
+    PROMPT_COMMAND=_do_prompt
+
+    # If the environment updated, update the prompt.
+    _do_hook_after "_do_env_login" "_do_prompt_force_update"
+}
+
 
 
 # This function is called whenever the current directory changed. 
@@ -48,21 +61,10 @@ function _do_prompt() {
 \[${_DO_FG_GREEN}\]➜ ${environment} ${text} \[${_DO_FG_NORMAL}\]"
 }
 
+
 function _do_prompt_force_update() {
     _do_log_debug "prompt" "force update"
     
     _DO_PROMPT_UPDATE_FORCED="yes"
     _do_prompt
 }
-
-# ==============================================================================
-# Plugin Init
-# ==============================================================================
-
-function _do_prompt_plugin_init() {
-    PROMPT_COMMAND=_do_prompt
-
-    # If the environment updated, update the prompt.
-    _do_hook_after "_do_env_login" "_do_prompt_force_update"
-}
-

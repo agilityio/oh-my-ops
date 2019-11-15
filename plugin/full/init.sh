@@ -12,7 +12,7 @@ function _do_full_plugin_init() {
     # These are the base life-cycle commands that commonly found in any 
     # project.
     if [ -z "${DO_FULL_BASE_CMDS}" ]; then 
-        DO_FULL_BASE_CMDS='help clean install build test'
+        DO_FULL_BASE_CMDS='status help clean install build doc test'
     fi
     
     # Provides some additional comands for apis development.
@@ -27,7 +27,7 @@ function _do_full_plugin_init() {
     
     # Provides some additional commands for mobile app development.
     if [ -z "${DO_FULL_MOBILE_APP_CMDS}" ]; then 
-        DO_FULL_MOBILE_APP_CMDS="${DO_FULL_BASE_CMDS} build-ios build-android run-ios run-android package deploy"
+        DO_FULL_MOBILE_APP_CMDS="${DO_FULL_BASE_CMDS} build:ios build:android run:ios run:android package deploy"
     fi
 
     # Provides some additional for a full project development.

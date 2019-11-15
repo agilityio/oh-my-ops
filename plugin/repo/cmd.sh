@@ -105,13 +105,15 @@ function _do_repo_repo_cmd_cd() {
 #   4. cmd: The command to register.
 #
 function __do_repo_plugin_cmd_alias() {
-    local dir=${1?'repo arg required'}
+   local dir=${1?'repo arg required'}
     local repo=${2?'repo arg required'}
     local plugin=${3?'plugin arg required'}
     local cmd=${4?'cmd arg required'}
 
     # Builds the alias to executes the command
-    local name="do-${repo}-${plugin}-${cmd}"
+    local cmd_d=$(_do_string_to_dash "${cmd}")
+    local name="do-${repo}-${plugin}-${cmd_d}"
+
     _do_log_debug 'repo' "Adds cmd '${cmd}' alias '${name}' for repo: ${repo}, at dir: ${dir}"
 
     if type "${name}" &>/dev/null; then
@@ -121,28 +123,44 @@ function __do_repo_plugin_cmd_alias() {
     fi
 
     # First, looks for the exact command handler to run.
-    local handler=''
+    local repo_u=$(_do_string_to_undercase "${repo}")
+    local plugin_u=$(_do_string_to_undercase "${plugin}") 
+    local cmd_u=$(_do_string_to_undercase "${cmd}")
 
-    local exact_handler="_do_${plugin}_repo_cmd_${cmd}"
-    local generic_handler="_do_${plugin}_repo_cmd"
+    local f1="_do_${repo_u}_${plugin_u}_${cmd_u}"
+    local f2="_do_${plugin_u}_repo_cmd_${cmd_u}"
+    local f3="_do_${plugin_u}_repo_cmd"
 
-    if type "${exact_handler}" &>/dev/null; then
-        handler="${exact_handler}"
-    elif type "${generic_handler}" &>/dev/null; then
-        handler="${generic_handler}"
-    fi
+    local funcs=( "${f1} ${f2} ${f3}" )
+    local func
+    for func in ${funcs[@]}; do 
+        if type ${func} &>/dev/null; then
+            # The function handler found. 
+            # Generates code for executing it.
+            eval "function ${name}() { 
+                local err=0
+                _do_dir_push ${dir}
 
-    if [ -z "${handler}" ]; then 
-        _do_log_warn 'repo' "No command handler found for ${name}. Please add '${name}', '${exact_handler}', or '${generic_handler}' function to handle it."
-        return 1
-    else
-        # The function handler exists, execute it.
-        eval "function ${name}() { 
-            ${handler} ${dir} ${repo} ${cmd} \${_DO_REPO_PLUGIN_CMD_OPTS[${repo}-${plugin}-${cmd}]}
-        }"
-        return
-    fi
+                { 
+                    _do_print_header_1 \"${name}\" &&
+                    ${func} ${dir} ${repo} ${cmd} \${_DO_REPO_PLUGIN_CMD_OPTS[${repo}-${plugin}-${cmd}]} &&
+                    _do_print_finished "${name}: Success!"
+                } || {
+                    err=1
+                    _do_print_error \"${name}: Failed\"
+                }
+
+                _do_dir_pop
+                return \${err}
+            }"
+            return
+        fi
+    done
+
+    _do_log_warn 'repo' "No handler for ${name}. Please add '${name}', '${f1}', '${f2}', or '${f3}' function to handle it."
+    return 1
 }
+
 
 function _do_repo_plugin_list() {
     local repo=${1?'repo arg required'}
@@ -164,49 +182,6 @@ function _do_repo_plugin_cmd_list() {
 
     local arr=$(_do_plugin_cmd_array_name "${repo}" "${plugin}")
     _do_array_print "${arr}"
-}
-
-
-# Executes all commands for the specified repository and plugins.
-#
-# Arguments:
-#   1. repo: The repo to run 
-#   2. plugin: The plugin to run.
-#   3. cmds: The list of commands to run
-#
-function _do_repo_plugin_cmd_run() {
-    local repo=${1?'repo arg required'}
-    local plugin=${2?'plugin arg required'}
-    shift 2
-
-    # Makes sure at least one command to run.
-    [[ $# -gt 0 ]] || _do_assert_fail 'cmds arg required'
-
-    local arr=$(_do_plugin_cmd_array_name "${repo}" "${plugin}")
-
-    # Gets the directory where the repostory is at.
-    local dir=$(_do_repo_dir_get "${repo}")
-
-
-    # Appends the new commands to it and make sure no duplicate
-    while (( $# > 0 )); do
-        local cmd="$1"
-
-        # Makes sure that the command has already registered.
-        _do_array_contains "${arr}" "${cmd}" || \
-            _do_assert_fail "${plugin}-${cmd} is not available for repository ${repo}"
-
-        # Executes the command handler
-        local handler="do-${repo}-${plugin}-${cmd}"
-        _do_print_line_1 "Runs ${handler}"
-
-        local dir=$(_do_repo_dir_get "${repo}")
-
-
-        ${handler} "${dir}" "${repo}" ${cmd} || _do_assert_fail "Fail to executes ${handler}"
-
-        shift 1
-    done
 }
 
 
