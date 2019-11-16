@@ -1,5 +1,5 @@
 _do_plugin "proj"
-_do_plugin "git" 
+_do_plugin "git"
 
 _do_log_level_debug "plugin"
 _do_log_level_debug "repo"
@@ -11,8 +11,8 @@ fake_repo="fake-repo"
 rm -rfd "${proj_dir}"
 mkdir -p "${proj_dir}"
 
-# Makes a fake "do" repository that will serves as the default 
-# repository for the project. This repository will have some 
+# Makes a fake "do" repository that will serves as the default
+# repository for the project. This repository will have some
 # git remote, which will be copy over to any new repository generated.
 #
 fake_do_dir="${proj_dir}/do"

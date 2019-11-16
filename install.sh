@@ -19,7 +19,7 @@ echo "Add oh-my-ops as git sub module"
 git init
 
 echo "* text=auto
-*.sh text eol=lf" > .gitattributes
+*.sh text eol=lf" >.gitattributes
 
 echo "Pull oh-my-ops framework"
 
@@ -36,20 +36,19 @@ git submodule init
 cd ${INSTALL_DIR}
 
 src_files=(
-    "version"
-    "os"
-    "src"
-    "color"
-    "print"
-    "assert"
-    "arg"
+  "version"
+  "os"
+  "src"
+  "color"
+  "print"
+  "assert"
+  "arg"
 )
 
 # Loads all core source files.
 for src_file in "${src_files[@]}"; do
-    source "vendor/oh-my-ops/src/${src_file}.sh"
+  source "vendor/oh-my-ops/src/${src_file}.sh"
 done
-
 
 echo '
 DO
@@ -66,7 +65,7 @@ source activate.sh
 
 ## Prerequisites
 
-* Bash 4+ 
+* Bash 4+
 * Git, Curl
 * Docker
 * MacOSX, Linux, or Windows (Cygwin)
@@ -80,8 +79,7 @@ source activate.sh
     * Java
     * Vagrant
 
-' > "README.md"
-
+' >"README.md"
 
 echo 'function _do_do_repo_plugin_ready() {
     _do_log_level_debug "do"
@@ -98,18 +96,16 @@ function do-update() {
     git submodule update --remote --merge
     _do_dir_pop
 }
-' > ".do.sh"
+' >".do.sh"
 
-
-# Generates the 
+# Generates the
 echo '# The array of plugin name to be included. If this variable is not specified
 # all plugins found will be included by default.
 # DO_PLUGINS="proj git prompt"
 
 
 source vendor/oh-my-ops/activate.sh $@
-' > "activate.sh"
-
+' >"activate.sh"
 
 # Generates the src directory where custom plugins can be put here.
 mkdir src
@@ -119,6 +115,5 @@ git add .
 
 _do_print_banner "\n
         Do ${DO_VERSION} installed at: ${CUR_DIR}/${DO_REPO}.
-        Runs 'source ./activate.sh' in bash shell to start and 
+        Runs 'source ./activate.sh' in bash shell to start and
         then run 'do-help' for more information."
-

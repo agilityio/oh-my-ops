@@ -1,7 +1,6 @@
-
 # Register npm alias to run on a repository
 #
-function _do_npm_repo_alias {
+function _do_npm_repo_alias() {
   local dir=${1?'dir arg required'}
 
   local repo=$(_do_string_to_dash $dir)

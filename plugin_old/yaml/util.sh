@@ -9,31 +9,30 @@
 #   - https://github.com/jasperes/bash-yaml
 #
 function _do_yaml_parse() {
-    local file=${1?'file arg required'}
-    local prefix=${2:-}
-    local convert=${3:-}
+  local file=${1?'file arg required'}
+  local prefix=${2:-}
+  local convert=${3:-}
 
-    if [ -z "convert" ]; then 
-        convert='$2'
-    else 
-        convert="${convert}"'($2)'
-    fi 
+  if [ -z "convert" ]; then
+    convert='$2'
+  else
+    convert="${convert}"'($2)'
+  fi
 
-    local s
-    local w
-    local fs
+  local s
+  local w
+  local fs
 
-    s='[[:space:]]*'
-    w='[a-zA-Z0-9_.-]*'
-    fs="$(echo @|tr @ '\034')"
+  s='[[:space:]]*'
+  w='[a-zA-Z0-9_.-]*'
+  fs="$(echo @ | tr @ '\034')"
 
-    (
-        sed -ne '/^--/s|--||g; s|\"|\\\"|g; s/\s*$//g;' \
-            -e "/#.*[\"\']/!s| #.*||g; /^#/s|#.*||g;" \
-            -e "s|^\($s\)\($w\)$s:$s\"\(.*\)\"$s\$|\1$fs\2$fs\3|p" \
-            -e "s|^\($s\)\($w\)$s:$s\(.*\)$s\$|\1$fs\2$fs\3|p" |
-
-        awk -F"$fs" '{
+  (
+    sed -ne '/^--/s|--||g; s|\"|\\\"|g; s/\s*$//g;' \
+      -e "/#.*[\"\']/!s| #.*||g; /^#/s|#.*||g;" \
+      -e "s|^\($s\)\($w\)$s:$s\"\(.*\)\"$s\$|\1$fs\2$fs\3|p" \
+      -e "s|^\($s\)\($w\)$s:$s\(.*\)$s\$|\1$fs\2$fs\3|p" |
+      awk -F"$fs" '{
             indent = length($1)/2;
             if (length($2) == 0) { conj[indent]="+";} else {conj[indent]="";}
             vname[indent] = '${convert}';
@@ -43,24 +42,23 @@ function _do_yaml_parse() {
                     printf("%s%s%s%s=(\"%s\")\n", "'"$prefix"'",vn, '${convert}', conj[indent-1],$3);
                 }
             }' |
+      sed -e 's/_=/+=/g' \
+        -e '/\..*=/s|\.|_|' \
+        -e '/\-.*=/s|\-|_|'
 
-        sed -e 's/_=/+=/g' \
-            -e '/\..*=/s|\.|_|' \
-            -e '/\-.*=/s|\-|_|'
-
-    ) < "${file}"
+  ) <"${file}"
 }
 
 function _do_yaml_export_uppercase_var() {
-    local file="$1"
-    local prefix="$2"
+  local file="$1"
+  local prefix="$2"
 
-    eval "$(_do_yaml_parse ${file} "${prefix}" 'toupper')"
+  eval "$(_do_yaml_parse ${file} "${prefix}" 'toupper')"
 }
 
 function _do_yaml_export_lowercase_var() {
-    local file="$1"
-    local prefix="$2"
+  local file="$1"
+  local prefix="$2"
 
-    eval "$(_do_yaml_parse ${file} "${prefix}" 'tolower')"
+  eval "$(_do_yaml_parse ${file} "${prefix}" 'tolower')"
 }

@@ -3,10 +3,10 @@
 # Wait for MongoDB to boot
 RET=1
 while [[ RET -ne 0 ]]; do
-    echo "=> Waiting for confirmation of MongoDB service startup..."
-    sleep 5
-    mongo admin --eval "help" >/dev/null 2>&1
-    RET=$?
+  echo "=> Waiting for confirmation of MongoDB service startup..."
+  sleep 5
+  mongo admin --eval "help" >/dev/null 2>&1
+  RET=$?
 done
 
 # Create the admin user
@@ -21,8 +21,8 @@ sleep 3
 # Then it switches to the REST API database and runs the createUser command
 # to actually create the user and assign it to the database.
 if [ "$MONGODB_NAME" != "admin" ]; then
-    echo "=> Creating a ${MONGODB_NAME} database user with a password in MongoDB"
-    mongo admin -u $MONGODB_ADMIN_USER -p $MONGODB_ADMIN_PASS << EOF
+  echo "=> Creating a ${MONGODB_NAME} database user with a password in MongoDB"
+  mongo admin -u $MONGODB_ADMIN_USER -p $MONGODB_ADMIN_PASS <<EOF
 echo "Using $MONGODB_NAME database"
 use $MONGODB_NAME
 db.createUser({user: '$MONGODB_USER', pwd: '$MONGODB_PASSWORD', roles:[{role:'dbOwner', db:'$MONGODB_NAME'}]})

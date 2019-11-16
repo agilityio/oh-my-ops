@@ -4,27 +4,27 @@
 # 2. repo: The repository name.
 #
 function _do_dotnet_repo_gen() {
-    local proj_dir=${1?'proj_dir required'}
-    local repo=${2?'repo required'}
-    
-    _do_print_line_1 "Generates dotnet support"
+  local proj_dir=${1?'proj_dir required'}
+  local repo=${2?'repo required'}
 
-    local repo_dir="${proj_dir}/${repo}"
+  _do_print_line_1 "Generates dotnet support"
 
-    # Makes sure that the directory exists
-    _do_dir_assert ${repo_dir}
+  local repo_dir="${proj_dir}/${repo}"
 
-    _do_dir_push "${repo_dir}"
+  # Makes sure that the directory exists
+  _do_dir_assert ${repo_dir}
 
-    # Creates an empty dotnet solution
-    dotnet new solution --name dotnet
-    echo "dotnet.sln file added"
-    local err=$?
+  _do_dir_push "${repo_dir}"
 
-    _do_dir_pop
+  # Creates an empty dotnet solution
+  dotnet new solution --name dotnet
+  echo "dotnet.sln file added"
+  local err=$?
 
-    _do_dotnet_repo_init ${proj_dir} ${repo}
-    _do_dotnet_repo_help ${proj_dir} ${repo}
+  _do_dir_pop
 
-    return $err
+  _do_dotnet_repo_init ${proj_dir} ${repo}
+  _do_dotnet_repo_help ${proj_dir} ${repo}
+
+  return $err
 }

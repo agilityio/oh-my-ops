@@ -7,10 +7,10 @@ _do_src_include_others_same_dir
 # ==============================================================================
 
 function _do_docker_plugin_init() {
-    if ! _do_alias_exist "docker"; then 
-        _do_log_warn "docker" "Disable 'docker' supports because missing 'docker' command."
-        return 
-    fi
+  if ! _do_alias_exist "docker"; then
+    _do_log_warn "docker" "Disable 'docker' supports because missing 'docker' command."
+    return
+  fi
 
-    _do_log_info "docker" "Initialize plugin"
+  _do_log_info "docker" "Initialize plugin"
 }

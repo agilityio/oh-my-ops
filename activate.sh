@@ -14,11 +14,11 @@
 # than the above plugins list.
 # DO_PLUGINS_EXCLUDED=slack
 
-# The array of environment names. 
+# The array of environment names.
 # DO_ENVS="local dev prod"
 
 # The home directory of the devops repository.
-export DO_HOME="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )";
+export DO_HOME="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 # Activates the main source file.
 source "$DO_HOME/src/main.sh" $@
