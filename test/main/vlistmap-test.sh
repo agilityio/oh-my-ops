@@ -55,21 +55,19 @@ function test_vlistmap_clear() {
   _do_vlistmap_is_empty "b" || _do_assert_fail
 }
 
-function test_vlistmap_get_set() {
+function test_vlistmap_append_print() {
   # Creates a new vlistmap
   _do_vlistmap_new "b"
 
-  _do_vlistmap_set "b" "0" "a"
-  _do_vlistmap_set "b" "1" "b"
-  _do_vlistmap_set "b" "2" "c"
+  _do_vlistmap_value_append "b" "0" "a" "aa" || _do_assert_fail
+  _do_vlistmap_value_append "b" "1" "b" "bb" || _do_assert_fail
+  _do_vlistmap_value_append "b" "2" "c" "cc" || _do_assert_fail
 
-  local val
-  val=$(_do_vlistmap_get "b" "0") || _do_assert_fail
-  _do_assert_eq "a" "${val}"
+  _do_vlistmap_has_key 'b' '1' || _do_assert_fail
+  _do_vlistmap_has_key 'b' '2' || _do_assert_fail
+  ! _do_vlistmap_has_key 'b' 'notexist' || _do_assert_fail
 
-  val=$(_do_vlistmap_get "b" "1") || _do_assert_fail
-  _do_assert_eq "b" "${val}"
-
-  val=$(_do_vlistmap_get "b" "2") || _do_assert_fail
-  _do_assert_eq "c" "${val}"
+  _do_vlistmap_has_value 'b' '0' 'a' || _do_assert_fail
+  _do_vlistmap_has_value 'b' '1' 'b' || _do_assert_fail
+  ! _do_vlistmap_has_value 'b' '2' 'notexist' || _do_assert_fail
 }

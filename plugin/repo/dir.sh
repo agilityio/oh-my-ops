@@ -32,10 +32,6 @@ function _do_repo_dir_add() {
 
   _do_log_debug 'repo' "add repo '${repo}', dir: ${dir}"
 
-  # Creates data arrays for the current repository.
-  _do_array_new_if_not_exists '_repo_dir'
-  _do_array_new_if_not_exists '_repo_name'
-
   # Makes sure the existing directory does not conflicts with any
   # existing directory.
   local idx=-1

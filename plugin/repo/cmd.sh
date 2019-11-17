@@ -18,30 +18,41 @@ function _do_repo_plugin_cmd_add() {
 
   [[ $# -gt 0 ]] || _do_assert_fail 'cmds arg required'
 
+  # Makes sure that the specified plugin is a valid one.
   _do_plugin_is_loaded "${plugin}" || _do_assert_fail "Invalid or not loaded plugin '${plugin}'"
 
   # Gets the directory where the repostory is at.
   local dir
   dir=$(_do_repo_dir_get "${repo}")
 
+  # ----------------------------------------------------------------------------
+  # Adds the new plugin to the repo's plugin list
   local plugins
-  plugins=$(_do_plugin_array_name "${repo}")
+  plugins=$(_do_plugin_set_name "${repo}")
 
+  if _do_set_exists "${plugins}"; then
+    _do_set_append "${plugins}" "${plugin}"
+  else
+    _do_set_new "${plugins}" "${plugin}"
+  fi
+
+  # ----------------------------------------------------------------------------
+  # Adds the set of plugin command to the repo's plugin command list.
   local cmds
-  cmds=$(_do_plugin_cmd_array_name "${repo}" "${plugin}")
+  cmds=$(_do_plugin_cmd_set_name "${repo}" "${plugin}")
+  _do_set_exists "${cmds}" || _do_set_new "${cmds}"
 
-  _do_array_exists "${plugins}" || _do_array_new "${plugins}"
-  _do_array_exists "${cmds}" || _do_array_new "${cmds}"
-
-  _do_array_contains "${plugins}" "${plugin}" || _do_array_append "${plugins}" "${plugin}"
-
-  # Appends the new commands to it and make sure no duplicate
+  # ----------------------------------------------------------------------------
+  # Appends the new commands to the command set
   while (($# > 0)); do
     local cmd="$1"
-    _do_array_contains "${cmds}" "${cmd}" || _do_array_append "${cmds}" "${cmd}"
+    if ! _do_set_contains "${cmds}" "${cmd}"; then
+      _do_set_append "${cmds}" "${cmd}"
 
-    # Registers alias for execute the command.
-    __do_repo_plugin_cmd_alias "${dir}" "${repo}" "${plugin}" "${cmd}"
+      # ------------------------------------------------------------------------
+      # Registers alias for execute the command.
+      __do_repo_plugin_cmd_alias "${dir}" "${repo}" "${plugin}" "${cmd}"
+    fi
 
     shift 1
   done
@@ -59,6 +70,8 @@ function _do_repo_plugin_cmd_opts() {
 
   # Stores the command ops for later use
   local key="${repo}-${plugin}-${cmd}"
+  # shellcheck disable=SC2034
+  # shellcheck disable=SC2124
   _DO_REPO_PLUGIN_CMD_OPTS[${key}]="$@"
 
 }
@@ -75,8 +88,8 @@ function _do_repo_plugin_exists() {
 
   local plugins
 
-  plugins=$(_do_plugin_array_name "${repo}")
-  if _do_array_exists "${plugins}" && _do_array_contains "${plugins}" "${plugin}"; then
+  plugins=$(_do_plugin_set_name "${repo}")
+  if _do_set_exists "${plugins}" && _do_set_contains "${plugins}" "${plugin}"; then
     return 0
   else
     return 1
@@ -97,9 +110,9 @@ function _do_repo_plugin_cmd_exists() {
   local cmd=${3?'cmd arg required'}
 
   local cmds
-  cmds=$(_do_plugin_cmd_array_name "${repo}" "${plugin}")
+  cmds=$(_do_plugin_cmd_set_name "${repo}" "${plugin}")
 
-  if _do_array_exists "${cmds}" && _do_array_contains "${cmds}" "${cmd}"; then
+  if _do_set_exists "${cmds}" && _do_set_contains "${cmds}" "${cmd}"; then
     return 0
   else
     return 1
@@ -123,7 +136,6 @@ function __do_repo_plugin_cmd_alias() {
 
   # Builds the alias to executes the command
   local cmd_d
-
   cmd_d=$(_do_string_to_dash "${cmd}")
   local name="do-${repo}-${plugin}-${cmd_d}"
 
@@ -136,7 +148,7 @@ function __do_repo_plugin_cmd_alias() {
   fi
 
   # First, looks for the exact command handler to run.
-  local repo_u
+  local repo_u=
   repo_u=$(_do_string_to_undercase "${repo}")
 
   local plugin_u
@@ -157,22 +169,23 @@ function __do_repo_plugin_cmd_alias() {
     if type ${func} &>/dev/null; then
       # The function handler found.
       # Generates code for executing it.
-      eval "function ${name}() {
-                local err=0
-                _do_dir_push ${dir}
+      eval "
+      function ${name}() {
+          local err=0
+          _do_dir_push ${dir}
 
-                {
-                    _do_print_header_1 \"${name}\" &&
-                    ${func} ${dir} ${repo} ${cmd} \${_DO_REPO_PLUGIN_CMD_OPTS[${repo}-${plugin}-${cmd}]} &&
-                    _do_print_finished "${name}: Success!"
-                } || {
-                    err=1
-                    _do_print_error \"${name}: Failed\"
-                }
+          {
+              _do_print_header_1 \"${name}\" &&
+              ${func} ${dir} ${repo} ${cmd} \${_DO_REPO_PLUGIN_CMD_OPTS[${repo}-${plugin}-${cmd}]} &&
+              _do_print_finished "${name}: Success!"
+          } || {
+              err=1
+              _do_print_error \"${name}: Failed\"
+          }
 
-                _do_dir_pop
-                return \${err}
-            }"
+          _do_dir_pop
+          return \${err}
+      }"
       return
     fi
   done
@@ -186,8 +199,8 @@ function _do_repo_plugin_list() {
 
   local plugins
 
-  plugins=$(_do_plugin_array_name "${repo}")
-  _do_array_print "${plugins}"
+  plugins=$(_do_plugin_set_name "${repo}")
+  _do_set_print "${plugins}"
 }
 
 # Gets out the list of command available for a repository.
@@ -202,16 +215,16 @@ function _do_repo_plugin_cmd_list() {
 
   local arr
 
-  arr=$(_do_plugin_cmd_array_name "${repo}" "${plugin}")
-  _do_array_print "${arr}"
+  arr=$(_do_plugin_cmd_set_name "${repo}" "${plugin}")
+  _do_set_print "${arr}"
 }
 
-function _do_plugin_array_name() {
+function _do_plugin_set_name() {
   local repo=${1?'repo arg required'}
   echo "_repo_${repo}"
 }
 
-function _do_plugin_cmd_array_name() {
+function _do_plugin_cmd_set_name() {
   local repo=${1?'repo arg required'}
   local plugin=${2?'plugin arg required'}
   echo "_repo_${repo}_${plugin}"

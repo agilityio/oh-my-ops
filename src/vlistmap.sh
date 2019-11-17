@@ -196,10 +196,13 @@ function _do_vlistmap_value_is_empty() {
 function _do_vlistmap_value_append() {
   local name=${1?'name arg required'}
   local key=${2?'key arg required'}
+
   shift 2
+  : ${1?'Missing item(s) to append'}
 
   local var_name=$(_do_vlistmap_var_name_required "${name}")
-  local size=$(_do_vlistmap_size $name)
+  local size
+  size=$(_do_vlistmap_size $name)
 
   # Makes sure there is at list 1 item to append
   : ${1?'Missing item(s) to append'}
@@ -214,26 +217,14 @@ function _do_vlistmap_value_append() {
   _do_array_append "${vl}" $@
 }
 
-# Set 1 more item to the vlistmap
-#
-# Arguments:
-#   1. name: The vlistmap name
-#   2. key: The vlistmap key
-#   ... values: One value or more to set.
-#
-function _do_vlistmap_value_set() {
-  local name=${1?'name arg required'}
-  local key=${2?'key arg required'}
-
-}
-
 # Print all keys of the map to stdout.
 # Arguments:
 #   1. The vlistmap name.
 #
 function _do_vlistmap_print() {
   local name=${1?'Stack name required'}
-  local arr="$(_do_vlistmap_var_name ${name})[@]"
+  local arr
+  arr="$(_do_vlistmap_var_name ${name})[@]"
 
   for v in ${!arr}; do
     echo "${v}"
@@ -248,7 +239,8 @@ function _do_vlistmap_value_print() {
   local name=${1?'name arg required'}
   local key=${2?'key arg required'}
 
-  local arr=$(_do_vlistmap_value_var_name "${name}" "${key}")
+  local arr
+  arr=$(_do_vlistmap_value_var_name "${name}" "${key}")
   _do_array_print "${arr}"
 }
 
@@ -287,6 +279,5 @@ function _do_vlistmap_var_name_required() {
   local name=${1?'name arg required'}
 
   _do_vlistmap_exists "${name}" || _do_assert_fail "${name} vlistmap doest not exist"
-
-  echo "$(_do_vlistmap_var_name ${name})"
+  _do_vlistmap_var_name "${name}"
 }

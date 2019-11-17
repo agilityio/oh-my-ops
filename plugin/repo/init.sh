@@ -15,6 +15,9 @@ _do_src_include_others_same_dir
 function _do_repo_plugin_init() {
   _do_log_info 'repo' 'Initialize plugin.'
 
+  _do_array_new '_repo_dir'
+  _do_array_new '_repo_name'
+
   # Provides alias for short commands that developer should use.
   alias _do_repo=_do_repo_dir_add
 }
