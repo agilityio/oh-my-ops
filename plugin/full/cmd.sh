@@ -44,14 +44,3 @@ function _do_full_repo_cmd() {
 
   return ${err}
 }
-
-function _do_full_repo_cmd_help() {
-  local err=0
-  local dir=${1?'dir arg is required'}
-  local repo=${2?'repo arg required'}
-  local cmd=${3?'arg command is required'}
-  shift 3
-
-  _do_log_debug 'full' "do '${cmd}' full on ${repo}, at: ${dir}"
-
-}

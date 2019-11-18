@@ -16,7 +16,7 @@ function _do_openapi_repo_cmd() {
   {
     {
       case "${cmd}" in
-      generate)
+      gen)
         generator=${1?'generator arg is required'}
         config_file=${2:-}
         schema_file=${3:-}
