@@ -29,13 +29,7 @@ function _do_gradle_repo_cmd() {
       # we need to append the "run" in front to run it with run script.
       case "${cmd}" in
       install)
-        run="gradle assemble"
-        ;;
-      build:android)
-        run="gradle build apk"
-        ;;
-      build:ios)
-        run="gradle build ios"
+        run="./gradlew assemble"
         ;;
       esac
     } &&

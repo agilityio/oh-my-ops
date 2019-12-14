@@ -7,9 +7,9 @@ function _do_gradle_lib() {
   local repo=${1?'repo arg required'}
   shift 1
 
-  _do_repo_plugin_cmd_add "${repo}" 'gradle' 'doctor' 'clean' 'install' $@
+  _do_repo_plugin_cmd_add "${repo}" 'gradle' 'clean' 'install' 'build' 'test' 'lint' $@
 }
 
 function _do_gradle_mobile() {
-  _do_gradle_lib $@ 'run' 'build:ios' 'build:android'
+  _do_gradle_lib $@ 'run'
 }
