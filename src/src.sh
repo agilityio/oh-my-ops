@@ -4,7 +4,7 @@ function _do_src_file() {
 
   # Walks the stack trace and find the first source
   # that is not from this plugin.
-  while ! [ -z "${BASH_SOURCE[$i]:-}" ]; do
+  while [ -n "${BASH_SOURCE[$i]:-}" ]; do
     local src="${BASH_SOURCE[$i]}"
     local func="${FUNCNAME[$i]}"
     if ! [[ "$func" =~ "_do_src_" ]]; then
@@ -19,26 +19,27 @@ function _do_src_file() {
 # Arguments: None
 #
 function _do_src_dir() {
-  local file=$(_do_src_file)
-  dirname $file
+  dirname "$(_do_src_file)"
 }
 
 # Gets the file name of the calling script.
 # Arguments: None
 #
 function _do_src_name() {
-  local file=$(_do_src_file)
-  basename $file
+  basename "$(_do_src_file)"
 }
 
 # Includes other bash scripts in the same directory.
 # Arguments: None
 #
 function _do_src_include_others_same_dir() {
-  local dir=$(_do_src_dir)
-  local excluded=$(_do_src_name)
+  local dir
+  dir=$(_do_src_dir)
 
-  _do_dir_push $dir
+  local excluded
+  excluded=$(_do_src_name)
+
+  _do_dir_push "$dir"
 
   local name
   for name in $(ls -A *.sh); do
@@ -56,11 +57,12 @@ function _do_src_include_others_same_dir() {
 #
 function _do_src_include() {
   # Makes sure there is at least 1 source file to load
-  : ${1?'files arg required'}
+  : "${1?'files arg required'}"
 
   # This is the source directory of the file that
   # call this script.
-  local dir=$(_do_src_dir)
+  local dir=
+  dir=$(_do_src_dir)
 
   # Changes to the directory relative to the calling script.
   _do_dir_push "${dir}"

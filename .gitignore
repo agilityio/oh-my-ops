@@ -1,3 +1,6 @@
+# Ignore idea files
+.idea
+
 doc/_build
 
 # Created by https://www.gitignore.io/api/vagrant

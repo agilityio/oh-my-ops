@@ -5,7 +5,6 @@ case "${DO_OS}" in
 Linux*) DO_OS=linux ;;
 Darwin*) DO_OS=mac ;;
 CYGWIN*) DO_OS=cygwin ;;
-# MINGW*)     DO_OS=mingw;;
 *)
   echo "Sorry! We don't support '$(uname)' operating system yet. Please hang on tight!"
   return
@@ -71,7 +70,6 @@ src_files=(
   "print"
   "trap"
   "assert"
-  "arg"
   "log"
   "error"
   "alias"

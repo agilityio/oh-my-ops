@@ -5,8 +5,8 @@
 #
 function _do_stack_new() {
     local name=${1?'Stack name required'}
-    
-    if _do_stack_exists ${name}; then
+
+    if _do_stack_exists "${name}"; then
         echo "Stack already exists -- ${name}" >&2
         return 1
     fi
@@ -21,7 +21,7 @@ function _do_stack_new() {
 
 # Destroy a stack
 #
-# Arguments: 
+# Arguments:
 #   1. stack_name: The stack variable to destroy.
 #
 function _do_stack_destroy() {
@@ -32,7 +32,7 @@ function _do_stack_destroy() {
 
 # Push one or more items onto a stack.
 #
-# Arguments: 
+# Arguments:
 #   1. stack_name: The stack name
 #   ... values: One value or more to push to the stack.
 #
@@ -40,9 +40,9 @@ function _do_stack_push() {
     local name=${1?'Stack name required'}
     shift 1
 
-    : ${1?'Missing item(s) to push'}
+    : "${1?'Missing item(s) to push'}"
 
-    if ! _do_stack_exists ${name}; then
+    if ! _do_stack_exists "${name}"; then
         echo "'${name}' stack not found'" >&2
         return 1
     fi
@@ -86,7 +86,7 @@ function _do_stack_print() {
 
 # Get the size of a stack
 #
-# Arguments: 
+# Arguments:
 #   1. The stack name.
 #   2. The variable name to contains the size.
 #
@@ -94,7 +94,7 @@ function _do_stack_size
 {
     local name=${1?'Stack name required'}
     local var=${2?'Missing name of variable for stack size result'}
-    if ! _do_stack_exists ${name}; then
+    if ! _do_stack_exists "${name}"; then
         echo "'${name}' stack not found'" >&2
         return 1
     fi
@@ -114,7 +114,7 @@ function _do_stack_pop {
     local var=${2?'Missing name of variable for popped result'}
 
     eval 'let _i=$'"__do_stack_${name}_i"
-    if ! _do_stack_exists ${name}; then
+    if ! _do_stack_exists "${name}"; then
         echo "'$1' stack is empty" >&2
         return 1
     fi
@@ -125,7 +125,8 @@ function _do_stack_pop {
         return 1
     fi
 
-    let _i-=1
+    (( _i-- ))
+
     eval "${var}"='$'"{__do_stack_${name}[$_i]}"
     eval "unset __do_stack_${name}[$_i]"
     eval "__do_stack_${name}_i=$_i"

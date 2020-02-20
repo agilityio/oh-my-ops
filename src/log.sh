@@ -47,7 +47,7 @@ function _do_log_level() {
 #   1. category: The log category.
 #
 function _do_log_level_error() {
-  _do_log_level 1 $1
+  _do_log_level 1 "$1"
 }
 
 # Sets the specified category to warn log level.
@@ -55,7 +55,7 @@ function _do_log_level_error() {
 #   1. category: The log category.
 #
 function _do_log_level_warn() {
-  _do_log_level 2 $1
+  _do_log_level 2 "$1"
 }
 
 # Sets the specified category to info log level.
@@ -63,7 +63,7 @@ function _do_log_level_warn() {
 #   1. category: The log category.
 #
 function _do_log_level_info() {
-  _do_log_level 3 $1
+  _do_log_level 3 "$1"
 }
 
 # Sets the specified category to debug log level.
@@ -71,7 +71,7 @@ function _do_log_level_info() {
 #   1. category: The log category.
 #
 function _do_log_level_debug() {
-  _do_log_level 4 $1
+  _do_log_level 4 "$1"
 }
 
 # ==============================================================================
@@ -89,7 +89,8 @@ function _do_log_print() {
   fi
 
   local level=$1
-  local level_name=$(_do_log_level_name $level)
+  local level_name
+  level_name=$(_do_log_level_name "$level")
 
   if [ $# -eq 2 ]; then
     # If only 2 arguments passed in,
@@ -105,7 +106,7 @@ function _do_log_print() {
     fi
   fi
 
-  if [ $level -gt $category_level ]; then
+  if [ "$level" -gt "$category_level" ]; then
     # Ignore this log message.
     return
   fi

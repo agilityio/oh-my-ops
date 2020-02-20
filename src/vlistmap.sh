@@ -12,7 +12,7 @@ function _do_vlistmap_new() {
 
   local var_name
 
-  var_name=$(_do_vlistmap_var_name ${name})
+  var_name=$(_do_vlistmap_var_name "${name}")
   declare -Ag "${var_name}"
 
   if [[ $# -gt 1 ]]; then
@@ -33,14 +33,16 @@ function _do_vlistmap_new_if_not_exists() {
 #
 function _do_vlistmap_destroy() {
   local name=${1?'name arg required'}
-  local var_name=$(_do_vlistmap_var_name_required ${name})
+  local var_name=
+  var_name=$(_do_vlistmap_var_name_required "${name}")
 
   unset "${var_name}"
 }
 
 function _do_vlistmap_clear() {
   local name=${1?'name arg required'}
-  local var_name=$(_do_vlistmap_var_name_required ${name})
+  local var_name
+  var_name=$(_do_vlistmap_var_name_required "${name}")
 
   eval "${var_name}=()"
 }
@@ -55,7 +57,8 @@ function _do_vlistmap_value_clear() {
   local name=${1?'name arg required'}
   local key=${2?'key arg required'}
 
-  local arr="$(_do_vlistmap_var_name ${name})[@]"
+  local arr
+  arr="$(_do_vlistmap_var_name "${name}")[@]"
 
   if _do_array_exists "${arr}"; then
     _do_array_clear "${arr}"
@@ -72,7 +75,8 @@ function _do_vlistmap_value_clear() {
 #
 function _do_vlistmap_exists() {
   local name=${1?'name arg required'}
-  local var_name=$(_do_vlistmap_var_name ${name})
+  local var_name
+  var_name=$(_do_vlistmap_var_name "${name}")
 
   if declare -p "${var_name}" &>/dev/null; then
     return 0
@@ -95,7 +99,8 @@ function _do_vlistmap_has_key() {
   local name=${1?'name arg required'}
   local key=${2?'key arg required'}
 
-  local arr="$(_do_vlistmap_var_name ${name})[@]"
+  local arr
+  arr="$(_do_vlistmap_var_name "${name}")[@]"
 
   for v in ${!arr}; do
     if [ "${v}" == "${key}" ]; then
@@ -122,7 +127,8 @@ function _do_vlistmap_has_value() {
   local key=${2?'key arg required'}
   local val=${3?'val arg required'}
 
-  local arr=$(_do_vlistmap_value_var_name "${name}" "${key}")
+  local arr
+  arr=$(_do_vlistmap_value_var_name "${name}" "${key}")
   if ! _do_array_contains "${arr}" "${val}"; then
     return 1
   fi
@@ -136,7 +142,8 @@ function _do_vlistmap_has_value() {
 #
 function _do_vlistmap_size() {
   local name=${1?'name arg required'}
-  local var_name=$(_do_vlistmap_var_name_required ${name})
+  local var_name
+  var_name=$(_do_vlistmap_var_name_required "${name}")
 
   local size
   eval "size"='$'"{#${var_name}[@]}"
@@ -153,7 +160,8 @@ function _do_vlistmap_value_size() {
   local name=${1?'name arg required'}
   local key=${2?'key arg required'}
 
-  local arr=$(_do_vlistmap_value_var_name "${name}" "${key}")
+  local arr
+  arr=$(_do_vlistmap_value_var_name "${name}" "${key}")
   _do_array_size "${arr}"
 }
 
@@ -161,7 +169,7 @@ function _do_vlistmap_value_size() {
 function _do_vlistmap_is_empty() {
   local name=${1?'name arg required'}
 
-  if [ "$(_do_vlistmap_size ${name})" == "0" ]; then
+  if [ "$(_do_vlistmap_size "${name}")" == "0" ]; then
     return 0
   else
     return 1
@@ -178,7 +186,9 @@ function _do_vlistmap_value_is_empty() {
   local name=${1?'name arg required'}
   local key=${2?'key arg required'}
 
-  local arr=$(_do_vlistmap_value_var_name "${name}" "${key}")
+  local arr
+  arr=$(_do_vlistmap_value_var_name "${name}" "${key}")
+
   if _do_array_is_empty "${arr}"; then
     return 0
   else
@@ -198,20 +208,23 @@ function _do_vlistmap_value_append() {
   local key=${2?'key arg required'}
 
   shift 2
-  : ${1?'Missing item(s) to append'}
+  : "${1?'Missing item(s) to append'}"
 
-  local var_name=$(_do_vlistmap_var_name_required "${name}")
+  local var_name
+  var_name=$(_do_vlistmap_var_name_required "${name}")
+
   local size
-  size=$(_do_vlistmap_size $name)
+  size=$(_do_vlistmap_size "$name")
 
   # Makes sure there is at list 1 item to append
-  : ${1?'Missing item(s) to append'}
+  : "${1?'Missing item(s) to append'}"
 
   # Push the key to the vlist key array
   eval "${var_name}[$size]='$key'"
 
   # Push all remaining values to a dedicated array
-  local vl=$(_do_vlistmap_value_var_name "${name}" "${key}")
+  local vl
+  vl=$(_do_vlistmap_value_var_name "${name}" "${key}")
 
   _do_array_new_if_not_exists "${vl}"
   _do_array_append "${vl}" $@
@@ -224,7 +237,7 @@ function _do_vlistmap_value_append() {
 function _do_vlistmap_print() {
   local name=${1?'Stack name required'}
   local arr
-  arr="$(_do_vlistmap_var_name ${name})[@]"
+  arr="$(_do_vlistmap_var_name "${name}")[@]"
 
   for v in ${!arr}; do
     echo "${v}"
@@ -258,12 +271,12 @@ function _do_vlistmap_value_print() {
 #
 function _do_vlistmap_var_name() {
   local name=${1?'name arg required'}
-  echo "__do_vlistmap_$(_do_string_to_lowercase_var ${name})"
+  echo "__do_vlistmap_$(_do_string_to_lowercase_var "${name}")"
 }
 
 function _do_vlistmap_value_var_name() {
   local name=${1?'name arg required'}
-  echo "__do_vlistmap_$(_do_string_to_lowercase_var ${name})__v"
+  echo "__do_vlistmap_$(_do_string_to_lowercase_var "${name}")__v"
 }
 
 # Converts a logical value array name to the physical one and make sure

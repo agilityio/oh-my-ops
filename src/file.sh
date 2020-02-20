@@ -12,7 +12,8 @@ function _do_file_name() {
 # 1. name: Required. The file name.
 #
 function _do_file_name_without_ext() {
-  local name="$(_do_file_name ${1?'name arg required'})"
+  local name=${1?'name arg required'}
+  name=$(_do_file_name "$name")
   echo "${name%%.*}"
 }
 

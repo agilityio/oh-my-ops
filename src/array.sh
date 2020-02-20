@@ -10,7 +10,8 @@ function _do_array_new() {
   # Makes sure that the array not yet exists
   ! _do_array_exists "${name}" || _do_assert_fail "${name} array already exists."
 
-  local var_name=$(_do_array_var_name ${name})
+  local var_name
+  var_name=$(_do_array_var_name "${name}")
   declare -ag "${var_name}"
 
   if [[ $# -gt 1 ]]; then
@@ -31,14 +32,16 @@ function _do_array_new_if_not_exists() {
 #
 function _do_array_destroy() {
   local name=${1?'name arg required'}
-  local var_name=$(_do_array_var_name_required ${name})
+  local var_name
+  var_name=$(_do_array_var_name_required "${name}")
 
   unset "${var_name}"
 }
 
 function _do_array_clear() {
   local name=${1?'name arg required'}
-  local var_name=$(_do_array_var_name_required ${name})
+  local var_name
+  var_name=$(_do_array_var_name_required "${name}")
 
   eval "${var_name}=()"
 }
@@ -53,7 +56,8 @@ function _do_array_clear() {
 #
 function _do_array_exists() {
   local name=${1?'name arg required'}
-  local var_name=$(_do_array_var_name ${name})
+  local var_name
+  var_name=$(_do_array_var_name "${name}")
 
   if declare -p "${var_name}" &>/dev/null; then
     return 0
@@ -76,7 +80,8 @@ function _do_array_contains() {
   local name=${1?'name arg required'}
   local val=${2?'val arg required'}
 
-  local arr="$(_do_array_var_name ${name})[@]"
+  local arr
+  arr="$(_do_array_var_name "${name}")[@]"
 
   for v in ${!arr}; do
     if [ "${v}" == "${val}" ]; then
@@ -102,7 +107,8 @@ function _do_array_index_of() {
   local name=${1?'name arg required'}
   local val=${2?'val arg required'}
 
-  local arr="$(_do_array_var_name ${name})[@]"
+  local arr
+  arr="$(_do_array_var_name "${name}")[@]"
 
   local i=0
   for v in ${!arr}; do
@@ -111,7 +117,7 @@ function _do_array_index_of() {
       return 0
     fi
 
-    let i+=1
+    (( i++ ))
   done
 
   # Not found the element
@@ -127,7 +133,8 @@ function _do_array_index_of() {
 #
 function _do_array_size() {
   local name=${1?'name arg required'}
-  local var_name=$(_do_array_var_name_required ${name})
+  local var_name
+  var_name=$(_do_array_var_name_required "${name}")
 
   local size
   eval "size"='$'"{#${var_name}[@]}"
@@ -137,7 +144,7 @@ function _do_array_size() {
 function _do_array_is_empty() {
   local name=${1?'name arg required'}
 
-  if [ "$(_do_array_size ${name})" == "0" ]; then
+  if [ "$(_do_array_size "${name}")" == "0" ]; then
     return 0
   else
     return 1
@@ -152,27 +159,29 @@ function _do_array_is_empty() {
 #
 function _do_array_append() {
   local name=${1?'name arg required'}
-  local var_name=$(_do_array_var_name_required "${name}")
+  local var_name
+  var_name=$(_do_array_var_name_required "${name}")
 
-  local size=$(_do_array_size $name)
+  local size
+  size=$(_do_array_size "$name")
   shift 1
 
   # Makes sure there is at list 1 item to append
-  : ${1?'Missing item(s) to append'}
+  : "${1?'Missing item(s) to append'}"
 
   # Reads all remaining values and push to stack
   while (($# > 0)); do
     # Appends to the current items to the end of the array.
     eval "${var_name}[$size]='$1'"
-    let size+=1
-
+    (( size++ ))
     shift 1
   done
 }
 
 function _do_array_get() {
   local name=${1?'name arg required'}
-  local var_name=$(_do_array_var_name_required "${name}")
+  local var_name
+  var_name=$(_do_array_var_name_required "${name}")
 
   local idx=${2?'idx arg required'}
   local expr="${var_name}[${idx}]"
@@ -181,7 +190,8 @@ function _do_array_get() {
 
 function _do_array_set() {
   local name=${1?'name arg required'}
-  local var_name=$(_do_array_var_name_required "${name}")
+  local var_name
+  var_name=$(_do_array_var_name_required "${name}")
 
   local idx=${2?'idx arg required'}
   local value=${3?'value arg required'}
@@ -199,7 +209,7 @@ function _do_array_set() {
 #
 function _do_array_var_name() {
   local name=${1?'name arg required'}
-  echo "__do_array_$(_do_string_to_lowercase_var ${name})"
+  echo "__do_array_$(_do_string_to_lowercase_var "${name}")"
 }
 
 # Converts a logical array name to the physical one and make sure
@@ -216,7 +226,7 @@ function _do_array_var_name_required() {
 
   _do_array_exists "${name}" || _do_assert_fail "${name} array doest not exist"
 
-  echo "$(_do_array_var_name ${name})"
+   _do_array_var_name "${name}"
 }
 
 # Print a stack to stdout.
@@ -225,7 +235,8 @@ function _do_array_var_name_required() {
 #
 function _do_array_print() {
   local name=${1?'Stack name required'}
-  local arr="$(_do_array_var_name ${name})[@]"
+  local arr
+  arr="$(_do_array_var_name "${name}")[@]"
 
   for v in ${!arr}; do
     echo "${v}"

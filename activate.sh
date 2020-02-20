@@ -18,7 +18,7 @@
 # DO_ENVS="local dev prod"
 
 # The home directory of the devops repository.
-export DO_HOME="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+DO_HOME="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 # Activates the main source file.
 source "$DO_HOME/src/main.sh" $@
