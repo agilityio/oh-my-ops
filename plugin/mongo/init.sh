@@ -9,14 +9,8 @@ _do_src_include_others_same_dir
 function _do_mongo_plugin_init() {
   _do_log_info 'mongo' 'Initialize plugin'
 
-  # This is the default docker image name & container
-  local default="do-mongo"
-
-  # This is the default docker image name.
-  _DO_MONGO_DOCKER_IMAGE=${_DO_MONGO_DOCKER_IMAGE:-$default}
-
-  # This is the default docker container name.
-  _DO_MONGO_DOCKER_CONTAINER=${_DO_MONGO_DOCKER_CONTAINER:-$default}
+  # This is the default mongo version to run with.
+  _DO_MONGO_VERSION=${_DO_MONGO_VERSION:-4}
 
   # This is the default mongo port.
   _DO_MONGO_PORT=${_DO_MONGO_PORT:-27017}

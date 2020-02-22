@@ -68,3 +68,20 @@ function _do_dir_assert_not() {
 
   [ ! -d "${dir}" ] || _do_assert_fail "Expected ${dir} is not a directory"
 }
+
+# Copies the specified source directory to a temp directory.
+# Arguments:
+#   1. src_dir: The source directory to copy.
+#
+function _do_dir_copy_to_random_tmp_dir() {
+  local src_dir=${1?'src_dir arg required'}
+
+  _do_dir_assert "${src_dir}"
+
+  local tmp_dir
+  tmp_dir=$(_do_dir_random_tmp_dir)
+
+  cp -r "${src_dir}" "${tmp_dir}" &>/dev/null || return 1
+
+  echo "${tmp_dir}"
+}

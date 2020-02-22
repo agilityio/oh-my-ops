@@ -7,9 +7,8 @@ function _do_git_repo_add() {
   local repo=${1?'repo arg required'}
   shift 1
 
-  _do_repo_plugin_cmd_add "${repo}" 'git' 'init' 'status'
+  local cmds="status help $*"
 
-  if [[ $# -gt 0 ]]; then
-    _do_repo_plugin_cmd_add "${repo}" 'git' $@
-  fi
+  # shellcheck disable=SC2086
+  _do_repo_plugin_cmd_add "${repo}" 'git' $cmds
 }

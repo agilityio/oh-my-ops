@@ -7,9 +7,8 @@ function _do_mongo() {
   local name=${1?'name arg required'}
   shift 1
 
-  local cmds='start stop status'
+  local cmds="install start stop status logs attach help $*"
 
-  # shellcheck disable=SC2068
   # shellcheck disable=SC2086
-  _do_repo_plugin_cmd_add "${name}" 'mongo' "install" $cmds $@
+  _do_repo_plugin_cmd_add "${name}" 'mongo' $cmds
 }

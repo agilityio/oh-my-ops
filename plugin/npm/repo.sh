@@ -7,7 +7,11 @@ function _do_npm() {
   local name=${1?'name arg required'}
   shift 1
 
-  _do_repo_plugin_cmd_add "${name}" 'npm' "install" "clean" $@
+  local cmds
+  cmds="install clean help $*"
+
+  # shellcheck disable=SC2086
+  _do_repo_plugin_cmd_add "${name}" 'npm' ${cmds}
 }
 
 function _do_npm_angular() {
