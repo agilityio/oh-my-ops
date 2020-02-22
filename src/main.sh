@@ -70,6 +70,7 @@ src_files=(
   "print"
   "trap"
   "assert"
+  "uuid"
   "log"
   "error"
   "alias"

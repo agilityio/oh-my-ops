@@ -1,0 +1,15 @@
+FROM mongo:3
+
+WORKDIR /app
+
+ADD bin /app/bin
+
+ENV MONGODB_NAME db
+ENV MONGODB_PASSWORD pass
+ENV MONGODB_USER user
+ENV MONGODB_ADMIN_USER admin
+ENV MONGODB_ADMIN_PASS admin
+
+EXPOSE 27017
+
+ENTRYPOINT [ "/app/bin/entrypoint.sh" ]

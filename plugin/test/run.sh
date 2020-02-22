@@ -1,5 +1,6 @@
 # Activates the environment with just the test plug
-source ${DO_HOME}/activate.sh --quick --no-log --no-plugins
+# shellcheck source=activate.sh
+source "${DO_HOME}/activate.sh" --quick --no-log --no-plugins
 
 # =============================================================================
 # Parse input arguments.

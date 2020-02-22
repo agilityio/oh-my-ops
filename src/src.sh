@@ -15,6 +15,7 @@ function _do_src_file() {
   done | grep -v "^$BASH_SOURCE"
 }
 
+
 # Gets the base dir of the calling script.
 # Arguments: None
 #
@@ -84,4 +85,14 @@ function _do_src_include() {
   done
 
   _do_dir_pop
+}
+
+
+# Changes the directory to the calling script dir
+function _do_src_dir_push() {
+  local dir
+  dir="$(_do_src_dir)"
+
+  # Changes to the directory relative to the calling script.
+  _do_dir_push "${dir}" || return 1
 }
