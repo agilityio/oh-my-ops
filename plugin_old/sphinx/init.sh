@@ -90,7 +90,7 @@ function _do_sphinx_is_running() {
   local proj_dir=$1
   local repo=$2
 
-  if _do_docker_process_exists ${_DO_SPHINX_DOCKER_CONTAINER_NAME}; then
+  if _do_docker_container_exists ${_DO_SPHINX_DOCKER_CONTAINER_NAME}; then
     return 0
   else
     return 1

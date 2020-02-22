@@ -11,13 +11,12 @@ function _do_docker_host_ip() {
       docker pull $img &>/dev/null
     fi
 
-    echo "$(docker run --net=host $img | tail -n1)"
+    docker run --net=host $img | tail -n1
 
   elif _do_os_is_mac; then
     # This impl works regardless of the order of wired & wireless network interfaces
     # https://apple.stackexchange.com/a/147777
-    echo $(ifconfig | grep "inet " | grep -Fv 127.0.0.1 | awk '{print $2}' | head -n1)
-
+    ifconfig | grep "inet " | grep -Fv 127.0.0.1 | awk '{print $2}' | head -n1
   fi
 
   # other OS is not supported yet
