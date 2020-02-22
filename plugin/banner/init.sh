@@ -10,7 +10,7 @@ function _do_banner() {
   fi
 
   echo -e "${_DO_FG_ENVIRONMENT}
-$(cat ${file})
-    $@
+$(cat "${file}")
+    $*
 ------------------------------------------------------------------------------${_DO_FG_NORMAL}"
 }

@@ -11,7 +11,7 @@ function _do_set_new() {
   ! _do_set_exists "${name}" || _do_assert_fail "${name} set already exists."
 
   local var
-  var=$(__do_set_var_name ${name})
+  var=$(__do_set_var_name "${name}")
 
   # Declares an associate set globally.
   declare -Ag "${var}"
@@ -36,7 +36,7 @@ function _do_set_new_if_not_exists() {
 function _do_set_destroy() {
   local name=${1?'name arg required'}
   local var
-  var=$(__do_set_var_name_required ${name})
+  var=$(__do_set_var_name_required "${name}")
 
   unset "${var}"
 }
@@ -45,7 +45,7 @@ function _do_set_clear() {
   local name=${1?'name arg required'}
   local var
 
-  var=$(__do_set_var_name_required ${name})
+  var=$(__do_set_var_name_required "${name}")
   eval "${var}=()"
 }
 
@@ -61,7 +61,7 @@ function _do_set_exists() {
   local name=${1?'name arg required'}
   local var
 
-  var=$(__do_set_var_name ${name})
+  var=$(__do_set_var_name "${name}")
 
   if declare -p "${var}" &>/dev/null; then
     return 0
@@ -85,7 +85,7 @@ function _do_set_contains() {
   local key=${2?'key arg required'}
 
   local var
-  var="$(__do_set_var_name ${name})"
+  var="$(__do_set_var_name "${name}")"
 
   # Dynamically get out the value of the key and that must
   # not be empty.
@@ -107,7 +107,7 @@ function _do_set_size() {
   local name=${1?'name arg required'}
   local var
 
-  var=$(__do_set_var_name_required ${name})
+  var=$(__do_set_var_name_required "${name}")
 
   eval "echo \${#${var}[@]}"
 }
@@ -115,7 +115,7 @@ function _do_set_size() {
 function _do_set_is_empty() {
   local name=${1?'name arg required'}
 
-  if [ "$(_do_set_size ${name})" == "0" ]; then
+  if [ "$(_do_set_size "${name}")" == "0" ]; then
     return 0
   else
     return 1
@@ -136,7 +136,7 @@ function _do_set_append() {
   shift 1
 
   # Makes sure there is at list 1 item to append
-  : ${1?'Missing item(s) to append'}
+  : "${1?'Missing item(s) to append'}"
 
   # For each value, push it to the associate set.
   # This will help to make sure all values are unique.
@@ -154,7 +154,7 @@ function _do_set_print() {
   local name=${1?'Stack name required'}
   local var
 
-  var="$(__do_set_var_name ${name})"
+  var="$(__do_set_var_name "${name}")"
   eval "echo \${!${var}[@]}"
 }
 
@@ -172,7 +172,7 @@ function _do_set_print() {
 #
 function __do_set_var_name() {
   local name=${1?'name arg required'}
-  echo "__do_set_$(_do_string_to_lowercase_var ${name})"
+  echo "__do_set_$(_do_string_to_lowercase_var "${name}")"
 }
 
 # Converts a logical set name to the physical one and make sure

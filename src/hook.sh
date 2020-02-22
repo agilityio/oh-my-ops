@@ -70,7 +70,7 @@ function _do_hook_exist() {
   local func=$2
 
   local funcs=${_do_hook_map[$hook]}
-  for i in $(echo "$funcs" | sed 's/:/ /g'); do
+  for i in ${funcs//:/ }; do
     if [ "$i" = "$func" ]; then
       # The hook is found
       return 0
@@ -92,7 +92,7 @@ function _do_hook_remove() {
 
   local funcs=${_do_hook_map[$hook]}
 
-  funcs=$(echo "$funcs" | sed "s/:${func}:/:/g")
+  funcs=${funcs//:${func}:/:}
   _do_hook_map[${hook}]="${funcs}"
 }
 
@@ -107,7 +107,7 @@ function _do_hook_remove_by_prefix() {
 
   local funcs=${_do_hook_map[$hook]}
 
-  funcs=$(echo "$funcs" | sed "s/:${prefix}[^:]*:/:/g")
+  funcs=${funcs//:${prefix}[^:]*:/:}
   _do_hook_map[${hook}]="${funcs}"
 }
 
@@ -122,7 +122,7 @@ function _do_hook_call() {
 
   # Removes the first argument to the argument list.
   shift
-  local args=$@
+  local args=( "$@" )
 
   _do_log_debug "hook" "_do_hook_call $hook"
 
@@ -130,9 +130,9 @@ function _do_hook_call() {
   # argument list.
   local funcs=${_do_hook_map[$hook]}
 
-  for func in $(echo "$funcs" | sed 's/:/ /g'); do
-    _do_log_debug "hook" "Call $func $args"
+  for func in ${funcs//:/ }; do
+    _do_log_debug "hook" "Call $func" "${args[@]}"
 
-    ${func} ${args}
+    ${func} ${args[@]}
   done
 }

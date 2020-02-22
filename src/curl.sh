@@ -10,12 +10,14 @@ function _do_curl_wait_url() {
   # Converts timeout to number
   local timeout=$((${2?'timeout arg required.'} + 0))
 
-  local start_time=$(date +%s)
+  local start_time
+  start_time=$(date +%s)
 
   local err=0
   until curl --silent --head --max-time 5 "${url}" &>/dev/null; do
 
-    local end_time=$(date +%s)
+    local end_time
+    end_time=$(date +%s)
     if [ ! -z "${timeout}" ] && [ $((end_time - start_time)) -gt ${timeout} ]; then
       # Exceed timeout setting.
       err=1
@@ -42,7 +44,7 @@ function _do_curl_url_exist() {
 
   # Try to get the head of the specified url.
   # If the request return 200 means the url is available.
-  if curl --silent --head --max-time 1 --fail ${url} &>/dev/null; then
+  if curl --silent --head --max-time 1 --fail "${url}" &>/dev/null; then
     return 0
   else
     return 1
@@ -57,7 +59,7 @@ function _do_curl_url_exist() {
 function _do_curl_assert() {
   local url=${1?'url arg required'}
 
-  _do_curl_url_exist ${url} || _do_assert_fail "Expect '${url}' to be available"
+  _do_curl_url_exist "${url}" || _do_assert_fail "Expect '${url}' to be available"
 }
 
 # Makes sure that the specified url does not exists.
@@ -67,5 +69,5 @@ function _do_curl_assert() {
 function _do_curl_assert_not() {
   local url=${1?'url arg required'}
 
-  ! _do_curl_url_exist ${url} || _do_assert_fail "Expected '${url}' to be unavailable."
+  ! _do_curl_url_exist "${url}" || _do_assert_fail "Expected '${url}' to be unavailable."
 }

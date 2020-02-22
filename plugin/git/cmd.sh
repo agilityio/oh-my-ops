@@ -17,7 +17,7 @@ function _do_git_repo_cmd() {
   _do_dir_push "${dir}" || return 1
 
   {
-    git ${cmd} $@
+    git "${cmd}" $@
   } || {
     err=1
   }

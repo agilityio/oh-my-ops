@@ -10,7 +10,6 @@ function _do_git_repo_add() {
   _do_repo_plugin_cmd_add "${repo}" 'git' 'init' 'status'
 
   if [[ $# -gt 0 ]]; then
-    # shellcheck disable=SC2068
     _do_repo_plugin_cmd_add "${repo}" 'git' $@
   fi
 }

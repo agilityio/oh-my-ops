@@ -7,7 +7,7 @@ function _do_assert_fail() {
     msg="Failed"
   fi
 
-  printf "${_DO_FG_CYAN}${msg}${_DO_FG_NORMAL}\n" >&2
+  printf "%s%s%s\n" "${_DO_FG_CYAN}" ${msg} "${_DO_FG_NORMAL}" >&2
   _do_assert_stack_trace
   exit 1
 }
@@ -18,7 +18,7 @@ function _do_assert() {
 
   if [ -z "$actual" ]; then
     if [ ! -z "$msg" ]; then
-      printf "${_DO_FG_CYAN}${msg}.${_DO_FG_NORMAL} " >&2
+      printf "%s%s.%s" "${_DO_FG_CYAN}" "${msg}" "${_DO_FG_NORMAL}"  >&2
     fi
 
     printf "Expected not empty.\n" >&2
@@ -34,10 +34,11 @@ function _do_assert_eq() {
 
   if [ "$expected" != "$actual" ]; then
     if [ ! -z "$msg" ]; then
-      printf "${_DO_FG_CYAN}${msg}.${_DO_FG_NORMAL} " >&2
+      printf "%s%s.%s" "${_DO_FG_CYAN}" "${msg}" "${_DO_FG_NORMAL}" >&2
     fi
 
-    printf "Expected ${_DO_FG_YELLOW}[$expected]${_DO_TX_NORMAL} but was ${_DO_FG_RED}[$actual]${_DO_TX_NORMAL}\n" >&2
+    printf "Expected %s[%s]%s but was %s[%s]%s\n" "${_DO_FG_YELLOW}" "$expected" "${_DO_TX_NORMAL}" "${_DO_FG_RED}" "$actual" "${_DO_TX_NORMAL}" >&2
+
     _do_assert_stack_trace
     exit 1
   fi
@@ -50,10 +51,10 @@ function _do_assert_neq() {
 
   if [ "$expected" == "$actual" ]; then
     if [ ! -z "$msg" ]; then
-      printf "${_DO_FG_CYAN}${msg}.${_DO_FG_NORMAL} " >&2
+      printf "%s%s.%s" "${_DO_FG_CYAN}" "${msg}" "${_DO_FG_NORMAL}" >&2
     fi
 
-    printf "Expected not ${_DO_FG_RED}[$actual]${_DO_TX_NORMAL}\n" >&2
+    printf "Expected not %s[%s]%s\n" "${_DO_FG_RED}" "$actual" "${_DO_TX_NORMAL}" >&2
     _do_assert_stack_trace
     exit 1
   fi
@@ -63,7 +64,7 @@ function _do_assert_neq() {
 #
 function _do_assert_stack_trace() {
   # Print out stack trace.
-  printf "${_DO_TX_DIM}" >&2
+  printf "%s" "${_DO_TX_DIM}" >&2
   local i=
   while ! [ -z "${BASH_SOURCE[$i]:-}" ]; do
     local src="${BASH_SOURCE[$i]}"
@@ -74,13 +75,13 @@ function _do_assert_stack_trace() {
     fi
     i=$((i + 1))
   done | grep -v "^$BASH_SOURCE"
-  printf "${_DO_TX_NORMAL}" >&2
+  printf "%s" "${_DO_TX_NORMAL}" >&2
 }
 
 function _do_assert_cmd() {
   local cmd
   for cmd in $@; do
-    which $cmd &>/dev/null
+    command -v "$cmd" &>/dev/null
     if _do_error $?; then
       _do_assert_fail "Expected '$cmd' command to be installed"
     fi

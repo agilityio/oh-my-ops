@@ -5,7 +5,7 @@
 #   ...name: The list of alias to check.
 #
 function _do_alias_exist() {
-  : ${1?'Alias name is required'}
+  : "${1?'Alias name is required'}"
 
   while (($# > 0)); do
     local name=$1
@@ -29,8 +29,8 @@ function _do_alias_exist() {
 function _do_alias_call_if_exists() {
   local name=${1?'alias name required'}
 
-  if _do_alias_exist $name; then
-    eval "$@"
+  if _do_alias_exist "$name"; then
+    eval "$*"
   fi
 }
 
@@ -43,9 +43,9 @@ function _do_alias_list() {
 
   local expr="s/alias[[:blank:]]*${prefix}\([[:alnum:]_-]*\)=.*$/\1/"
   if [ -z "${prefix}" ]; then
-    alias | sed -e ${expr}
+    alias | sed -e "${expr}"
   else
-    alias | grep "alias ${prefix}" | sed -e ${expr}
+    alias | grep "alias ${prefix}" | sed -e "${expr}"
   fi
 }
 
@@ -53,7 +53,7 @@ function _do_alias_feature_check() {
   local feature=${1?'Support name required'}
   shift 1
 
-  : ${1?'Alias name is required'}
+  : "${1?'Alias name is required'}"
 
   local miss=()
 
@@ -70,7 +70,7 @@ function _do_alias_feature_check() {
   done
 
   if ((${#miss[@]} > 0)); then
-    _do_log_warn "${feature}" "Disable ${feature} supports because of missing ${miss[@]} commands"
+    _do_log_warn "${feature}" "Disable ${feature} supports because of missing ${miss[*]} commands"
     return 1
 
   else

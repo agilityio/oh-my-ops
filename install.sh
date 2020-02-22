@@ -33,7 +33,7 @@ git submodule add https://github.com/trungngo/oh-my-ops.git
 git submodule init
 
 # Generates additional files.
-cd ${INSTALL_DIR}
+cd "${INSTALL_DIR}"
 
 src_files=(
   "version"
@@ -50,6 +50,7 @@ for src_file in "${src_files[@]}"; do
   source "vendor/oh-my-ops/src/${src_file}.sh"
 done
 
+# shellcheck disable=SC2016
 echo '
 DO
 ==
@@ -81,6 +82,7 @@ source activate.sh
 
 ' >"README.md"
 
+# shellcheck disable=SC2016
 echo 'function _do_do_repo_plugin_ready() {
     _do_log_level_debug "do"
     _do_log_info "do" "do repo is ready"

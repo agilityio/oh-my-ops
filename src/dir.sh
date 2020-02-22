@@ -26,7 +26,7 @@ function _do_dir_normalized() {
 
   _do_dir_push "${dir}" || do_assert_fail
 
-  echo $(pwd)
+  pwd
 
   _do_dir_pop
 }
@@ -40,7 +40,8 @@ function _do_dir_home_push() {
 # Generates a random temp directory
 #
 function _do_dir_random_tmp_dir() {
-  local tmp_dir="$(mktemp -d)"
+  local tmp_dir
+  tmp_dir="$(mktemp -d)"
   _do_assert "${tmp_dir}"
   echo "${tmp_dir}"
 }

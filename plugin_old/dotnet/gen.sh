@@ -12,7 +12,7 @@ function _do_dotnet_repo_gen() {
   local repo_dir="${proj_dir}/${repo}"
 
   # Makes sure that the directory exists
-  _do_dir_assert ${repo_dir}
+  _do_dir_assert "${repo_dir}"
 
   _do_dir_push "${repo_dir}"
 
@@ -23,8 +23,8 @@ function _do_dotnet_repo_gen() {
 
   _do_dir_pop
 
-  _do_dotnet_repo_init ${proj_dir} ${repo}
-  _do_dotnet_repo_help ${proj_dir} ${repo}
+  _do_dotnet_repo_init "${proj_dir}" "${repo}"
+  _do_dotnet_repo_help "${proj_dir}" "${repo}"
 
   return $err
 }

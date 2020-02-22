@@ -11,10 +11,10 @@ function _do_error() {
 }
 
 function do_error_assert_not() {
-  local $err="$1"
+  local err="$1"
   shift
 
-  [ ! do_error $1 ] || _do_assert_fail $@
+  do_error $1  || _do_assert_fail $@
 }
 
 function _do_error_report() {
@@ -36,13 +36,14 @@ function _do_error_report_line() {
   local msg=$1
   shift
 
-  local line=$(printf '%0.1s' "."{1..75})
+  local line
+  line=$(printf '%0.1s' "."{1..75})
 
   local pad=${line:${#msg}}
   local color
   local char
 
-  if _do_error $err; then
+  if _do_error "$err"; then
     char="F"
     color=${_DO_FG_RED}
   else
