@@ -1,6 +1,6 @@
 # Find the directory of the calling script
 function _do_src_file() {
-  local i=
+  local i=0
 
   # Walks the stack trace and find the first source
   # that is not from this plugin.
@@ -96,3 +96,4 @@ function _do_src_dir_push() {
   # Changes to the directory relative to the calling script.
   _do_dir_push "${dir}" || return 1
 }
+
