@@ -12,3 +12,8 @@ function _do_git_repo_add() {
   # shellcheck disable=SC2086
   _do_repo_plugin_cmd_add "${repo}" 'git' $cmds
 }
+
+function _do_git() {
+  # shellcheck disable=SC2068
+  _do_git_repo_add $@
+}

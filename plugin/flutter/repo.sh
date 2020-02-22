@@ -7,9 +7,11 @@ function _do_flutter_lib() {
   local repo=${1?'repo arg required'}
   shift 1
 
+  # shellcheck disable=SC2068
   _do_repo_plugin_cmd_add "${repo}" 'flutter' 'doctor' 'clean' 'install' $@
 }
 
 function _do_flutter_mobile() {
+  # shellcheck disable=SC2068
   _do_flutter_lib $@ 'run' 'build:ios' 'build:android'
 }

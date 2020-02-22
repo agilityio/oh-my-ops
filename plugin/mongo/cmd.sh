@@ -84,8 +84,16 @@ function _do_mongo_repo_cmd_start() {
       _do_docker_image_exists "${image}" ||
       _do_mongo_repo_cmd_install "${dir}" "${repo}" "${cmd}"
     } &&
+
+    # Runs the mongo server as deamon
     _do_docker_container_run_deamon "${image}" "${container}" \
-      -p "${port}:${_DO_MONGO_PORT}" $@
+      -p "${port}:${_DO_MONGO_PORT}" $@ &> /dev/null &&
+
+    # Notifies run success
+    echo "Mongo is running at port ${port} as '${container}' docker container." &&
+
+    # Prints out some status about the server
+    _do_mongo_repo_cmd_status "${dir}" "${repo}"
 
   } || return 1
 }
@@ -105,7 +113,7 @@ function _do_mongo_repo_cmd_stop() {
     return 1
   }
 
-  _do_docker_container_kill "${container}" || return 1
+  _do_docker_container_kill "${container}" &> /dev/null || return 1
 }
 
 
@@ -154,6 +162,7 @@ Environment variables:
   docker image: $(_do_mongo_docker_image_name "${repo}")
   docker container: $(_do_mongo_docker_container_name "${repo}")
 
+  _DO_MONGO_VERSION: ${_DO_MONGO_VERSION}
   _DO_MONGO_PORT: ${_DO_MONGO_PORT}
   _DO_MONGO_ADMIN_USER: ${_DO_MONGO_ADMIN_USER}
   _DO_MONGO_ADMIN_PASS: ${_DO_MONGO_ADMIN_PASS}

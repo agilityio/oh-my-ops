@@ -16,6 +16,12 @@ function _do_mongo_repo_cmd_help() {
     status)
       echo "Displays server status.";;
 
+    logs)
+      echo "Displays the most recent logs in the server.";;
+
+    attach)
+      echo "Attach to the server to see logs live.";;
+
     start)
       echo "Starts the mongo server.";;
 

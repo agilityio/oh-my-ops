@@ -12,9 +12,4 @@ function _do_git_plugin_init() {
   fi
 
   _do_log_info 'git' 'Initialize plugin'
-
-  # Listens to
-  # _do_hook_before 'before_repo_dir_add' '_do_git_hook_before_repo_dir_add'
-
-  alias _do_git=_do_git_repo_add
 }

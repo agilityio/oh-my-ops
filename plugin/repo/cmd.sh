@@ -178,10 +178,13 @@ function __do_repo_plugin_cmd_alias() {
 
       local sub_cmd
       for sub_cmd in \$(_do_repo_plugin_cmd_list \"${repo_u}\" \"${plugin_u}\"); do
+        local sub_cmd_d
+        sub_cmd_d=\$(_do_string_to_dash \"\${sub_cmd}\")
+
         local s
         s=\$(${func} \"${dir}\" ${repo} ${cmd} \${sub_cmd} \${_DO_REPO_PLUGIN_CMD_OPTS[${repo_u}-${plugin_u}-\${sub_cmd}]})
 
-        [ -z \"\${s}\" ] || _do_print_repo_help_cmd ${plugin_u} ${repo_u} \"\${sub_cmd}\" \"\${s}\"
+        [ -z \"\${s}\" ] || _do_print_repo_help_cmd ${plugin_u} ${repo_u} \"\${sub_cmd_d}\" \"\${s}\"
       done
     }"
         eval "${src}"
