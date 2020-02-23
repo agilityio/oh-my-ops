@@ -1,7 +1,8 @@
 
 # This function runs tmux section for the given repository.
 # Arguments:
-#   1. repo: The repository name. E.g, `hello-service`
+#   1-3. dir, repo, cmd: Common repo command arguments.
+#     cmd is always "start".
 #
 # It is important to note that, if the tmux have been run before,
 # this will just reopen that session instead of running the new one.
@@ -54,6 +55,8 @@ function _do_tmux_repo_cmd_start() {
   _do_tmux_send_activate_cmd
 
   # Parse all lines in the layout file
+  # shellcheck disable=SC2002
+  # shellcheck disable=SC2162
   cat "$config_file" | while read line; do
     # Reads in and clean up the line. Notes that line start with `#`
     # will be removed. This will also trim the leading and trailing spaces.
@@ -101,6 +104,10 @@ function _do_tmux_repo_cmd_start() {
 
 
 # This util will kill the tmux session for a repository.
+# Arguments:
+#   1-3. dir, repo, cmd: Common repo command arguments.
+#     cmd is always "stop".
+#
 function _do_tmux_repo_cmd_stop() {
   local dir=${1?'dir arg required'}
   local repo=${2?'repo arg required'}
@@ -134,8 +141,13 @@ function _do_tmux_send_keys() {
 # tmux session/windows
 #
 function _do_tmux_send_activate_cmd() {
-  _do_tmux_send_keys "clear && bash"
+  _do_tmux_send_keys "bash"
+
+  # Insides a tmux pane, activates the oh-my-ops frameworks
   _do_tmux_send_keys "source ${DO_ACTIVATE_FILE} --quick $ENVIRONMENT"
+
+  # Clears screen
+  _do_tmux_send_keys "clear"
 }
 
 # If the specified repository has a file ".tmux", tmux is enabled for

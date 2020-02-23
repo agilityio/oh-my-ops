@@ -15,6 +15,7 @@ function _do_tmux_repo_cmd_help() {
 
     stop)
       echo "Stops the repository's tmux session.";;
+
   esac
 }
 
