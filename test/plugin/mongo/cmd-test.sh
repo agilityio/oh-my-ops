@@ -1,7 +1,7 @@
 _do_plugin "mongo"
 
 
-function test_build_start_stop() {
+function test_common_commands() {
   local dir
   dir=$(_do_dir_random_tmp_dir)
 

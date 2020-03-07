@@ -23,6 +23,7 @@ function _do_flutter_repo_cmd() {
   _do_dir_push "${dir}" || return 1
 
   {
+    # shellcheck disable=SC2068
     {
       # For command that is not the default flutter one,
       # we need to append the "run" in front to run it with run script.

@@ -203,11 +203,12 @@ function __do_repo_plugin_cmd_alias() {
         eval "
         function ${name}() {
             local err=0
-            _do_dir_push ${dir}
+            shift 3
+            _do_dir_push \"${dir}\"
 
             {
                 _do_print_header_1 \"${name}\" &&
-                ${func} ${dir} ${repo} ${cmd} \${_DO_REPO_PLUGIN_CMD_OPTS[${repo}-${plugin}-${cmd}]} &&
+                ${func} ${dir} ${repo} ${cmd} \$@ \${_DO_REPO_PLUGIN_CMD_OPTS[${repo}-${plugin}-${cmd}]} &&
                 _do_print_finished \"${name}: Success!\"
             } || {
                 err=1

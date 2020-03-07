@@ -1,30 +1,37 @@
-# Adds a new project to the management list.
+# Enables npm commands for the specified repository.
 # Arguments:
-#   1. dir: The project directories
-#   2. name: The project custom name.
+#   1. name: The repository name.
 #
 function _do_npm() {
   local name=${1?'name arg required'}
   shift 1
 
   local cmds
-  cmds="install clean help $*"
+  cmds="install test clean help $*"
+
+  _do_npm_enabled "${name}" || _do_print_warn "${name} repo is not an npm repo."
 
   # shellcheck disable=SC2086
   _do_repo_plugin_cmd_add "${name}" 'npm' ${cmds}
+}
+
+# Determines if the specified repository has npm enabled.
+#
+function _do_npm_enabled() {
+  local name=${1?'name arg required'}
+
+  local dir
+  dir=$(_do_repo_dir_get "${name}")
+
+  # We do expects the repository to have package.json file.
+  [ -f "${dir}/package.json" ] || return 1
 }
 
 function _do_npm_angular() {
   local name=${1?'name arg required'}
   shift 1
 
-  _do_repo_plugin_cmd_add "${name}" 'npm' 'install' 'clean' 'start' 'build' 'test' 'lint' 'e2e' 'ng' $@
+  # shellcheck disable=SC2068
+  _do_repo_plugin_cmd_add "${name}" 'npm' "${DO_NPM_CMDS}" $@
 }
 
-function _do_npm_api() {
-  local name=${1?'name arg required'}
-  shift 1
-
-  _do_repo_plugin_cmd_add "${name}" 'npm' 'clean' 'start' 'lint' \
-    'build' 'test' 'lint' 'e2e' $@
-}

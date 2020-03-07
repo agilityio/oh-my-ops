@@ -20,4 +20,31 @@ function _do_repo_plugin_init() {
 
   # Provides alias for short commands that developer should use.
   alias _do_repo=_do_repo_dir_add
+
+  # Initializes common commands.
+  # These are the base life-cycle commands that commonly found in any
+  # project.
+  if [ -z "${DO_REPO_BASE_CMDS}" ]; then
+    DO_REPO_BASE_CMDS='status help clean install build doc test'
+  fi
+
+  # Provides some additional comands for apis development.
+  if [ -z "${DO_REPO_API_CMDS}" ]; then
+    DO_REPO_API_CMDS="${DO_REPO_BASE_CMDS} run package deploy"
+  fi
+
+  # Provides some additional commands for web app development.
+  if [ -z "${DO_REPO_WEB_APP_CMDS}" ]; then
+    DO_REPO_WEB_APP_CMDS="${DO_REPO_BASE_CMDS} run package deploy"
+  fi
+
+  # Provides some additional commands for mobile app development.
+  if [ -z "${DO_REPO_MOBILE_APP_CMDS}" ]; then
+    DO_REPO_MOBILE_APP_CMDS="${DO_REPO_BASE_CMDS} build:ios build:android run:ios run:android package deploy"
+  fi
+
+  # Provides some additional for a full project development.
+  if [ -z "${DO_REPO_PROJ_CMDS}" ]; then
+    DO_REPO_PROJ_CMDS="${DO_REPO_BASE_CMDS} package deploy"
+  fi
 }
