@@ -73,8 +73,8 @@ function _do_repo_plugin_cmd_opts() {
   # shellcheck disable=SC2034
   # shellcheck disable=SC2124
   _DO_REPO_PLUGIN_CMD_OPTS[${key}]="$@"
-
 }
+
 
 # Determines if the specified plugin is registered for the specified repository.
 #
@@ -165,33 +165,67 @@ function __do_repo_plugin_cmd_alias() {
   local func
 
   # shellcheck disable=SC2068
-  for func in ${funcs[@]}; do
-    if type "${func}" &>/dev/null; then
-      # The function handler found.
-      # Generates code for executing it.
-      eval "
-      function ${name}() {
-          local err=0
-          _do_dir_push ${dir}
+  # shellcheck disable=SC2086
+  if [ "${cmd}" == "help" ]; then
+    for func in ${funcs[@]}; do
+      if type "${func}" &>/dev/null; then
+    # This is the special case for help command.
+    # Generates a function that triggers help command for the current plugin.
+    local src
+    src="
+    function ${name}() {
+      _do_print_line_1 \"${name}\"
 
-          {
-              _do_print_header_1 \"${name}\" &&
-              ${func} ${dir} ${repo} ${cmd} \${_DO_REPO_PLUGIN_CMD_OPTS[${repo}-${plugin}-${cmd}]} &&
-              _do_print_finished \"${name}: Success!\"
-          } || {
-              err=1
-              _do_print_error \"${name}: Failed\"
-          }
+      local sub_cmd
+      for sub_cmd in \$(_do_repo_plugin_cmd_list \"${repo_u}\" \"${plugin_u}\"); do
+        local sub_cmd_d
+        sub_cmd_d=\$(_do_string_to_dash \"\${sub_cmd}\")
 
-          _do_dir_pop
-          return \${err}
-      }"
-      return
-    fi
-  done
+        local s
+        s=\$(${func} \"${dir}\" ${repo} ${cmd} \${sub_cmd} \${_DO_REPO_PLUGIN_CMD_OPTS[${repo_u}-${plugin_u}-\${sub_cmd}]})
 
-  _do_log_warn 'repo' "No handler for ${name}. Please add '${name}', '${f1}', '${f2}', or '${f3}' function to handle it."
-  return 1
+        [ -z \"\${s}\" ] || _do_print_repo_help_cmd ${plugin_u} ${repo_u} \"\${sub_cmd_d}\" \"\${s}\"
+      done
+    }"
+        eval "${src}"
+        return
+      fi
+    done
+
+  else
+    # Generates a function that triggers the command handler.
+
+    for func in ${funcs[@]}; do
+      if type "${func}" &>/dev/null; then
+        # The function handler found.
+        # Generates code for executing it.
+
+        eval "
+        function ${name}() {
+            local err=0
+            shift 3
+            _do_dir_push \"${dir}\"
+
+            {
+                _do_print_header_1 \"${name}\" &&
+                ${func} ${dir} ${repo} ${cmd} \$@ \${_DO_REPO_PLUGIN_CMD_OPTS[${repo}-${plugin}-${cmd}]} &&
+                _do_print_finished \"${name}: Success!\"
+            } || {
+                err=1
+                _do_print_error \"${name}: Failed\"
+            }
+
+            _do_dir_pop
+            return \${err}
+        }"
+
+        return
+      fi
+    done
+
+    _do_log_warn 'repo' "No handler for ${name}. Please add '${name}', '${f1}', '${f2}', or '${f3}' function to handle it."
+    return 1
+  fi
 }
 
 function _do_repo_plugin_list() {

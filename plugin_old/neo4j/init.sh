@@ -124,7 +124,7 @@ function _do_neo4j_clean() {
 
 # Determines if neo4j is already running or not.
 function _do_neo4j_is_running() {
-  if _do_docker_process_exists ${_DO_NEO4J_DOCKER_CONTAINER_NAME}; then
+  if _do_docker_container_exists ${_DO_NEO4J_DOCKER_CONTAINER_NAME}; then
     return 0
   else
     return 1

@@ -94,3 +94,14 @@ function _do_print_finished() {
     $*
 ------------------------------------------------------------------------------${_DO_FG_NORMAL}"
 }
+function _do_print_repo_help_cmd() {
+  local plugin=${1?'plugin arg required'}
+  local repo=${2?'repo arg required'}
+  local cmd=${3?'cmd arg required'}
+  shift 3
+
+  echo -e "  ${_DO_FG_YELLOW}do-${repo}-${plugin}-${cmd}:${_DO_FG_NORMAL}
+    $*
+  "
+}
+

@@ -19,6 +19,9 @@
 
 # The home directory of the devops repository.
 DO_HOME="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+export DO_HOME
 
 # Activates the main source file.
+# shellcheck source=src/main.sh
+# shellcheck disable=SC2068
 source "$DO_HOME/src/main.sh" $@

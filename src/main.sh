@@ -1,3 +1,33 @@
+function __do_main_activate_file() {
+  # Gets the first file that activate everything.
+  local n=${#BASH_SOURCE[@]}
+  ((n--))
+  local src="${BASH_SOURCE[$n]}"
+
+  # Gets the file name
+  local name
+  name=$(basename "$src")
+
+  # Gets the directory
+  local dir
+  dir=$(dirname "$src")
+
+  # Normalizes the directory
+  pushd "$dir" &> /dev/null || exit
+  dir=$(pwd)
+  popd &> /dev/null || exit
+
+  # Prints out the absolute script that activate everything.
+  echo "${dir}/${name}"
+}
+
+# This is the file that activates the whole thing.
+# This is useful in the case we need to open more terminal
+# starting from this root file. (e.g., see tmux plugin)
+# shellcheck disable=SC2034
+DO_ACTIVATE_FILE=$(__do_main_activate_file)
+
+
 # Figures out which operating system we are on.
 DO_OS="$(uname -s)"
 
@@ -70,6 +100,7 @@ src_files=(
   "print"
   "trap"
   "assert"
+  "uuid"
   "log"
   "error"
   "alias"

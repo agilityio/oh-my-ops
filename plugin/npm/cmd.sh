@@ -57,6 +57,7 @@ function _do_npm_repo_cmd() {
           [ -d "./node_modules" ] ||
           npm install
       } &&
+
       npm ${cmd} $@ &&
       {
         # In the case of link command, we need some special handling
@@ -70,11 +71,15 @@ function _do_npm_repo_cmd() {
             [ ! "${cmd}" == "unlink" ] || opts=" --no-save"
 
             # Gets the links specification from .do.yml
-            local links="$(_do_repo_conf_var_name "${dir}" "npm.link")[@]"
+            local links
+            links="$(_do_repo_conf_var_name "${dir}" "npm.link")[@]"
+
             for link in ${!links}; do
               # Links additional repository
-              _do_print_line_1 "${cmd} ${link}" &&
-                npm ${cmd} ${opts} ${link}
+              _do_print_line_1 "${cmd} ${link}"
+
+              # shellcheck disable=SC2086
+              npm ${cmd} ${opts} ${link}
             done
           }
       }
