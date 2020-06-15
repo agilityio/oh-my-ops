@@ -1,42 +1,27 @@
-_do_plugin "docker"
+_do_plugin 'repo'
 
 _do_log_level_warn "go"
 
 _do_src_include_others_same_dir
 
-# ==============================================================================
-# Plugin Init
-# ==============================================================================
-
-# The list of commands availble, eg., do-go-help, do-go-build, ...
-_DO_GO_CMDS=( "help" )
-
-
-# Initializes go plugin.
-#
 function _do_go_plugin_init() {
-    
-    if ! _do_alias_feature_check "go" "go"; then 
-        return 
-    fi 
+  if ! _do_alias_feature_check "go" "go"; then
+    _do_log_warn 'go' 'Skips go plugin because missing go command.'
+    return
+  fi
 
-    _do_log_info "go" "Initialize plugin"
+  _do_log_info "go" "Initialize plugin"
 
-    _do_plugin_cmd "go" _DO_GO_CMDS
+  # This is the default go commands supported
+  if [ -z "${DO_GO_CMDS}" ]; then
+    DO_GO_CMDS='help clean install build test gen get doctor'
+  fi
 
-    _do_repo_init_hook_add "go" "init"
+  if [ -z "${DO_GO_MOD_CMDS}" ]; then
+    DO_GO_MOD_CMDS="${DO_GO_CMDS} mod tidy"
+  fi
 
-    # Adds alias that runs at repository level
-    local cmds=( "clean" "build" )
-    for cmd in ${cmds[@]}; do 
-        alias "do-all-go-${cmd}"="_do_proj_default_exec_all_repo_cmds go-${cmd}"
-    done
+  if [ -z "${DO_GO_CLI_CMDS}" ]; then
+    DO_GO_CLI_CMDS="${DO_GO_CMDS} mod tidy start stop"
+  fi
 }
-
-
-# Prints out helps for go supports.
-#
-function _do_go_help() {
-    _do_log_info "go" "help"
-}
-
