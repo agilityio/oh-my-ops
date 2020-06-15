@@ -87,6 +87,17 @@ function _do_string_urldecode() {
   printf '%b' "${url_encoded//%/\\x}"
 }
 
+function _do_string_contains() {
+  local s1=${1?'s1 arg required'}
+  local suffix=${2?'suffix arg required'}
+
+  if [[ "${s1}" == *"${suffix}"* ]]; then
+    return 0
+  else
+    return 1
+  fi
+}
+
 # Checks if the specified string start with the specified prefix.
 #
 # Arguments:

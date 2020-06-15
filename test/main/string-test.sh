@@ -62,6 +62,16 @@ function test_do_string_to_alias_name() {
   _do_assert_eq "ab-c-d" $(_do_string_to_alias_name ".AB/src/C/bin/D ")
 }
 
+function test_do_string_contains() {
+  _do_string_contains "ABC" "A" || _do_assert_fail
+  _do_string_contains "ABC" "B" || _do_assert_fail
+  _do_string_contains "ABC" "C" || _do_assert_fail
+  _do_string_contains "ABC" "AB" || _do_assert_fail
+  _do_string_contains "ABC" "BC" || _do_assert_fail
+  _do_string_contains "ABC" "ABC" || _do_assert_fail
+  ! _do_string_contains "ABC" "a" || _do_assert_fail
+}
+
 function test_do_string_startswith() {
   _do_string_startswith "ABC" "A" || _do_assert_fail
   _do_string_startswith "ABC" "AB" || _do_assert_fail

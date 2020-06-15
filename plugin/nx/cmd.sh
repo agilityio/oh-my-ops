@@ -9,25 +9,20 @@
 #
 function _do_nx_repo_cmd() {
   local err=0
-  local dir=${1?'dir arg required'}
-  local repo=${2?'repo arg required'}
   local cmd=${3?'cmd arg required'}
 
   shift 3
-  local opts=""
-
-  _do_dir_push "${dir}" || return 1
 
   # Replaces all '::' to 'space'
-  cmd=$(echo $cmd | sed -e 's/::/ /g')
-  _do_log_debug 'nx' "cmd: $cmd" 
+  cmd=${cmd//::/ }
 
   {
+    # shellcheck disable=SC2086
+    # shellcheck disable=SC2068
     nx ${cmd} $@
   } || {
     err=1
   }
 
-  _do_dir_pop
   return ${err}
 }
