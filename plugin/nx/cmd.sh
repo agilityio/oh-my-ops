@@ -9,17 +9,26 @@
 #
 function _do_nx_repo_cmd() {
   local err=0
+  local dir=${1?'dir arg required'}
   local cmd=${3?'cmd arg required'}
 
   shift 3
 
+  local run="nx"
+
+  if [[ "${dir}" == "UNIT-TEST" ]]; then
+    # For unit testing
+    run="echo ${run}"
+  fi
+
   # Replaces all '::' to 'space'
   cmd=${cmd//::/ }
 
+  # replaces the "start " prefix with the "serve " prefix
+  # see: https://wiki.bash-hackers.org/syntax/pe#search_and_replace
+  cmd=${cmd/#start /serve }
   {
-    # shellcheck disable=SC2086
-    # shellcheck disable=SC2068
-    nx ${cmd} $@
+    ${run} ${cmd} $@
   } || {
     err=1
   }
