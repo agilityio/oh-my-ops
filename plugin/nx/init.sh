@@ -27,4 +27,12 @@ function _do_nx_plugin_init() {
     DO_NX_ANGULAR_LIB_CMDS='build test lint'
   fi
 
+  if [ -z "${DO_NX_NODE_APP_CMDS}" ]; then
+    DO_NX_NODE_APP_CMDS='build test start lint'
+  fi
+
+  if [ -z "${DO_NX_NODE_LIB_CMDS}" ]; then
+    DO_NX_NODE_LIB_CMDS='build test lint'
+  fi
+
 }

@@ -22,7 +22,7 @@ function _do_nx_sub_repo {
   local cmds=""
   local repo_cmds="${DO_NX_ANGULAR_APP_CMDS} $@"
 
-  for cmd in ${repo_cmds}; do 
+  for cmd in ${repo_cmds}; do
     cmds="${cmds} ${cmd}::${sub_repo}"
   done
 
@@ -49,6 +49,25 @@ function _do_nx_angular_lib {
 
   # shellcheck disable=SC2086
   _do_nx_sub_repo "${name}" "${sub_repo}" ${DO_NX_ANGULAR_LIB_CMDS} $@
+}
+
+function _do_nx_node_app {
+  local name=${1?'name arg required'}
+  local sub_repo=${2?'sub_repo arg required'}
+  shift 2
+
+  # shellcheck disable=SC2086
+  _do_nx_sub_repo "${name}" "${sub_repo}" ${DO_NX_NODE_APP_CMDS} $@
+}
+
+
+function _do_nx_node_lib {
+  local name=${1?'name arg required'}
+  local sub_repo=${2?'sub_repo arg required'}
+  shift 2
+
+  # shellcheck disable=SC2086
+  _do_nx_sub_repo "${name}" "${sub_repo}" ${DO_NX_NODE_LIB_CMDS} $@
 }
 
 
