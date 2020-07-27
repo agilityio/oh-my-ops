@@ -148,7 +148,7 @@ function __do_repo_plugin_cmd_alias() {
   fi
 
   # First, looks for the exact command handler to run.
-  local repo_u=
+  local repo_u
   repo_u=$(_do_string_to_undercase "${repo}")
 
   local plugin_u
@@ -163,6 +163,7 @@ function __do_repo_plugin_cmd_alias() {
 
   local funcs=("${f1} ${f2} ${f3}")
   local func
+  local hook=$(_do_string_to_dash "${repo}-${plugin}-${cmd}")
 
   # shellcheck disable=SC2068
   # shellcheck disable=SC2086
@@ -205,6 +206,7 @@ function __do_repo_plugin_cmd_alias() {
             local err=0
             shift 3
             _do_dir_push \"${dir}\"
+            _do_hook_call \"do-before-${hook}\"
 
             {
                 _do_print_header_1 \"${name}\" &&
@@ -215,6 +217,7 @@ function __do_repo_plugin_cmd_alias() {
                 _do_print_error \"${name}: Failed\"
             }
 
+            _do_hook_call \"do-after-${hook}\"
             _do_dir_pop
             return \${err}
         }"
