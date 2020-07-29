@@ -14,8 +14,11 @@ function _do_repo_plugin_cmd_hook_call() {
   shift 4
 
   local hook="do-${repo}-${plugin}-${cmd}"
+  hook=$(_do_string_to_dash "${hook}")
+
   _do_hook_call "${hook}" "${dir}" "${repo}" "${cmd}" $@
 }
+
 
 # Adds a hook before the plugin command execution.
 #
@@ -33,7 +36,10 @@ function _do_repo_plugin_cmd_hook_before() {
   local cmd=${3?'cmd arg required'}
   local func=${4?'func arg required'}
 
-  _do_hook_before "do-${repo}-${plugin}-${cmd}" "${func}"
+  local hook="do-${repo}-${plugin}-${cmd}"
+  hook=$(_do_string_to_dash "${hook}")
+
+  _do_hook_before "${hook}" "${func}"
 }
 
 # Adds a hook before a plugin command execution.
@@ -54,7 +60,10 @@ function _do_repo_plugin_cmd_hook_after() {
   local cmd=${3?'cmd arg required'}
   local func=${4?'func arg required'}
 
-  _do_hook_after "do-${repo}-${plugin}-${cmd}" "${func}"
+  local hook="do-${repo}-${plugin}-${cmd}"
+  hook=$(_do_string_to_dash "${hook}")
+
+  _do_hook_after "${hook}" "${func}"
 }
 
 # Just removes a function from an existing hook.
@@ -65,5 +74,8 @@ function _do_repo_plugin_cmd_hook_remove() {
   local cmd=${3?'cmd arg required'}
   local func=${4?'func arg required'}
 
-  _do_hook_remove "do-${repo}-${plugin}-${cmd}" "${func}"
+  local hook="do-${repo}-${plugin}-${cmd}"
+  hook=$(_do_string_to_dash "${hook}")
+
+  _do_hook_remove "${hook}" "${func}"
 }

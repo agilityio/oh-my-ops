@@ -10,11 +10,22 @@ function _do_nx_repo_cmd_help() {
     help)
       echo "Prints this help.";;
 
-    install)
-      echo "Prints out this help.";;
+    affected:build)
+      echo "Build applications and publishable libraries affected by changes";;
 
-    clean)
-      echo "Runs 'nx run clean' to clean the repository.";;
+    affected:test)
+      echo "Test projects affected by changes";;
+
+    affected:lint)
+      echo "Lint projects affected by changes";;
+
+    *)
+      if _do_string_contains "${sub_cmd}" "::"; then
+        echo "${sub_cmd//::/ } sub project".
+      else
+        echo "Runs nx ${sub_cmd}"
+      fi
+
   esac
 }
 

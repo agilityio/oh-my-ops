@@ -1,6 +1,6 @@
 _do_plugin 'repo'
 
-_do_log_level_debug "nx"
+_do_log_level_warn "nx"
 
 _do_src_include_others_same_dir
 
@@ -24,7 +24,23 @@ function _do_nx_plugin_init() {
   fi
 
   if [ -z "${DO_NX_ANGULAR_LIB_CMDS}" ]; then
-    DO_NX_ANGULAR_LIB_CMDS='build test lint'
+    DO_NX_ANGULAR_LIB_CMDS='test lint'
+  fi
+
+  if [ -z "${DO_NX_ANGULAR_PUBLISHABLE_LIB_CMDS}" ]; then
+    DO_NX_ANGULAR_PUBLISHABLE_LIB_CMDS='build test lint'
+  fi
+
+  if [ -z "${DO_NX_NODE_APP_CMDS}" ]; then
+    DO_NX_NODE_APP_CMDS='build test start lint'
+  fi
+
+  if [ -z "${DO_NX_NODE_LIB_CMDS}" ]; then
+    DO_NX_NODE_LIB_CMDS='test lint'
+  fi
+
+  if [ -z "${DO_NX_NODE_PUBLISHABLE_LIB_CMDS}" ]; then
+    DO_NX_NODE_PUBLISHABLE_LIB_CMDS='build test lint'
   fi
 
 }

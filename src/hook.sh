@@ -33,6 +33,7 @@ function _do_hook_before() {
   _do_hook_map[$hook]=":${func}${funcs}"
 }
 
+
 # Adds the specified function to the hook.
 # Arguments:
 #   1. hook: The hook name, returned by _do_hook_declare function.
@@ -56,6 +57,12 @@ function _do_hook_after() {
   fi
 
   _do_hook_map[$hook]="${funcs}${func}:"
+}
+
+# Short-hand for _do_hook_after
+function _do_hook() {
+  # shellcheck disable=SC2068
+  _do_hook_after $@
 }
 
 # Determines if the specified function is already registered with the hook.
