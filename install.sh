@@ -3,119 +3,73 @@
 set -e
 
 # The directory where this script is executed.
-CUR_DIR="$(pwd)"
+REPO_DIR="$(pwd)"
 
-# The repository name.
-DO_REPO="do"
+mkdir do
+cd do
 
-# The home directory from do framework.
-INSTALL_DIR="${CUR_DIR}/${DO_REPO}"
+mkdir src
 
-echo "Initializes empty ${DO_REPO}"
-mkdir ${DO_REPO}
-cd ${DO_REPO}
+# Generates the
+# shellcheck disable=SC2016
+echo '
+# The array of plugins to enabled.
+DO_PLUGINS="proj git prompt banner env full"
 
-echo "Add oh-my-ops as git sub module"
-git init
+# The environments supported.
+DO_ENVS="local dev stag prod"
 
-echo "* text=auto
-*.sh text eol=lf" >.gitattributes
+# Uncomment this if you want to run with a specific version.
+# DO_VERSION="0.1-alpha"
 
-echo "Pull oh-my-ops framework"
+cd do
+source "src/init.sh"
 
-mkdir vendor
-cd vendor
+_do_proj ".." "proj"
+_do_full_proj "proj"
 
-# Initializes devops as the submodule of the current repository
-git submodule add https://github.com/trungngo/oh-my-ops.git
+# Enables git command at the project root.
+_do_git "proj"
+_do_banner
+cd ..
 
-# Pull the submodule
-git submodule init
-
-# Generates additional files.
-cd "${INSTALL_DIR}"
-
-src_files=(
-  "version"
-  "os"
-  "src"
-  "color"
-  "print"
-  "assert"
-  "arg"
-)
-
-# Loads all core source files.
-for src_file in "${src_files[@]}"; do
-  source "vendor/oh-my-ops/src/${src_file}.sh"
-done
+' > "activate.sh"
 
 # shellcheck disable=SC2016
 echo '
-DO
-==
+function _do_init() {
+  local repo="agilityio/oh-my-ops"
 
-## Get Starts
+  if [ -z "${DO_VERSION}" ]; then
+    DO_VERSION=$(curl --silent "https://api.github.com/repos/${repo}/releases/latest" | grep -Po '\''"tag_name": "v\K.*?(?=")'\'')
+  fi
 
-Runs the following command to activate the `do` virtual environment.
-
-```
-bash
-source activate.sh
-```
-
-## Prerequisites
-
-* Bash 4+
-* Git, Curl
-* Docker
-* MacOSX, Linux, or Windows (Cygwin)
-
-* Optional:
-    * Python
-    * NodeJS
-    * Go
-    * Typescript
-    * Dotnet
-    * Java
-    * Vagrant
-
-' >"README.md"
-
-# shellcheck disable=SC2016
-echo 'function _do_do_repo_plugin_ready() {
-    _do_log_level_debug "do"
-    _do_log_info "do" "do repo is ready"
+  [ -d ".oh-my-ops" ] || {
+    echo "Download op-my-ops ${DO_VERSION} release."
+    wget https://github.com/${repo}/archive/v${DO_VERSION}.zip &&
+    unzip v${DO_VERSION}.zip &> /dev/null &&
+    mv oh-my-ops-${DO_VERSION} .oh-my-ops &> /dev/null &&
+    rm v${DO_VERSION}.zip &> /dev/null
+  } || {
+    echo "Cannot download oh-my-ops runtime."
+    return 1
+  }
 }
 
-
-# Updates submodules like oh-my-ops framework
-#
 function do-update() {
-    _do_print_header_2 "Update dependencies"
-
-    _do_dir_push $(_do_src_dir)
-    git submodule update --remote --merge
-    _do_dir_pop
+  [ ! -d ".oh-my-ops" ] || {
+    echo "Remove old .oh-my-ops runtime."
+    rm -rfd .oh-my-ops &> /dev/null &&
+    _do_init &&
+    _do_print_warn "Please exit and run source activate.sh again."
+  } || {
+    _do_print_error "Fail to upgrade."
+  }
 }
-' >".do.sh"
 
-# Generates the
-echo '# The array of plugin name to be included. If this variable is not specified
-# all plugins found will be included by default.
-# DO_PLUGINS="proj git prompt"
+_do_init
+source .oh-my-ops/activate.sh $@
 
+' > 'src/init.sh'
 
-source vendor/oh-my-ops/activate.sh $@
-' >"activate.sh"
-
-# Generates the src directory where custom plugins can be put here.
-mkdir src
-touch src/.keep
-
-git add .
-
-_do_print_banner "\n
-        Do ${DO_VERSION} installed at: ${CUR_DIR}/${DO_REPO}.
-        Runs 'source ./activate.sh' in bash shell to start and
-        then run 'do-help' for more information."
+echo "Runs 'source do/activate.sh' in bash shell to start."
