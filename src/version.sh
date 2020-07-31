@@ -5,7 +5,7 @@ function _do_version() {
   local ver="${DO_VERSION}"
   if [ -z "${ver}" ]; then
     # This should be the latest version.
-    ver="1.0.0"
+    ver="0.1"
   fi
   echo "${ver}"
 }
