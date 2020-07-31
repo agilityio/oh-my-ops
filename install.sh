@@ -68,9 +68,11 @@ function _do_init() {
 
 function do-update() {
   {
-    [ -d ".oh-my-ops" ] || {
-      echo "Remove old .oh-my-ops runtime."
-      rm -rfd .oh-my-ops &> /dev/null
+    {
+      [ ! -d ".oh-my-ops" ] || {
+        echo "Remove old .oh-my-ops runtime."
+        rm -rfd .oh-my-ops &> /dev/null
+      }
     } &&
     _do_init &&
     _do_print_warn "Please exit and run source activate.sh again."
