@@ -2,25 +2,29 @@
 
 set -e
 
-# The directory where this script is executed.
-REPO_DIR="$(pwd)"
+mkdir "do"
+cd "do"
 
-mkdir do
-cd do
+mkdir "src"
 
-mkdir src
+# -----------------------------------------------------------------------------
+# Generates do/activate.sh
+# -----------------------------------------------------------------------------
 
-# Generates the
 # shellcheck disable=SC2016
 echo '
+# The git repository that do installed from.
+# https://github.com/agilityio/oh-my-ops
+DO_INSTALL_REPO="agilityio/oh-my-ops"
+
+# Uncomment this if you want to run with a specific version.
+# DO_VERSION="0.1-alpha"
+
 # The array of plugins to enabled.
 DO_PLUGINS="proj git prompt banner env full"
 
 # The environments supported.
 DO_ENVS="local dev stag prod"
-
-# Uncomment this if you want to run with a specific version.
-# DO_VERSION="0.1-alpha"
 
 cd do
 source "src/init.sh"
@@ -35,21 +39,27 @@ cd ..
 
 ' > "activate.sh"
 
+
+# -----------------------------------------------------------------------------
+# Generates do/src/init.sh
+# -----------------------------------------------------------------------------
+
 # shellcheck disable=SC2016
 echo '
 function _do_init() {
-  local repo="agilityio/oh-my-ops"
+  local repo="${DO_INSTALL_REPO}"
+  local ver="${DO_VERSION}"
 
-  if [ -z "${DO_VERSION}" ]; then
-    DO_VERSION=$(curl --silent "https://api.github.com/repos/${repo}/releases/latest" | grep -Po '\''"tag_name": "v\K.*?(?=")'\'')
+  if [ -z "${ver}" ]; then
+    ver=$(curl --silent "https://api.github.com/repos/${repo}/releases/latest" | grep -Po '\''"tag_name": "v\K.*?(?=")'\'')
   fi
 
   [ -d ".oh-my-ops" ] || {
-    echo "Download op-my-ops ${DO_VERSION} release."
-    wget https://github.com/${repo}/archive/v${DO_VERSION}.zip &&
-    unzip v${DO_VERSION}.zip &> /dev/null &&
-    mv oh-my-ops-${DO_VERSION} .oh-my-ops &> /dev/null &&
-    rm v${DO_VERSION}.zip &> /dev/null
+    echo "Download op-my-ops ${ver} release."
+    wget https://github.com/${repo}/archive/v${ver}.zip &&
+    unzip v${ver}.zip &> /dev/null &&
+    mv oh-my-ops-${ver} .oh-my-ops &> /dev/null &&
+    rm v${ver}.zip &> /dev/null
   } || {
     echo "Cannot download oh-my-ops runtime."
     return 1
@@ -57,9 +67,11 @@ function _do_init() {
 }
 
 function do-update() {
-  [ ! -d ".oh-my-ops" ] || {
-    echo "Remove old .oh-my-ops runtime."
-    rm -rfd .oh-my-ops &> /dev/null &&
+  {
+    [ -d ".oh-my-ops" ] || {
+      echo "Remove old .oh-my-ops runtime."
+      rm -rfd .oh-my-ops &> /dev/null
+    } &&
     _do_init &&
     _do_print_warn "Please exit and run source activate.sh again."
   } || {
@@ -67,9 +79,8 @@ function do-update() {
   }
 }
 
-_do_init
+_do_init &&
 source .oh-my-ops/activate.sh $@
-
 ' > 'src/init.sh'
 
 echo "Runs 'source do/activate.sh' in bash shell to start."
