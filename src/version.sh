@@ -1,11 +1,13 @@
-if [ -z "${DO_VERSION}" ]; then
-  export DO_VERSION="1.0.0"
-fi
 
 # Prints out the version of do framework.
 #
 function _do_version() {
-  echo "${DO_VERSION}"
+  local ver="${DO_VERSION}"
+  if [ -z "${ver}" ]; then
+    # This should be the latest version.
+    ver="1.0.0"
+  fi
+  echo "${ver}"
 }
 
 alias do-version="_do_version"
