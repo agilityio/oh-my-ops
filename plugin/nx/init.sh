@@ -16,11 +16,11 @@ function _do_nx_plugin_init() {
 
   # This is the default nx commands supported
   if [ -z "${DO_NX_CMDS}" ]; then
-    DO_NX_CMDS='help affected:build affected:test affected:lint'
+    DO_NX_CMDS='help cli affected:build affected:test affected:lint dep-graph'
   fi
 
   if [ -z "${DO_NX_ANGULAR_APP_CMDS}" ]; then
-    DO_NX_ANGULAR_APP_CMDS='build test start lint'
+    DO_NX_ANGULAR_APP_CMDS='build watch test start lint'
   fi
 
   if [ -z "${DO_NX_ANGULAR_LIB_CMDS}" ]; then
@@ -32,7 +32,7 @@ function _do_nx_plugin_init() {
   fi
 
   if [ -z "${DO_NX_NODE_APP_CMDS}" ]; then
-    DO_NX_NODE_APP_CMDS='build test start lint'
+    DO_NX_NODE_APP_CMDS='build watch test start lint'
   fi
 
   if [ -z "${DO_NX_NODE_LIB_CMDS}" ]; then

@@ -59,5 +59,3 @@ function _do_dotnet_test() {
   # shellcheck disable=SC2086
   _do_repo_plugin_cmd_add "${repo}" 'dotnet' ${DO_DOTNET_TEST_CMDS} $@
 }
-
-

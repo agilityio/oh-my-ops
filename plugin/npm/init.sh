@@ -16,6 +16,10 @@ function _do_npm_plugin_init() {
 
   # This is the default npm commands supported
   if [ -z "${DO_NPM_CMDS}" ]; then
-    DO_NPM_CMDS='help install'
+    DO_NPM_CMDS='help cli install test clean help'
+  fi
+
+  if [ -z "${DO_NPM_ANGULAR_CMDS}" ]; then
+    DO_NPM_ANGULAR_CMDS='start'
   fi
 }

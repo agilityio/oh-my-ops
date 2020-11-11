@@ -63,6 +63,25 @@ function _do_string_to_alias_name() {
   _do_string_to_dash "$1" | awk '{print tolower($0)}' | sed -E 's/(src|bin)-//g'
 }
 
+function _do_string_to_alias_prefix() {
+    local name=$(_do_string_to_alias_name "$1")
+    
+    if [ ! "${name}" == "" ]; then 
+        name="${name}-"
+    fi
+
+    echo "${name}"
+}
+function _do_string_to_alias_suffix() {
+    local name=$(_do_string_to_alias_name "$1")
+    
+    if [ ! "${name}" == "" ]; then 
+        name="-${name}"
+    fi
+
+    echo "${name}"
+}
+
 function _do_string_urlencode() {
   # urlencode <string>
   old_lc_collate=$LC_COLLATE

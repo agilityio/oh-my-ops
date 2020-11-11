@@ -211,7 +211,7 @@ function __do_repo_plugin_cmd_alias() {
             {
                 _do_print_header_1 \"${name}\" &&
                 ${func} ${dir} ${repo} ${cmd} \$@ \${_DO_REPO_PLUGIN_CMD_OPTS[${repo}-${plugin}-${cmd}]} &&
-                _do_print_finished \"${name}: Success!\"
+                _do_print_success \"${name}: Success!\"
             } || {
                 err=1
                 _do_print_error \"${name}: Failed\"
