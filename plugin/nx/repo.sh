@@ -106,5 +106,5 @@ function _do_nx_enabled() {
   dir=$(_do_repo_dir_get "${name}")
 
   # We do expects the repository to have nx.json file.
-  [ -f "${dir}/nx.json" ] || return 1
+  [ -f "${dir}/firebase.json" ] || return 1
 }

@@ -130,7 +130,7 @@ function _do_postgres_repo_cmd_logs() {
 
 
 
-# Stops postgres db server.
+# Prints out the postgres server status.
 #
 function _do_postgres_repo_cmd_status() {
   local dir=${1?'dir arg required'}

@@ -56,10 +56,10 @@ function _do_init() {
 
   [ -d ".oh-my-ops" ] || {
     echo "Download op-my-ops ${ver} release."
-    wget https://github.com/${repo}/archive/v${ver}.zip &&
-    unzip v${ver}.zip &> /dev/null &&
-    mv oh-my-ops-${ver} .oh-my-ops &> /dev/null &&
-    rm v${ver}.zip &> /dev/null
+    wget "https://github.com/${repo}/archive/v${ver}.zip" &&
+    unzip "v${ver}.zip" &> /dev/null &&
+    mv "oh-my-ops-${ver}" .oh-my-ops &> /dev/null &&
+    rm "v${ver}.zip" &> /dev/null
   } || {
     echo "Cannot download oh-my-ops runtime."
     return 1

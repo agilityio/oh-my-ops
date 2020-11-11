@@ -21,12 +21,16 @@ function _do_nx_repo_cmd() {
     run="echo ${run}"
   fi
 
+  # replaces the "start " prefix with the "serve " prefix
+  # see: https://wiki.bash-hackers.org/syntax/pe#search_and_replace
+  cmd=${cmd/#start::/serve::}
+
+  # Replaces watch prefix with the "build --watch" prefix
+  cmd=${cmd/#watch::/build --watch::}
+
   # Replaces all '::' to 'space'
   cmd=${cmd//::/ }
 
-  # replaces the "start " prefix with the "serve " prefix
-  # see: https://wiki.bash-hackers.org/syntax/pe#search_and_replace
-  cmd=${cmd/#start /serve }
   {
     ${run} ${cmd} $@
   } || {
@@ -35,3 +39,32 @@ function _do_nx_repo_cmd() {
 
   return ${err}
 }
+
+
+# Runs an nx command at the specified directory.
+# 
+# Arguments:
+# 1. dir: The absolute directory to run the command.
+# 2. cmd: Always "cli"
+#
+function _do_nx_repo_cmd_cli() {
+  local err=0
+  local dir=${1?'dir arg required'}
+  shift 3
+
+  local run="nx"
+
+  if [[ "${dir}" == "UNIT-TEST" ]]; then
+    # For unit testing
+    run="echo ${run}"
+  fi
+
+  {
+    ${run} $@
+  } || {
+    err=1
+  }
+
+  return ${err}
+}
+

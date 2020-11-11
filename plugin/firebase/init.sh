@@ -1,32 +1,36 @@
-_do_plugin "docker"
+_do_plugin 'repo'
 
-_do_log_level_debug "firebase"
+_do_log_level_warn "firebase"
 
 _do_src_include_others_same_dir
 
-# ==============================================================================
-# Plugin Init
-# ==============================================================================
-# The list of commands availble, eg., do-firebase-help, do-firebase-start, ...
-_DO_FIREBASE_CMDS=( "help" )
-
-
-# Initializes firebase plugin.
-#
 function _do_firebase_plugin_init() {
-    if ! _do_alias_feature_check "firebase" "firebase"; then 
-        return 
-    fi 
+  # Checks that the `firebase` command is available or not.
+  _do_alias_feature_check "firebase" "firebase"; 
+  _do_log_info "firebase" "Initialize plugin"
 
-    _do_log_info "firebase" "Initialize plugin"
-    _do_plugin_cmd "firebase" _DO_FIREBASE_CMDS
+  # This is the default firebase commands supported
+  if [ -z "${DO_FIREBASE_CMDS}" ]; then
+    DO_FIREBASE_CMDS='help cli status login logout start deploy'
+  fi
 
-    _do_repo_init_hook_add "firebase" "init"
-}
+  if [ -z "${DO_FIREBASE_HOSTING_CMDS}" ]; then
+    DO_FIREBASE_HOSTING_CMDS='deploy-hosting'
+  fi
 
+  if [ -z "${DO_FIREBASE_HOSTING_SUB_CMDS}" ]; then
+    DO_FIREBASE_HOSTING_SUB_CMDS='deploy-hosting'
+  fi
 
-# Prints out helps for firebase supports.
-#
-function _do_firebase_help() {
-    _do_log_info "firebase" "help"
+  if [ -z "${DO_FIREBASE_FIRESTORE_CMDS}" ]; then
+    DO_FIREBASE_FIRESTORE_CMDS='deploy-firestore'
+  fi
+
+  if [ -z "${DO_FIREBASE_FUNCTION_CMDS}" ]; then
+    DO_FIREBASE_FUNCTION_CMDS='deploy-function'
+  fi
+
+  if [ -z "${DO_FIREBASE_STORAGE_CMDS}" ]; then
+    DO_FIREBASE_STORAGE_CMDS='deploy-storage'
+  fi
 }

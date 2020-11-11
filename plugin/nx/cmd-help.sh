@@ -11,13 +11,17 @@ function _do_nx_repo_cmd_help() {
       echo "Prints this help.";;
 
     affected:build)
-      echo "Build applications and publishable libraries affected by changes";;
+      echo "Build applications and publishable libraries affected by changes.";;
 
     affected:test)
-      echo "Test projects affected by changes";;
+      echo "Test projects affected by changes.";;
 
     affected:lint)
-      echo "Lint projects affected by changes";;
+      echo "Lint projects affected by changes.";;
+    
+    dep-graph)
+      echo "Generates the dependency graph in the workspace.";;
+
 
     *)
       if _do_string_contains "${sub_cmd}" "::"; then

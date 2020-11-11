@@ -90,3 +90,32 @@ function _do_npm_repo_cmd() {
   _do_dir_pop
   return ${err}
 }
+
+
+# Runs an npm command at the specified directory.
+# 
+# Arguments:
+# 1. dir: The absolute directory to run the command.
+# 2. cmd: Always "cli"
+#
+function _do_npm_repo_cmd_cli() {
+  local err=0
+  local dir=${1?'dir arg required'}
+  shift 3
+
+  local run="npm"
+
+  if [[ "${dir}" == "UNIT-TEST" ]]; then
+    # For unit testing
+    run="echo ${run}"
+  fi
+
+  {
+    ${run} $@
+  } || {
+    err=1
+  }
+
+  return ${err}
+}
+
