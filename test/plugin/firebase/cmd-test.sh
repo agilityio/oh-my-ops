@@ -20,7 +20,7 @@ function test_deploy_function_cmd() {
   local s
 
   s=$(_do_firebase_repo_cmd "UNIT-TEST" "fake-repo" "deploy-function")
-  _do_assert_eq "firebase deploy --only function" "$s"
+  _do_assert_eq "firebase deploy --only functions" "$s"
 }
 
 

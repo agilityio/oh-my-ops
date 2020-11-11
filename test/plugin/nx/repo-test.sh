@@ -22,7 +22,7 @@ function test_repo() {
   do-fakerepo-nx-affected-build || _do_assert_fail
 }
 
-function test_angular_app() {
+function skip_test_angular_app() {
 
   local dir
   dir=$(_do_dir_random_tmp_dir)
