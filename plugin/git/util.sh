@@ -66,3 +66,4 @@ function _do_git_util_is_dirty() {
   _do_dir_pop
   return $err
 }
+

@@ -1,7 +1,7 @@
 _do_plugin 'docker'
 _do_plugin 'repo'
 
-_do_log_level_debug 'sphinx'
+_do_log_level_warn 'sphinx'
 _do_src_include_others_same_dir
 
 # Initializes sphinx plugin.

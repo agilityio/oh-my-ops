@@ -33,7 +33,7 @@ function _do_file_ext() {
 function _do_file_assert() {
   local file=${1?'file arg required'}
 
-  [ -f $file ] || _do_assert_fail "Expected $file a file"
+  [ -f "$file" ] || _do_assert_fail "Expected $file a file"
 }
 
 # Asserts that the specified file does not exist.
@@ -43,7 +43,7 @@ function _do_file_assert() {
 function _do_file_assert_not() {
   local file=${1?'file arg required'}
 
-  [ -f $file ] || _do_assert_fail "Expected $file not a file"
+  [ -f "$file" ] || _do_assert_fail "Expected $file not a file"
 }
 
 # Scans the specified directory recursively to find certain files.
@@ -60,9 +60,10 @@ function _do_file_scan() {
   _do_dir_push "${dir}"
 
   local name
+  # shellcheck disable=SC2044
   for name in $(find . -maxdepth 3 -type f -name "${pattern}" -print); do
     # Removes the first 2 characters './'.
-    echo $name | cut -c 3-
+    echo "$name" | cut -c 3-
   done
 
   _do_dir_pop
