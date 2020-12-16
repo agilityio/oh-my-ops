@@ -27,6 +27,7 @@ function _do_go_plugin_init() {
 
   # Adds alias that runs at repository level
   local cmds=("clean" "build")
+  # shellcheck disable=SC2068
   for cmd in ${cmds[@]}; do
     alias "do-all-go-${cmd}"="_do_proj_default_exec_all_repo_cmds go-${cmd}"
   done

@@ -1,6 +1,5 @@
 _do_plugin "nx"
 
-
 function test_repo() {
   local dir
   dir=$(_do_dir_random_tmp_dir)
@@ -9,7 +8,7 @@ function test_repo() {
     # Creates an empty nx workspace. If anything fails,
     # please try "npx create-nx-workspace@latest --help" to figure out.
     cd "$dir" &&
-    npx create-nx-workspace@latest fakerepo --preset=empty --cli=angular --nx-cloud=false
+      npx create-nx-workspace@latest fakerepo -q --preset=empty --cli=angular --nx-cloud=false
   } || _do_assert_fail
 
   _do_repo_dir_add "${dir}/fakerepo" "fakerepo"
@@ -31,7 +30,8 @@ function test_angular_app() {
     # Creates an nx workspace with an angular application..
     # please try "npx create-nx-workspace@latest --help" to figure out.
     cd "$dir" &&
-    npx create-nx-workspace@latest fakerepo --preset=angular --cli=angular --nx-cloud=false --style=scss --appName=demo
+      npx create-nx-workspace@latest fakerepo -q --preset=angular \
+        --cli=angular --nx-cloud=false --style=scss --appName=demo --linter=tslint
   } || _do_assert_fail
 
   _do_repo_dir_add "${dir}/fakerepo" "fakerepo"

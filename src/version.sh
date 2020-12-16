@@ -1,4 +1,3 @@
-
 # Prints out the version of do framework.
 #
 function _do_version() {
@@ -10,4 +9,3 @@ function _do_version() {
   echo "${ver}"
 }
 
-alias do-version="_do_version"

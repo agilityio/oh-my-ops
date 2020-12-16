@@ -19,7 +19,7 @@ function _do_repo_plugin_init() {
   _do_array_new '_repo_name'
 
   # Provides alias for short commands that developer should use.
-  alias _do_repo=_do_repo_dir_add
+  _do_alias "_do_repo" "_do_repo_dir_add"
 
   # Initializes common commands.
   # These are the base life-cycle commands that commonly found in any

@@ -1,3 +1,18 @@
+# Checks if the current shell is bash
+
+# Figures out which operating system we are on.
+DO_OS="$(uname -s)"
+
+case "${DO_OS}" in
+Linux*) DO_OS=linux ;;
+Darwin*) DO_OS=mac ;;
+CYGWIN*) DO_OS=cygwin ;;
+*)
+  echo "Sorry! We don't support '$(uname)' operating system yet. Please hang on tight!"
+  return
+  ;;
+esac
+
 function __do_main_activate_file() {
   # Gets the first file that activate everything.
   local n=${#BASH_SOURCE[@]}
@@ -13,9 +28,9 @@ function __do_main_activate_file() {
   dir=$(dirname "$src")
 
   # Normalizes the directory
-  pushd "$dir" &> /dev/null || exit
+  pushd "$dir" &>/dev/null || exit
   dir=$(pwd)
-  popd &> /dev/null || exit
+  popd &>/dev/null || exit
 
   # Prints out the absolute script that activate everything.
   echo "${dir}/${name}"
@@ -27,22 +42,8 @@ function __do_main_activate_file() {
 # shellcheck disable=SC2034
 DO_ACTIVATE_FILE=$(__do_main_activate_file)
 
-
-# Figures out which operating system we are on.
-DO_OS="$(uname -s)"
-
-case "${DO_OS}" in
-Linux*) DO_OS=linux ;;
-Darwin*) DO_OS=mac ;;
-CYGWIN*) DO_OS=cygwin ;;
-*)
-  echo "Sorry! We don't support '$(uname)' operating system yet. Please hang on tight!"
-  return
-  ;;
-esac
-
 # The remaining arguments that cannot be parsed.
-_DO_MAIN_ARGS=()
+_DO_EXEC_ARGS=()
 
 # Plugins system should be loaded
 _DO_PLUGINS_ENABLED="yes"
@@ -68,20 +69,16 @@ while [[ $# -gt 0 ]]; do
     shift
     ;;
 
+  -e | --exec)
+    _DO_EXEC_ARGS+=("$2") # save it in an array for later
+    shift 2
+    ;;
+
   *) # unknown option
-    _DO_MAIN_ARGS+=("$1") # save it in an array for later
-    shift                 # past argument
+    shift # past argument
     ;;
   esac
 done
-
-# Checks if the current shell is bash
-if [ "${_DO_MAIN_QUICK}" == "no" ]; then
-  if ! echo "$0" | grep -q "bash"; then
-    echo "Only support bash! Please executes 'bash' to change to bash shell instead."
-    return
-  fi
-fi
 
 # Loads core libraries
 src_files=(
@@ -116,6 +113,8 @@ for src_file in "${src_files[@]}"; do
   source "${DO_HOME}/src/${src_file}.sh"
 done
 
+_do_alias "do-version" "_do_version"
+
 # _do_timer_start
 
 _do_log_level_warn "main"
@@ -125,8 +124,9 @@ if [ "${_DO_PLUGINS_ENABLED}" == "yes" ]; then
     _do_log_debug "main" "load all plugins"
 
     # Loads all plugins.
-    for plugin in $(ls -A ${DO_HOME}/plugin); do
-      _do_plugin $(_do_file_name_without_ext $plugin)
+    # shellcheck disable=SC2045
+    for plugin in $(ls -A "${DO_HOME}/plugin"); do
+      _do_plugin "$(_do_file_name_without_ext "$plugin")"
     done
 
   else
@@ -140,3 +140,6 @@ fi
 _do_plugin_init
 
 # echo "Activated in $(_do_timer_end) seconds."
+for cmd in "${_DO_EXEC_ARGS[@]}"; do
+  eval "$cmd"
+done

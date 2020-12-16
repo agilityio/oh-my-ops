@@ -1,3 +1,29 @@
+# This function help to replace the builtin "alias" command
+# That does not persists to the child shell.
+# For example, instead of doing "alias my_cd=cd", you would
+# do "_do_alias "my_cd" "cd"
+#
+# Arguments:
+#   1: The alias name
+#   2: The alias body.
+#
+function _do_alias() {
+  local from=${1?'from name required'}
+  local to=${2?'to name required'}
+  shift 2
+
+  # Generates a function that serves as the alias
+  local src
+  src="
+    function ${from} {
+      ${to} \$@
+      return \$?
+    }
+  "
+
+  eval "${src}"
+}
+
 # This function checks if an alias or type exists
 # Return: "yes" if exists; otherwise, return "no"
 #
@@ -28,10 +54,17 @@ function _do_alias_exist() {
 #
 function _do_alias_call_if_exists() {
   local name=${1?'alias name required'}
+  local err=0
 
-  if _do_alias_exist "$name"; then
-    eval "$*"
-  fi
+  {
+    ! _do_alias_exist "$name"
+  } || {
+      eval "$@"
+  } || {
+    err=1
+  }
+
+  return $err
 }
 
 # Gets the list of alias given a prefix.
@@ -40,13 +73,8 @@ function _do_alias_call_if_exists() {
 #
 function _do_alias_list() {
   local prefix=${1:-}
-
-  local expr="s/alias[[:blank:]]*${prefix}\([[:alnum:]_-]*\)=.*$/\1/"
-  if [ -z "${prefix}" ]; then
-    alias | sed -e "${expr}"
-  else
-    alias | grep "alias ${prefix}" | sed -e "${expr}"
-  fi
+  local expr="s/declare[[:blank:]]*-f[[:blank:]]${prefix}\(.*\)/\1/"
+  declare -F | grep "declare -f ${prefix}" | sed -e "${expr}"
 }
 
 function _do_alias_feature_check() {
@@ -83,7 +111,8 @@ function _do_alias_remove_by_prefix() {
 
   # Removes all aliases begin with the specified prefix
   for cmd in $(_do_alias_list "${prefix}"); do
-    unalias "${prefix}${cmd}"
+    # Removes the function
+    unset -f "${prefix}${cmd}"
   done
 }
 

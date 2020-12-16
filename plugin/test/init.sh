@@ -4,8 +4,8 @@ function _do_test() {
 }
 
 function _do_test_plugin_init() {
-  alias "do-test"="_do_test"
+  _do_alias "do-test" "_do_test"
 
   # Tests and print output
-  alias "do-test-verbose"="_do_test --verbose"
+  _do_alias "do-test-verbose" "_do_test --verbose"
 }

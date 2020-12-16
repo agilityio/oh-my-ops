@@ -1,7 +1,7 @@
 # See: https://www.gnu.org/software/gawk/manual/html_node/String-Functions.html
 #
 
-# Convers a string to uppercase.
+# Converts a string to uppercase.
 # Arguments:
 # - 1. The string to convert.
 #
@@ -9,7 +9,7 @@ function _do_string_to_upper() {
   echo "${1^^}"
 }
 
-# Convers a string to lowercase.
+# Converts a string to lowercase.
 # Arguments:
 # - 1. The string to convert.
 #

@@ -79,7 +79,7 @@ function _do_repo_dir_add() {
   _do_array_append '_repo_name' "${repo}"
 
   # Adds alias for quickly go to the repository directory.
-  alias "do-${repo}-cd"="cd ${dir}"
+  _do_alias "do-${repo}-cd" "cd ${dir}"
 
   # Triggers hook so that other plugins can response to it.
   _do_hook_call 'after_repo_dir_add' "${dir}" "${repo}"

@@ -29,7 +29,7 @@ function _do_env_plugin_init() {
 
   # Registers aliases for all environments
   for env in $DO_ENVS; do
-    alias "do-env-login-${env}"="_do_env_login ${env}"
+    _do_alias "do-env-login-${env}" "_do_env_login ${env}"
   done
 
   # Logins into the default local environment

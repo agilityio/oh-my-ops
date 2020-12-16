@@ -27,7 +27,10 @@ function _do_docker_container_run() {
   shift 1
 
   # shellcheck disable=SC2068
-  docker run $@ "$image" || return 1
+  echo $@
+
+  # shellcheck disable=SC2068
+  docker run --rm $@ "$image" || return 1
 }
 
 # Runs a new docker container with the specified image name as deamon.
@@ -61,7 +64,7 @@ function _do_docker_container_logs() {
 # Attach to a running container.
 #
 # Arguments:
-#   - container: The runnning container to attach to.
+#   - container: The running container to attach to.
 #
 function _do_docker_container_attach() {
   local container=${1?'container arg required'}

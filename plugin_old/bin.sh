@@ -58,7 +58,7 @@ function _do_bin_repo_init() {
       name=$(echo $name | cut -c 3-)
 
       local cmd=$(_do_bin_repo_cmd_name_get $name)
-      alias "${repo}-bin-${cmd}"="_do_bin_repo_cmd ${proj_dir} ${repo} ${name}"
+      _do_alias "${repo}-bin-${cmd}" "_do_bin_repo_cmd ${proj_dir} ${repo} ${name}"
     fi
   done
   _do_dir_pop

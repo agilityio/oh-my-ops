@@ -1,7 +1,0 @@
-FROM neo4j
-
-ENV NEO4J_AUTH=neo4j/pass
-# 7474 for HTTP.
-# 7473 for HTTPS.
-# 7687 for Bolt.
-EXPOSE 7474 7473 7687

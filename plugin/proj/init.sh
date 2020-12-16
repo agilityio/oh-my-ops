@@ -1,6 +1,6 @@
 _do_plugin 'repo'
 
-_do_log_level_warn 'proj'
+_do_log_level_debug 'proj'
 _do_src_include_others_same_dir
 
 # Initializes the plugin.
@@ -9,7 +9,7 @@ function _do_proj_plugin_init() {
   _do_log_info 'proj' 'Initialize plugin'
 
   # Provides short command for user
-  alias _do_proj=_do_proj_add
+  _do_alias "_do_proj" "_do_proj_add"
 }
 
 function _do_proj_repo_cmd_help() {

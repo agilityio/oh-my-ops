@@ -137,6 +137,6 @@ function _do_vg_plugin_init() {
   # Adds alias that runs at repository level
   local cmds=("start" "stop")
   for cmd in ${cmds[@]}; do
-    alias "do-all-vg-${cmd}"="_do_proj_default_exec_all_repo_cmds vg-${cmd}"
+    _do_alias "do-all-vg-${cmd}" "_do_proj_default_exec_all_repo_cmds vg-${cmd}"
   done
 }

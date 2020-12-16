@@ -1,4 +1,4 @@
-_do_log_level_debug "docker"
+_do_log_level_warn "docker"
 
 _do_src_include_others_same_dir
 

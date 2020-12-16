@@ -1,4 +1,0 @@
-sphinx==1.4.1
-sphinx-rtd-theme==0.1.9
-sphinx-autobuild==0.7.1
-jupyter==1.0.0
