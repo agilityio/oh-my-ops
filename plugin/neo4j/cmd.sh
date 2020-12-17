@@ -136,8 +136,11 @@ function _do_neo4j_repo_cmd_status() {
   local dir=${1?'dir arg required'}
   local repo=${2?'repo arg required'}
 
+  local container
+  container=$(_do_neo4j_docker_container_name "${repo}")
+
   local status
-  if _do_docker_container_exists "${_DO_NEO4J_DOCKER_IMAGE}"; then
+  if _do_docker_container_exists "${container}"; then
     status="Running"
   else
     status="Stopped"

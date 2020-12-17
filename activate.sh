@@ -1,11 +1,3 @@
-#!/usr/bin/env bash
-
-# The colon-separated list of absolute directories to load more plugins.
-# DO_PLUGIN_DIR=~/.do-plugins
-
-# The colon-separted list of directories for the frameworks to look for projects.
-# DO_PROJ_DIR=~/myprojects
-
 # The array of plugin name to be included. If this variable is not specified
 # all plugins found will be included by default.
 # DO_PLUGINS="proj git prompt"

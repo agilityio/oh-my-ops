@@ -91,7 +91,7 @@ function _do_plugin_cmd() {
       # Register an alias for the plugin repo command.
       _do_log_debug "plugin" "Register '${cmd}' alias"
 
-      alias "${cmd}"="${func}"
+      _do_alias "${cmd}" "${func}"
     fi
   done
 }

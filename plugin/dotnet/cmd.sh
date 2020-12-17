@@ -8,7 +8,6 @@
 function _do_dotnet_repo_cmd() {
   local err=0
   local dir=${1?'dir arg is required'}
-  local repo=${2?'repo arg required'}
   local cmd=${3?'arg command is required'}
   shift 3
 

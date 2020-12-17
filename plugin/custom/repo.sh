@@ -7,5 +7,6 @@ function _do_custom() {
   local name=${1?'name arg required'}
   shift 1
 
+  # shellcheck disable=SC2068
   _do_repo_plugin_cmd_add "${name}" 'custom' $@
 }

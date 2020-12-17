@@ -2,8 +2,9 @@
 #
 # Arguments:
 # 1. dir: The absolute directory to run the command.
+# 2. repo: The repo name
 #
-# 2. cmd: The command to run.
+# 3. cmd: The command to run.
 #   * install: Installs the dependencies specified in package.json.
 #
 #   * start: For start any nodejs program. This command must be defined in

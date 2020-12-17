@@ -1,8 +1,8 @@
 _do_plugin "proj"
 _do_plugin "git"
 
-_do_log_level_debug "plugin"
-_do_log_level_debug "repo"
+_do_log_level_warn "plugin"
+_do_log_level_warn "repo"
 
 proj_dir="./proj"
 fake_repo="fake-repo"

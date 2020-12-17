@@ -1,3 +1,5 @@
+[![Gitter](https://badges.gitter.im/oh-my-ops/community.svg)](https://gitter.im/oh-my-ops/community?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
+
 # DevOps
 ========
 
@@ -10,6 +12,7 @@ This repository will go open source on its own later.
 To install this framework, runs:
 curl -L https://raw.githubusercontent.com/agilityio/oh-my-ops/master/install.sh | bash
 
+To get more support, please jump on [gitter](https://gitter.im/oh-my-ops/community).
 
 ## Prerequisites
 
@@ -17,15 +20,7 @@ curl -L https://raw.githubusercontent.com/agilityio/oh-my-ops/master/install.sh 
 * Git, Curl
 * Docker
 * MacOSX, Linux, or Windows (Cygwin)
-* Optional:
-
-    * Python
-    * NodeJS
-    * Go
-    * Typescript
-    * Dotnet
-    * Java
-    * Vagrant
+* Docker
 
 ## Unit Testing
 
