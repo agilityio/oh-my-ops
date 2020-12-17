@@ -139,7 +139,9 @@ fi
 # Initializes all plugins registered
 _do_plugin_init
 
-# echo "Activated in $(_do_timer_end) seconds."
-for cmd in "${_DO_EXEC_ARGS[@]}"; do
-  eval "$cmd"
-done
+function _do_activate_finished() {
+  # echo "Activated in $(_do_timer_end) seconds."
+  for cmd in "${_DO_EXEC_ARGS[@]}"; do
+    eval "$cmd"
+  done
+}
