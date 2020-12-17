@@ -17,8 +17,9 @@ echo '
 # https://github.com/agilityio/oh-my-ops
 DO_INSTALL_REPO="agilityio/oh-my-ops"
 
-# Uncomment this if you want to run with a specific version.
-# DO_VERSION="0.1.2"
+# The version to run with.
+# You can find the releases here: https://github.com/agilityio/oh-my-ops/releases
+ DO_VERSION="0.1.2"
 
 # The array of plugins to enabled.
 DO_PLUGINS="proj git prompt banner env full"
