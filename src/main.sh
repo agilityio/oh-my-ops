@@ -17,23 +17,7 @@ function __do_main_activate_file() {
   # Gets the first file that activate everything.
   local n=${#BASH_SOURCE[@]}
   ((n--))
-  local src="${BASH_SOURCE[$n]}"
-
-  # Gets the file name
-  local name
-  name=$(basename "$src")
-
-  # Gets the directory
-  local dir
-  dir=$(dirname "$src")
-
-  # Normalizes the directory
-  pushd "$dir" &>/dev/null || exit
-  dir=$(pwd)
-  popd &>/dev/null || exit
-
-  # Prints out the absolute script that activate everything.
-  echo "${dir}/${name}"
+  echo "${BASH_SOURCE[$n]}"
 }
 
 # This is the file that activates the whole thing.
@@ -110,6 +94,7 @@ src_files=(
 
 # Loads all core source files.
 for src_file in "${src_files[@]}"; do
+  # shellcheck disable=SC1090
   source "${DO_HOME}/src/${src_file}.sh"
 done
 
