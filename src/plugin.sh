@@ -30,7 +30,7 @@ function _do_plugin() {
 
   for plugin_name in $1; do
 
-    if _do_plugin_is_loaded $plugin_name; then
+    if _do_plugin_is_loaded "$plugin_name"; then
       _do_log_debug "plugin" "Skip loaded plugin ${plugin_name}"
 
     else
@@ -46,6 +46,7 @@ function _do_plugin() {
       fi
 
       if [ -f "${init_file}" ]; then
+        # shellcheck disable=SC1090
         source "${init_file}"
       fi
 
@@ -82,7 +83,7 @@ function _do_plugin_cmd() {
 
   for cmd in "${!cmds}"; do
     # Converts the command to undercase
-    local under_cmd=$(_do_string_to_undercase $cmd)
+    local under_cmd=$(_do_string_to_undercase "$cmd")
 
     local func="_do_${plugin}_${under_cmd}"
     local cmd="do-${plugin}-${cmd}"

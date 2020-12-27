@@ -7,8 +7,7 @@ _do_src_include_others_same_dir
 function _do_vg_plugin_init() {
   # Checks that the `vagrant` command is available or not.
   if ! _do_alias_feature_check "vg" "vagrant"; then
-    _do_log_warn 'vg' 'Skips vg plugin because missing vagrant command.'
-    return
+    _do_log_warn 'vg' 'vagrant command is missing. Please install vagrant'
   fi
 
   _do_log_info "vg" "Initialize plugin"
