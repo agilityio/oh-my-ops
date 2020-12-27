@@ -31,6 +31,7 @@ function _do_test_parse_args() {
   done
 }
 
+# shellcheck disable=SC2068
 _do_test_parse_args $@
 
 # =============================================================================
@@ -57,7 +58,7 @@ line=$(printf '%0.1s' "."{1..75})
 
 function _do_test_run_file() {
   local file=$1
-  _do_file_assert $file
+  _do_file_assert "$file"
 
   local only_func=$2
 
@@ -65,11 +66,12 @@ function _do_test_run_file() {
 
   # Extracts all test functions out of the original source file and
   # generate function calls to those at the end of the generated test file.
-  local funcs=$(cat $file | grep $pattern | sed -e "s/${pattern}/\1/")
+  local funcs=$(cat "$file" | grep "$pattern" | sed -e "s/${pattern}/\1/")
 
   # Loops through all test functions found in the test file. For each
   # of the function, generate a bash file to execute just that function.
   local func
+  # shellcheck disable=SC2068
   for func in ${funcs[@]}; do
     if [ "${func}" == "test_setup" ] || [ "${func}" == "test_teardown" ]; then
       # Skips test_setup and test_teardown function
@@ -85,7 +87,7 @@ function _do_test_run_file() {
     printf "%s ${_DO_TX_DIM}%s${_DO_FG_NORMAL}" "$func" "${pad}"
 
     # Generates the file that quickly activate the devops framework
-    # and include the orginal test source file and run the current test function.
+    # and include the original test source file and run the current test function.
     echo "
 source ${DO_HOME}/activate.sh --quick
 
@@ -207,10 +209,10 @@ _do_test_run
 rm -rfd $tmp_dir &>/dev/null
 
 # All tests passed
-if [ $total_failed -gt 0 ]; then 
+if [ $total_failed -gt 0 ]; then
     _do_print_error "Fail ${total_failed} of total ${total_tests} tests!"
     exit 1
-else 
+else
     _do_print_success "All ${total_tests} tests passed!"
     exit 0
-fi 
+fi
