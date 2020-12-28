@@ -33,4 +33,7 @@ function _do_gitlab_plugin_init() {
   # Default root password for gitlab.
   # It is required to have capital case, special characters. etc.
   _DO_GITLAB_PASS=${_DO_GITLAB_PASS:-"Password@123"}
+
+  # This key will be added to gitlab on start command.
+  _DO_GITLAB_RSA_PUB_KEY=${_DO_GITLAB_RSA_PUB_KEY:-"~/.ssh/id_rsa.pub"}
 }

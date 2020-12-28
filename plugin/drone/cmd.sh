@@ -15,6 +15,7 @@ function _do_drone_repo_cmd_install() {
   local tmp_dir
   tmp_dir=$(_do_dir_random_tmp_dir)
 
+  _do_log_debug 'drone' 'build drone server docker file'
   # Makes the docker file
   # https://docs.drone.io/server/provider/gitlab/
   echo "
@@ -22,29 +23,37 @@ FROM drone/drone:${_DO_DRONE_VERSION}
 ENV DRONE_SERVER_HOST=\"${_DO_DRONE_SERVER_HOST}\"
 ENV DRONE_SERVER_PROTO=\"${_DO_DRONE_SERVER_PROTO}\"
 ENV DRONE_RPC_SECRET=\"${_DO_DRONE_RPC_SECRET}\"
-ENV DRONE_GIT_ALWAYS_AUTH=false
 
 ENV DRONE_GITLAB_SERVER=\"${_DO_DRONE_GITLAB_SERVER}\"
 ENV DRONE_GITLAB_CLIENT_ID=\"${_DO_DRONE_GITLAB_CLIENT_ID}\"
 ENV DRONE_GITLAB_CLIENT_SECRET=\"${_DO_DRONE_GITLAB_CLIENT_SECRET}\"
 
 ENV DRONE_USER_FILTER=\"${_DO_DRONE_USER}\"
-ENV DRONE_USER_CREATE=\"username:${_DO_DRONE_USER},machine:false,admin:true\"
+ENV DRONE_USER_CREATE=\"username:${_DO_DRONE_USER},machine:false,admin:true,token:${_DO_DRONE_USER_TOKEN}\"
 ENV DRONE_GITLAB_SKIP_VERIFY=true
-
 " > "${tmp_dir}/Dockerfile"
 
 
+  _do_log_debug 'drone' 'build drone server docker image'
   # The docker image to build. This image name is localized
   # to the current repository only.
   local image
   image=$(_do_drone_docker_image_name "${repo}")
 
-  # Builds the docker image. This might take a while.
-  _do_docker_container_build "${tmp_dir}" "${image}" || {
-    _do_dir_pop
-    return 1
-  }
+  _do_docker_container_build "${tmp_dir}" "${image}" || return 1
+
+  _do_log_debug 'drone' 'build drone runner docker file'
+  echo "
+FROM drone/drone-runner-docker:${_DO_DRONE_VERSION}
+ENV DRONE_RPC_HOST=\"${_DO_DRONE_SERVER_HOST}\"
+ENV DRONE_RPC_PROTO=\"${_DO_DRONE_SERVER_PROTO}\"
+ENV DRONE_RPC_SECRET=\"${_DO_DRONE_RPC_SECRET}\"
+ENV DRONE_RUNNER_CAPACITY=${_DO_DRONE_RUNNER_CAPACITY}
+" > "${tmp_dir}/Dockerfile"
+
+  _do_log_debug 'drone' 'build drone runner docker image'
+  image=$(_do_drone_runner_docker_image_name "${repo}")
+  _do_docker_container_build "${tmp_dir}" "${image}" || return 1
 }
 
 # Starts drone server.
@@ -54,22 +63,31 @@ function _do_drone_repo_cmd_start() {
   local repo=${2?'repo arg required'}
   shift 3
 
-
-
   # The docker image to build. This image name is localized
   # to the current repository only.
   local image
   image=$(_do_drone_docker_image_name "${repo}")
 
+  local runner_image
+  runner_image=$(_do_drone_runner_docker_image_name "${repo}")
+
   # The name of the drone container, running for this repository only.
   local container
   container=$(_do_drone_docker_container_name "${repo}")
 
-  ! _do_docker_container_exists "${container}" || {
+  local runner_container
+  runner_container=$(_do_drone_runner_docker_container_name "${repo}")
+
+  _do_log_debug 'drone' 'Checks if drone containers are running'
+  {
+    ! _do_docker_container_exists "${container}" &&
+    ! _do_docker_container_exists "${runner_container}"
+  } || {
     _do_print_error "The container is already running"
     return 1
   }
 
+  _do_log_debug 'drone' 'Checks if gitlab container is running'
   local gitlab_container
   gitlab_container=$(_do_gitlab_docker_container_name "${repo}")
 
@@ -82,7 +100,10 @@ function _do_drone_repo_cmd_start() {
   {
     {
       # Makes sure the docker image is built
-      _do_docker_image_exists "${image}" ||
+      {
+        _do_docker_image_exists "${image}" &&
+        _do_docker_image_exists "${runner_image}"
+      } ||
       _do_drone_repo_cmd_install "${dir}" "${repo}" "${cmd}"
     } && {
       _do_log_info 'drone' 'Install default oauth application' &&
@@ -96,10 +117,19 @@ function _do_drone_repo_cmd_start() {
     } &&
 
     # Runs the drone server as deamon
+    _do_log_info 'drone' 'Runs drone server container' &&
     _do_docker_container_run_deamon "${image}" "${container}" \
     --publish "${_DO_DRONE_HTTP_PORT}:80" \
-    --publish "${_DO_DRONE_HTTPS_PORT}:443" \
-    $@ &&
+    --publish "${_DO_DRONE_HTTPS_PORT}:443" &&
+
+    # Gives the server a bit time to start
+    sleep 3 &&
+
+    # Runs the drone runner as deamon
+    _do_log_info 'drone' 'Runs drone runner container' &&
+    _do_docker_container_run_deamon "${runner_image}" "${runner_container}" \
+    -v /var/run/docker.sock:/var/run/docker.sock \
+    --publish "${_DO_DRONE_RUNNER_PORT}:3000" &&
 
     # Notifies run success
     echo "Gitlab is running as '${container}' docker container." &&
@@ -120,12 +150,22 @@ function _do_drone_repo_cmd_stop() {
   local container
   container=$(_do_drone_docker_container_name "${repo}")
 
-  _do_docker_container_exists "${container}" || {
-    _do_print_warn "The container is not running"
-    return 0
+  local runner_container
+  runner_container=$(_do_drone_runner_docker_container_name "${repo}")
+
+  {
+    _do_docker_container_exists "${container}"  &&
+    _do_docker_container_kill "${container}" &> /dev/null || return 1
+  } || {
+    _do_print_warn "The drone server container is not running"
   }
 
-  _do_docker_container_kill "${container}" &> /dev/null || return 1
+  {
+    _do_docker_container_exists "${runner_container}"  &&
+    _do_docker_container_kill "${runner_container}" &> /dev/null || return 1
+  } || {
+    _do_print_warn "The drone runner container is not running"
+  }
 }
 
 
@@ -141,6 +181,7 @@ function _do_drone_repo_cmd_attach() {
   _do_docker_container_attach "${container}" || return 1
 }
 
+
 # View logs
 #
 function _do_drone_repo_cmd_logs() {
@@ -152,7 +193,6 @@ function _do_drone_repo_cmd_logs() {
 
   _do_docker_container_logs "${container}" || return 1
 }
-
 
 
 # Stops drone db server.
@@ -174,6 +214,7 @@ function _do_drone_repo_cmd_status() {
   echo "
 Status: ${status}
 App: ${_DO_DRONE_SERVER_PROTO}://${_DO_DRONE_SERVER_HOST}
+
 Environment variables:
   docker image: $(_do_drone_docker_image_name "${repo}")
   docker container: $(_do_drone_docker_container_name "${repo}")
@@ -184,8 +225,11 @@ Environment variables:
   _DO_DRONE_SERVER_HOST=${_DO_DRONE_SERVER_HOST}
   _DO_DRONE_SERVER_PROTO=${_DO_DRONE_SERVER_PROTO}
 
+  _DO_DRONE_RUNNER_PORT=${_DO_DRONE_RUNNER_PORT}
+  _DO_DRONE_RUNNER_CAPACITY=${_DO_DRONE_RUNNER_CAPACITY}
+
   _DO_DRONE_USER: ${_DO_DRONE_USER}
-  _DO_DRONE_PASS: ${_DO_DRONE_PASS}
+  _DO_DRONE_USER_TOKEN: ${_DO_DRONE_USER_TOKEN}
   _DO_DRONE_HTTP_PORT: ${_DO_DRONE_HTTP_PORT}
   _DO_DRONE_HTTPS_PORT: ${_DO_DRONE_HTTPS_PORT}
 

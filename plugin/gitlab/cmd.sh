@@ -55,6 +55,9 @@ function _do_gitlab_repo_cmd_start() {
   local container
   container=$(_do_gitlab_docker_container_name "${repo}")
 
+  local host_ip
+  host_ip=$(_do_docker_host_ip) || return 1
+
   ! _do_docker_container_exists "${container}" || {
     _do_print_error "The container is already running"
     return 1
@@ -77,6 +80,15 @@ function _do_gitlab_repo_cmd_start() {
 
     # Waits for the server to be up
     _do_gitlab_repo_cmd_wait "${dir}" "${repo}" &&
+
+    # Updates gitlab settings, to allow local webhooks, such as drone integration.
+    _do_gitlab_util_update_application_settings "${repo}" "{
+    \"outbound_local_requests_allowlist_raw\": \"${host_ip}\nlocalhost\",
+    \"custom_http_clone_url_root\": \"http://${host_ip}:${_DO_GITLAB_HTTP_PORT}\",
+    \"allow_local_requests_from_web_hooks_and_services\": true,
+    \"allow_local_requests_from_system_hooks\": true
+    }
+    " &&
 
     # Notifies run success
     echo "Gitlab is running as '${container}' docker container." &&

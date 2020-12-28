@@ -34,6 +34,11 @@ function test_common_commands() {
   _do_assert "$(_do_gitlab_util_authenticate 'fakerepo')"
   _do_gitlab_util_create_project 'fakerepo' 'hello-world' || _do_assert_fail
   _do_gitlab_util_project_exists 'fakerepo' 'hello-world' || _do_assert_fail
+
+  _do_gitlab_util_create_project_if_missing 'fakerepo' 'hello-world-2' || _do_assert_fail
+  _do_gitlab_util_project_exists 'fakerepo' 'hello-world-2' || _do_assert_fail
+  _do_gitlab_util_create_project_if_missing 'fakerepo' 'hello-world-2' || _do_assert_fail
+
   _do_gitlab_util_psql_create_application 'fakerepo' \
     "Drone" \
     "7bd7074378956edce103bfb6a110d658a6f5eb9f8049512b46a570ea6f6c1a63" \
