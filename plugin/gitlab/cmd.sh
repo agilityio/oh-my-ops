@@ -10,19 +10,21 @@ function _do_gitlab_repo_cmd_install() {
   local cmd=${3?'cmd arg required'}
   shift 3
 
+
   # The temporary directory that contains a copy of the src
   # docker directory.
   local tmp_dir
-  tmp_dir=$(_do_dir_random_tmp_dir)
+  tmp_dir=$(_do_dir_random_tmp_dir) || return 1
 
   # Makes the docker file
   # https://copdips.com/2018/09/install-gitlab-ce-in-docker-on-ubuntu.html#install-gitlab-ce-in-docker
   # See: https://docs.gitlab.com/12.10/ee/administration/environment_variables.html
+  # TODO: curl  --header "Authorization: Bearer d07b0b033e0c302c7f15d6a17f4ab2cd0a45d06d8cc3f80bc3966e210bbb88f0" http://localhost:8280/api/v4/personal_access_tokens
   echo "
 FROM gitlab/gitlab-ce:${_DO_GITLAB_VERSION}
-ENV GITLAB_HOST=\"http://localhost:${_DO_GITLAB_HTTP_PORT}\"
+ENV GITLAB_HOST=\"http://0.0.0.0:${_DO_GITLAB_HTTP_PORT}\"
+ENV GITLAB_ROOT_PASSWORD=\"${_DO_GITLAB_PASS}\"
 " > "${tmp_dir}/Dockerfile"
-
 
   # The docker image to build. This image name is localized
   # to the current repository only.
@@ -35,6 +37,7 @@ ENV GITLAB_HOST=\"http://localhost:${_DO_GITLAB_HTTP_PORT}\"
     return 1
   }
 }
+
 
 # Starts gitlab server.
 #
@@ -72,6 +75,9 @@ function _do_gitlab_repo_cmd_start() {
     --publish "${_DO_GITLAB_SSH_PORT}:22" \
     $@ &&
 
+    # Waits for the server to be up
+    _do_gitlab_repo_cmd_wait "${dir}" "${repo}" &&
+
     # Notifies run success
     echo "Gitlab is running as '${container}' docker container." &&
 
@@ -81,6 +87,21 @@ function _do_gitlab_repo_cmd_start() {
   } || return 1
 }
 
+
+# Starts gitlab server.
+#
+function _do_gitlab_repo_cmd_wait() {
+  local repo=${2?'repo arg required'}
+
+  printf "Wait for gitlab to be up"
+  until _do_gitlab_util_authenticate "$repo" &> /dev/null; do
+    printf "."
+
+    # Sleep a bit before trying again
+    sleep 15
+  done
+  printf "\n"
+}
 
 # Stops gitlab db server.
 #
@@ -92,8 +113,8 @@ function _do_gitlab_repo_cmd_stop() {
   container=$(_do_gitlab_docker_container_name "${repo}")
 
   _do_docker_container_exists "${container}" || {
-    _do_print_error "The container is not running"
-    return 1
+    _do_print_warn "The container is not running"
+    return 0
   }
 
   _do_docker_container_kill "${container}" &> /dev/null || return 1
@@ -144,6 +165,7 @@ function _do_gitlab_repo_cmd_status() {
 
   echo "
 Status: ${status}
+App: http://localhost:${_DO_GITLAB_HTTP_PORT}
 Environment variables:
   docker image: $(_do_gitlab_docker_image_name "${repo}")
   docker container: $(_do_gitlab_docker_container_name "${repo}")

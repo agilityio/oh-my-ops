@@ -3,12 +3,12 @@
 #   1. dir: The project directories
 #   2. name: The project custom name.
 #
-function _do_gitlab() {
+function _do_drone() {
   local name=${1?'name arg required'}
   shift 1
 
-  local cmds="install start wait stop status logs attach help $*"
+  local cmds="install start stop status logs attach help $*"
 
   # shellcheck disable=SC2086
-  _do_repo_plugin_cmd_add "${name}" 'gitlab' $cmds
+  _do_repo_plugin_cmd_add "${name}" 'drone' $cmds
 }

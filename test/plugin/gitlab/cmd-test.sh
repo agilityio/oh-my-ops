@@ -8,6 +8,8 @@ function test_common_commands() {
   _do_repo_dir_add "${dir}" "fakerepo"
   _do_gitlab 'fakerepo'
 
+  do-fakerepo-gitlab-stop
+
   # Prints out help
   do-fakerepo-gitlab-help || _do_assert_fail
 
@@ -20,6 +22,24 @@ function test_common_commands() {
 
   # The run it.
   do-fakerepo-gitlab-start || _do_assert_fail
+
+  # Waits the repo to start, this should work
+  do-fakerepo-gitlab-wait || _do_assert_fail
+
+  # Test the api here instead of a different test because starts
+  # a gitlab server is quite slow.
+  _do_assert_eq "http://localhost:8280" "$(_do_gitlab_util_app_url 'fakerepo')"
+  _do_assert_eq "http://localhost:8280/api/v4" "$(_do_gitlab_util_api_url 'fakerepo')"
+  _do_assert_eq "http://localhost:8280/api/v4" "$(_do_gitlab_util_api_url 'fakerepo')"
+  _do_assert "$(_do_gitlab_util_authenticate 'fakerepo')"
+  _do_gitlab_util_create_project 'fakerepo' 'hello-world' || _do_assert_fail
+  _do_gitlab_util_project_exists 'fakerepo' 'hello-world' || _do_assert_fail
+  _do_gitlab_util_psql_create_application 'fakerepo' \
+    "Drone" \
+    "7bd7074378956edce103bfb6a110d658a6f5eb9f8049512b46a570ea6f6c1a63" \
+    "9ae609b5ab7babbe8c70befdd3c5d5f8a8cec8ff3fa70429661f3c512308e919" \
+    "http://localhost:8480/login" \
+    'api read_user openid' || _do_assert_fail
 
   # Gets the status
   do-fakerepo-gitlab-status || _do_assert_fail
