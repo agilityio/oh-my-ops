@@ -7,8 +7,7 @@ function _do_registry() {
   local name=${1?'name arg required'}
   shift 1
 
-  local cmds="install start stop status logs attach help $*"
-
   # shellcheck disable=SC2086
-  _do_repo_plugin_cmd_add "${name}" 'registry' $cmds
+  # shellcheck disable=SC2068
+  _do_repo_plugin_cmd_add "${name}" 'registry' ${_DO_REGISTRY_CMDS} $@
 }

@@ -27,6 +27,12 @@ function _do_registry_repo_cmd_help() {
 
     stop)
       echo "Stops the registry server.";;
+
+    login)
+      echo "Logs into the registry server.";;
+
+    logout)
+      echo "Logout from the registry server.";;
   esac
 }
 

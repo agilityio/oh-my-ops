@@ -1,26 +1,15 @@
-
-# Install registry database to local system. Internally, it will build a docker
-# image that contains registrydb to run.
-# Arguments:
-#   1-3. dir, repo, cmd: Common repo command arguments.
-#
 function _do_registry_repo_cmd_install() {
   local dir=${1?'dir arg required'}
   local repo=${2?'repo arg required'}
   local cmd=${3?'cmd arg required'}
   shift 3
 
-  # The temporary directory that contains a copy of the src
-  # docker directory.
   local tmp_dir
   tmp_dir=$(_do_dir_random_tmp_dir)
 
-  # Makes the docker file
-  # See: https://bintray.com/beta/#/jfrog/reg2/jfrog:registry-oss/latest
   echo "
 FROM registry:${_DO_REGISTRY_VERSION}
 " > "${tmp_dir}/Dockerfile"
-
 
   # The docker image to build. This image name is localized
   # to the current repository only.
@@ -97,6 +86,33 @@ function _do_registry_repo_cmd_stop() {
 }
 
 
+# Logs into the registry server
+#
+function _do_registry_repo_cmd_login() {
+  local repo=${2?'repo arg required'}
+
+  if [[ -z "${_DO_REGISTRY_USER}" ]] || [[ -z "${_DO_REGISTRY_PASS}" ]]; then
+    _do_log_warn 'registry' 'Skips login because either user or pass is empty.'
+    return
+  fi
+
+  docker login --username "${_DO_REGISTRY_USER}" --password "${_DO_REGISTRY_PASS}" || return 1
+}
+
+# Logs out the registry server
+#
+function _do_registry_repo_cmd_logout() {
+  local repo=${2?'repo arg required'}
+
+  if [[ -z "${_DO_REGISTRY_USER}" ]] || [[ -z "${_DO_REGISTRY_PASS}" ]]; then
+    _do_log_warn 'registry' 'Skips logout because either user or pass is empty.'
+    return
+  fi
+
+  docker logout "${_DO_REGISTRY_HOST}":"${_DO_REGISTRY_PORT}" || 1
+}
+
+
 # Attach
 #
 function _do_registry_repo_cmd_attach() {
@@ -121,8 +137,6 @@ function _do_registry_repo_cmd_logs() {
   _do_docker_container_logs "${container}" || return 1
 }
 
-
-
 # Stops registry db server.
 #
 function _do_registry_repo_cmd_status() {
@@ -146,8 +160,9 @@ Environment variables:
   docker container: $(_do_registry_docker_container_name "${repo}")
 
   _DO_REGISTRY_VERSION: ${_DO_REGISTRY_VERSION}
+  _DO_REGISTRY_HOST: ${_DO_REGISTRY_HOST}
+  _DO_REGISTRY_PORT: ${_DO_REGISTRY_PORT}
   _DO_REGISTRY_USER: ${_DO_REGISTRY_USER}
   _DO_REGISTRY_PASS: ${_DO_REGISTRY_PASS}
-  _DO_REGISTRY_PORT: ${_DO_REGISTRY_PORT}
   "
 }
