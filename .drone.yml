@@ -3,8 +3,7 @@ type: docker
 name: default
 
 steps:
-- name: greeting
+- name: test
   image: alpine
   commands:
-  - echo hello
-  - echo world
+  - bash test.sh test/main
