@@ -4,6 +4,6 @@ name: default
 
 steps:
 - name: test
-  image: alpine
+  image: ubuntu:18.04
   commands:
   - bash test.sh test/main
