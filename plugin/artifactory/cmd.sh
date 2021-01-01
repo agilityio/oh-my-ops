@@ -143,6 +143,7 @@ function _do_artifactory_repo_cmd_status() {
 
   echo "
 Status: ${status}
+App: http://localhost:${_DO_ARTIFACTORY_HTTP_UI_PORT}
 Environment variables:
   docker image: $(_do_artifactory_docker_image_name "${repo}")
   docker container: $(_do_artifactory_docker_container_name "${repo}")

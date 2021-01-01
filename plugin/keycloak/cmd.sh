@@ -29,10 +29,7 @@ EXPOSE ${_DO_KEYCLOAK_PORT}
   image=$(_do_keycloak_docker_image_name "${repo}")
 
   # Builds the docker image. This might take a while.
-  _do_docker_container_build "${tmp_dir}" "${image}" || {
-    _do_dir_pop
-    return 1
-  }
+  _do_docker_container_build "${tmp_dir}" "${image}" || return 1
 }
 
 # Starts keycloak server.
