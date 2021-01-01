@@ -6,4 +6,5 @@ steps:
 - name: test
   image: ubuntu:18.04
   commands:
-  - bash test.sh test/main
+    - sudo apt install -y curl wget git jq
+    - bash test.sh test/main
