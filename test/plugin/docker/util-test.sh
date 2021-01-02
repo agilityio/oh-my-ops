@@ -16,15 +16,15 @@ function test_build_run() {
   n="do_test_helloworld"
 
   # Builds the docker command
-  _do_docker_container_build "$tmp_dir" "$n" || _do_assert_fail
-  _do_docker_image_assert_exists "$n"
+  _do_docker_util_build_image "$tmp_dir" "$n" || _do_assert_fail
+  _do_docker_assert_image_exists "$n"
 
   # The run it.
-  _do_docker_container_assert_not_exists "$n"
-  _do_docker_container_run "$n" || _do_assert_fail
+  _do_docker_assert_container_not_exists "$n"
+  _do_docker_util_run_container "$n" || _do_assert_fail
 
   # Remove the image
-  _do_docker_image_remove "$n" || _do_assert_fail
-  _do_docker_image_assert_not_exists "$n"
+  _do_docker_util_remove_image "$n" || _do_assert_fail
+  _do_docker_assert_image_not_exists "$n"
 }
 

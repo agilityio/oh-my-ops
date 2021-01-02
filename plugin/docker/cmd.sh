@@ -37,5 +37,4 @@ function _do_docker_repo_cmd() {
     docker $@ || return 1
     ;;
   esac
-
 }

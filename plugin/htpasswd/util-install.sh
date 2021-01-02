@@ -16,11 +16,11 @@ ENTRYPOINT [\"htpasswd\"]
 " >"${tmp_dir}/Dockerfile"
 
   # Builds the docker image
-  _do_docker_container_build "${tmp_dir}" "${_DO_HTPASSWD_DOCKER_IMAGE}" || return 1
+  _do_docker_util_build_image "${tmp_dir}" "${_DO_HTPASSWD_DOCKER_IMAGE}" || return 1
 }
 
 function _do_htpasswd_util_exists() {
-  _do_docker_image_exists "${_DO_HTPASSWD_DOCKER_IMAGE}" || return 1
+  _do_docker_util_image_exists "${_DO_HTPASSWD_DOCKER_IMAGE}" || return 1
 }
 
 function _do_htpasswd_util_install_if_missing() {

@@ -40,7 +40,7 @@ ENV DRONE_GITLAB_SKIP_VERIFY=true
   local image
   image=$(_do_drone_docker_image_name "${repo}")
 
-  _do_docker_container_build "${tmp_dir}" "${image}" || return 1
+  _do_docker_util_build_image "${tmp_dir}" "${image}" || return 1
 
   _do_log_debug 'drone' 'build drone runner docker file'
   echo "
@@ -53,7 +53,7 @@ ENV DRONE_RUNNER_CAPACITY=${_DO_DRONE_RUNNER_CAPACITY}
 
   _do_log_debug 'drone' 'build drone runner docker image'
   image=$(_do_drone_runner_docker_image_name "${repo}")
-  _do_docker_container_build "${tmp_dir}" "${image}" || return 1
+  _do_docker_util_build_image "${tmp_dir}" "${image}" || return 1
 }
 
 # Starts drone server.
@@ -80,8 +80,8 @@ function _do_drone_repo_cmd_start() {
 
   _do_log_debug 'drone' 'Checks if drone containers are running'
   {
-    ! _do_docker_container_exists "${container}" &&
-    ! _do_docker_container_exists "${runner_container}"
+    ! _do_docker_util_container_exists "${container}" &&
+    ! _do_docker_util_container_exists "${runner_container}"
   } || {
     _do_print_error "The container is already running"
     return 1
@@ -91,7 +91,7 @@ function _do_drone_repo_cmd_start() {
   local gitlab_container
   gitlab_container=$(_do_gitlab_docker_container_name "${repo}")
 
-  _do_docker_container_exists "${gitlab_container}" || {
+  _do_docker_util_container_exists "${gitlab_container}" || {
     _do_print_error "Gitlab container ${gitlab_container}, for repo ${repo} is not yet running. Please run it first."
     return 1
   }
@@ -101,8 +101,8 @@ function _do_drone_repo_cmd_start() {
     {
       # Makes sure the docker image is built
       {
-        _do_docker_image_exists "${image}" &&
-        _do_docker_image_exists "${runner_image}"
+        _do_docker_util_image_exists "${image}" &&
+        _do_docker_util_image_exists "${runner_image}"
       } ||
       _do_drone_repo_cmd_install "${dir}" "${repo}" "${cmd}"
     } && {
@@ -118,7 +118,7 @@ function _do_drone_repo_cmd_start() {
 
     # Runs the drone server as deamon
     _do_log_info 'drone' 'Runs drone server container' &&
-    _do_docker_container_run_deamon "${image}" "${container}" \
+    _do_docker_util_run_container_as_deamon "${image}" "${container}" \
     --publish "${_DO_DRONE_HTTP_PORT}:80" \
     --publish "${_DO_DRONE_HTTPS_PORT}:443" &&
 
@@ -127,7 +127,7 @@ function _do_drone_repo_cmd_start() {
 
     # Runs the drone runner as deamon
     _do_log_info 'drone' 'Runs drone runner container' &&
-    _do_docker_container_run_deamon "${runner_image}" "${runner_container}" \
+    _do_docker_util_run_container_as_deamon "${runner_image}" "${runner_container}" \
     -v /var/run/docker.sock:/var/run/docker.sock \
     --publish "${_DO_DRONE_RUNNER_PORT}:3000" &&
 
@@ -154,15 +154,15 @@ function _do_drone_repo_cmd_stop() {
   runner_container=$(_do_drone_runner_docker_container_name "${repo}")
 
   {
-    _do_docker_container_exists "${container}"  &&
-    _do_docker_container_kill "${container}" &> /dev/null || return 1
+    _do_docker_util_container_exists "${container}"  &&
+    _do_docker_util_kill_container "${container}" &> /dev/null || return 1
   } || {
     _do_print_warn "The drone server container is not running"
   }
 
   {
-    _do_docker_container_exists "${runner_container}"  &&
-    _do_docker_container_kill "${runner_container}" &> /dev/null || return 1
+    _do_docker_util_container_exists "${runner_container}"  &&
+    _do_docker_util_kill_container "${runner_container}" &> /dev/null || return 1
   } || {
     _do_print_warn "The drone runner container is not running"
   }
@@ -178,7 +178,7 @@ function _do_drone_repo_cmd_attach() {
   local container
   container=$(_do_drone_docker_container_name "${repo}")
 
-  _do_docker_container_attach "${container}" || return 1
+  _do_docker_util_attach_to_container "${container}" || return 1
 }
 
 
@@ -191,7 +191,7 @@ function _do_drone_repo_cmd_logs() {
   local container
   container=$(_do_drone_docker_container_name "${repo}")
 
-  _do_docker_container_logs "${container}" || return 1
+  _do_docker_util_show_container_logs "${container}" || return 1
 }
 
 
@@ -205,7 +205,7 @@ function _do_drone_repo_cmd_status() {
   container=$(_do_drone_docker_container_name "${repo}")
 
   local status
-  if _do_docker_container_exists "${container}"; then
+  if _do_docker_util_container_exists "${container}"; then
     status="Running"
   else
     status="Stopped"

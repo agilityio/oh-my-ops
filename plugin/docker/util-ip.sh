@@ -5,7 +5,7 @@ function _do_docker_host_ip() {
     # Need to get the last line of the output to avoid first image pull output.
     local img="codenvy/che-ip"
 
-    if ! _do_docker_image_exists "$img"; then
+    if ! _do_docker_util_image_exists "$img"; then
       echo "Downloading $img docker image for getting docker host ip."
       # Pull the image silently
       docker pull $img &>/dev/null
