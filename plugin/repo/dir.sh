@@ -44,7 +44,7 @@ function _do_repo_dir_add() {
     fi
 
     if _do_string_startswith "${dir}" "${d}"; then
-      let idx=i
+      (( idx=i ))
       parent_dir="${d}"
     fi
 
@@ -202,7 +202,7 @@ function _do_repo_get() {
 
   for d in $(_do_array_print '_repo_dir'); do
     if _do_string_startswith "${dir}" "${d}"; then
-      let idx=i
+      (( idx=i ))
     fi
 
     i=$((i + 1))

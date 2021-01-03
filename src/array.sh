@@ -16,6 +16,7 @@ function _do_array_new() {
 
   if [[ $# -gt 1 ]]; then
     # if there array value is passed in then append that to the array
+    # shellcheck disable=SC2068
     _do_array_append $@
   fi
 }
@@ -117,7 +118,7 @@ function _do_array_index_of() {
       return 0
     fi
 
-    (( i++ ))
+    ((i++))
   done
 
   # Not found the element
@@ -173,10 +174,56 @@ function _do_array_append() {
   while (($# > 0)); do
     # Appends to the current items to the end of the array.
     eval "${var_name}[$size]='$1'"
-    (( size++ ))
+    ((size++))
     shift 1
   done
 }
+
+# Append 1 more item to the array
+#
+# Arguments:
+#   1. name: The array name
+#   ... values: One value or more to remove.
+#
+function _do_array_remove() {
+  local name=${1?'name arg required'}
+  shift 1
+
+  # Makes sure there is at list 1 item to remove
+  : "${1?'Missing item(s) to remove'}"
+
+  local arr
+  arr="$(_do_array_var_name_required "${name}")[@]"
+
+  local values
+  values=()
+
+  for v in ${!arr}; do
+    local found
+    found=0
+
+    # shellcheck disable=SC2068
+    for arg in $@; do
+      if [ "${v}" == "${arg}" ]; then
+        # Founds the current value in the to be removed list.
+        found=1
+        break
+      fi
+    done
+
+    if [[ ${found} -eq 0 ]]; then
+      # The current value is not found in the to be removed list.
+      # add it back to the values
+      values+=("${v}")
+    fi
+  done
+
+  _do_array_clear "${name}"
+
+  # shellcheck disable=SC2068
+  [[ ${#values[@]} -eq 0 ]] || _do_array_append "${name}" ${values[@]}
+}
+
 
 function _do_array_get() {
   local name=${1?'name arg required'}
@@ -226,7 +273,7 @@ function _do_array_var_name_required() {
 
   _do_array_exists "${name}" || _do_assert_fail "${name} array doest not exist"
 
-   _do_array_var_name "${name}"
+  _do_array_var_name "${name}"
 }
 
 # Print a stack to stdout.

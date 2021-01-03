@@ -6,26 +6,18 @@
 #
 function _do_set_new() {
   local name=${1?'name arg required'}
+  shift 1
 
   # Makes sure that the set not yet exists
-  ! _do_set_exists "${name}" || _do_assert_fail "${name} set already exists."
+  ! _do_array_exists "${name}" || _do_assert_fail "${name} set already exists."
 
-  local var
-  var=$(__do_set_var_name "${name}")
-
-  # Declares an associate set globally.
-  declare -Ag "${var}"
-
-  if [[ $# -gt 1 ]]; then
-    # if there set value is passed in then append that to the set
-    # shellcheck disable=SC2068
-    _do_set_append $@
-  fi
+  # shellcheck disable=SC2068
+  _do_array_new "${name}" $@ || return 1
 }
 
 function _do_set_new_if_not_exists() {
   local name=${1?'name arg required'}
-  _do_set_exists "${name}" || _do_set_new "${name}"
+  _do_set_exists "${name}" || _do_set_new "${name}" || return 1
 }
 
 # Destroys an set data structure
@@ -35,18 +27,12 @@ function _do_set_new_if_not_exists() {
 #
 function _do_set_destroy() {
   local name=${1?'name arg required'}
-  local var
-  var=$(__do_set_var_name_required "${name}")
-
-  unset "${var}"
+  _do_array_destroy "${name}" || return 1
 }
 
 function _do_set_clear() {
   local name=${1?'name arg required'}
-  local var
-
-  var=$(__do_set_var_name_required "${name}")
-  eval "${var}=()"
+  _do_array_clear "${name}" || return 1
 }
 
 # Checks if an set exists.
@@ -59,22 +45,14 @@ function _do_set_clear() {
 #
 function _do_set_exists() {
   local name=${1?'name arg required'}
-  local var
-
-  var=$(__do_set_var_name "${name}")
-
-  if declare -p "${var}" &>/dev/null; then
-    return 0
-  else
-    return 1
-  fi
+  _do_array_exists "${name}" || return 1
 }
 
 # Checks if the specified item exists in the set.
 #
 # Arguments:
 # 1. name: Required. The set name.
-# 2. key: Required. The value to find in the set.
+# 2. val: Required. The value to find in the set.
 #
 # Returns:
 #   If the set contains the specified value, returns 0.
@@ -82,19 +60,9 @@ function _do_set_exists() {
 #
 function _do_set_contains() {
   local name=${1?'name arg required'}
-  local key=${2?'key arg required'}
+  local val=${2?'val arg required'}
 
-  local var
-  var="$(__do_set_var_name "${name}")"
-
-  # Dynamically get out the value of the key and that must
-  # not be empty.
-  local v
-  eval "v=\${${var}[${key}]}"
-  if [[ -z "${v}" ]]; then
-    # Not found the element
-    return 1
-  fi
+  _do_array_contains "${name}" "${val}" || return 1
 }
 
 # Get the size of a set
@@ -105,21 +73,13 @@ function _do_set_contains() {
 #
 function _do_set_size() {
   local name=${1?'name arg required'}
-  local var
-
-  var=$(__do_set_var_name_required "${name}")
-
-  eval "echo \${#${var}[@]}"
+  _do_array_size "${name}" || return 1
 }
 
 function _do_set_is_empty() {
   local name=${1?'name arg required'}
 
-  if [ "$(_do_set_size "${name}")" == "0" ]; then
-    return 0
-  else
-    return 1
-  fi
+  _do_array_is_empty "${name}" || return 1
 }
 
 # Append 1 more item to the set
@@ -130,9 +90,6 @@ function _do_set_is_empty() {
 #
 function _do_set_append() {
   local name=${1?'name arg required'}
-  local var
-
-  var=$(__do_set_var_name_required "${name}")
   shift 1
 
   # Makes sure there is at list 1 item to append
@@ -141,7 +98,7 @@ function _do_set_append() {
   # For each value, push it to the associate set.
   # This will help to make sure all values are unique.
   while (($# > 0)); do
-    eval "${var}[$1]=1"
+    _do_array_contains "${name}" "${1}" || _do_array_append "${name}" "${1}"
     shift 1
   done
 }
@@ -152,41 +109,5 @@ function _do_set_append() {
 #
 function _do_set_print() {
   local name=${1?'Stack name required'}
-  local var
-
-  var="$(__do_set_var_name "${name}")"
-  eval "echo \${!${var}[@]}"
-}
-
-# ==============================================================================
-# Private methods
-# ==============================================================================
-
-# Converts a logical set name to the physical one.
-#
-# Arguments:
-#  1. name: Required. The logical set name.
-#
-# Output:
-#  The physical set name.
-#
-function __do_set_var_name() {
-  local name=${1?'name arg required'}
-  echo "__do_set_$(_do_string_to_lowercase_var "${name}")"
-}
-
-# Converts a logical set name to the physical one and make sure
-# that set does exist.
-#
-# Arguments:
-#  1. name: Required. The set logical name.
-#
-# Outputs:
-#  The set physical name.
-#
-function __do_set_var_name_required() {
-  local name=${1?'name arg required'}
-
-  _do_set_exists "${name}" || _do_assert_fail "${name} set doest not exist"
-  __do_set_var_name "${name}"
+  _do_array_print "${name}" || return 1
 }
