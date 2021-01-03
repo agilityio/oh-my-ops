@@ -31,10 +31,7 @@ EXPOSE ${_DO_RABBITMQ_HTTP_PORT}
   image=$(_do_rabbitmq_docker_image_name "${repo}")
 
   # Builds the docker image. This might take a while.
-  _do_docker_util_build_image "${tmp_dir}" "${image}" || {
-    _do_dir_pop
-    return 1
-  }
+  _do_docker_util_build_image "${tmp_dir}" "${image}" || return 1
 }
 
 # Starts rabbitmq server.

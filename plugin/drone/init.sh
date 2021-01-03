@@ -1,6 +1,8 @@
 _do_plugin 'docker'
 _do_plugin 'gitlab'
 _do_plugin 'repo'
+_do_plugin 'curl'
+_do_plugin 'jq'
 
 _do_log_level_warn 'drone'
 _do_src_include_others_same_dir
@@ -16,11 +18,11 @@ function _do_drone_plugin_init() {
   # This is the default drone port.
   _DO_DRONE_HTTP_PORT=${_DO_DRONE_HTTP_PORT:-8480}
   _DO_DRONE_HTTPS_PORT=${_DO_DRONE_HTTPS_PORT:-18443}
-  _DO_DRONE_SERVER_HOST=${_DO_DRONE_SERVER_HOST:-"$(_do_docker_host_ip):${_DO_DRONE_HTTP_PORT}"}
-  _DO_DRONE_SERVER_PROTO=${_DO_DRONE_SERVER_PROTO:-http}
+  _DO_DRONE_SERVER_HOST=${_DO_DRONE_SERVER_HOST:-"${_DO_DOCKER_HOST_IP}"}
+  _DO_DRONE_SERVER_PROTO=${_DO_DRONE_SERVER_PROTO:-'http'}
 
   # See: https://docs.drone.io/server/provider/gitlab/
-  _DO_DRONE_GITLAB_SERVER=${_DO_DRONE_GITLAB_SERVER:-"http://$(_do_docker_host_ip):${_DO_GITLAB_HTTP_PORT}"}
+  _DO_DRONE_GITLAB_SERVER=${_DO_DRONE_GITLAB_SERVER:-"http://${_DO_DOCKER_HOST_IP}:${_DO_GITLAB_HTTP_PORT}"}
 
   # This Gitlab application is inserted to gitlab database
   # during drone start command.

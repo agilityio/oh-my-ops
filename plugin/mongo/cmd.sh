@@ -1,4 +1,3 @@
-
 # Install mongo database to local system. Internally, it will build a docker
 # image that contains mongodb to run.
 # Arguments:
@@ -37,8 +36,7 @@ ENV MONGODB_ADMIN_PASS ${_DO_MONGO_ADMIN_PASS}
 EXPOSE ${_DO_MONGO_PORT}
 
 ENTRYPOINT [ \"/app/bin/entrypoint.sh\" ]
-  " > "${tmp_dir}/docker/Dockerfile"
-
+  " >"${tmp_dir}/docker/Dockerfile"
 
   # The docker image to build. This image name is localized
   # to the current repository only.
@@ -46,10 +44,7 @@ ENTRYPOINT [ \"/app/bin/entrypoint.sh\" ]
   image=$(_do_mongo_docker_image_name "${repo}")
 
   # Builds the docker image. This might take a while.
-  _do_docker_util_build_image "${tmp_dir}"/docker "${image}" || {
-    _do_dir_pop
-    return 1
-  }
+  _do_docker_util_build_image "${tmp_dir}"/docker "${image}" || return 1
 }
 
 # Starts mongo server.
@@ -82,22 +77,21 @@ function _do_mongo_repo_cmd_start() {
     {
       # Makes sure the docker image is built
       _do_docker_util_image_exists "${image}" ||
-      _do_mongo_repo_cmd_install "${dir}" "${repo}" "${cmd}"
+        _do_mongo_repo_cmd_install "${dir}" "${repo}" "${cmd}"
     } &&
 
-    # Runs the mongo server as deamon
-    _do_docker_util_run_container_as_deamon "${image}" "${container}" \
-      -p "${port}:${_DO_MONGO_PORT}" $@ &> /dev/null &&
+      # Runs the mongo server as deamon
+      _do_docker_util_run_container_as_deamon "${image}" "${container}" \
+        -p "${port}:${_DO_MONGO_PORT}" $@ &>/dev/null &&
 
-    # Notifies run success
-    echo "Mongo is running at port ${port} as '${container}' docker container." &&
+      # Notifies run success
+      echo "Mongo is running at port ${port} as '${container}' docker container." &&
 
-    # Prints out some status about the server
-    _do_mongo_repo_cmd_status "${dir}" "${repo}"
+      # Prints out some status about the server
+      _do_mongo_repo_cmd_status "${dir}" "${repo}"
 
   } || return 1
 }
-
 
 # Stops mongo db server.
 #
@@ -113,9 +107,8 @@ function _do_mongo_repo_cmd_stop() {
     return 1
   }
 
-  _do_docker_util_kill_container "${container}" &> /dev/null || return 1
+  _do_docker_util_kill_container "${container}" &>/dev/null || return 1
 }
-
 
 # Attach
 #
@@ -140,8 +133,6 @@ function _do_mongo_repo_cmd_logs() {
 
   _do_docker_util_show_container_logs "${container}" || return 1
 }
-
-
 
 # Stops mongo db server.
 #

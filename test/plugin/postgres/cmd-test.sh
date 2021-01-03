@@ -1,12 +1,21 @@
 _do_plugin "postgres"
 
 
-function test_common_commands() {
+function test_setup() {
   local dir
   dir=$(_do_dir_random_tmp_dir)
 
   _do_repo_dir_add "${dir}" "fakerepo"
   _do_postgres 'fakerepo'
+
+  do-fakerepo-postgres-stop &> /dev/null
+}
+
+function test_teardown() {
+  do-fakerepo-postgres-stop &> /dev/null
+}
+
+function test_common_commands() {
 
   # Prints out help
   do-fakerepo-postgres-help || _do_assert_fail

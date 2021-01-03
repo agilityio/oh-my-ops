@@ -1,12 +1,20 @@
 _do_plugin "registry"
 
-
-function test_common_commands() {
+function test_setup() {
   local dir
   dir=$(_do_dir_random_tmp_dir)
 
   _do_repo_dir_add "${dir}" "fakerepo"
   _do_registry 'fakerepo'
+
+  do-fakerepo-registry-stop &>/dev/null
+}
+
+function test_teardown() {
+  do-fakerepo-registry-stop &>/dev/null
+}
+
+function test_common_commands() {
 
   # Prints out help
   do-fakerepo-registry-help || _do_assert_fail
@@ -28,4 +36,3 @@ function test_common_commands() {
   # shellcheck disable=SC2086
   do-fakerepo-registry-stop || _do_assert_fail
 }
-

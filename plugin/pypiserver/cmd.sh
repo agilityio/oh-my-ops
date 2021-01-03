@@ -31,10 +31,7 @@ ENTRYPOINT /entrypoint.sh -P /data/.htpasswd
   image=$(_do_pypiserver_docker_image_name "${repo}")
 
   # Builds the docker image. This might take a while.
-  _do_docker_util_build_image "${tmp_dir}" "${image}" || {
-    _do_dir_pop
-    return 1
-  }
+  _do_docker_util_build_image "${tmp_dir}" "${image}" || return 1
 }
 
 # Starts pypiserver server.
@@ -58,6 +55,11 @@ function _do_pypiserver_repo_cmd_start() {
     return 1
   }
 
+  _do_docker_util_create_default_network_if_missing || {
+    _do_log_error 'pypiserver' 'cannot starts default network'
+    return 1
+  }
+
   # shellcheck disable=SC2068
   {
     {
@@ -67,8 +69,8 @@ function _do_pypiserver_repo_cmd_start() {
     } &&
 
       # Runs the pypiserver server as deamon
-      # TODO: Send in username/pass?
       _do_docker_util_run_container_as_deamon "${image}" "${container}" \
+        --network "${_DO_DOCKER_NETWORK}" \
         --publish "${_DO_PYPISERVER_PORT}:8080" \
         $@ &&
 

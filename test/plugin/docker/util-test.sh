@@ -1,7 +1,7 @@
 _do_plugin "docker"
 
 
-function test_build_run() {
+function test_build_and_run() {
 
   # Makes a new docker file to test. This file extends
   # from the well-known hello-world docker image.

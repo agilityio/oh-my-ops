@@ -24,8 +24,8 @@ function _do_registry_plugin_init() {
   # This is the default registry port.
   _DO_REGISTRY_PORT=${_DO_REGISTRY_PORT:-5000}
 
-  _DO_REGISTRY_USER=${_DO_REGISTRY_USER:-user}
-  _DO_REGISTRY_PASS=${_DO_REGISTRY_PASS:-pass}
+  _DO_REGISTRY_USER=${_DO_REGISTRY_USER:-}
+  _DO_REGISTRY_PASS=${_DO_REGISTRY_PASS:-}
 
   # shellcheck disable=SC2034
   _DO_DOCKER_REGISTRY="${_DO_REGISTRY_HOST}:${_DO_REGISTRY_PORT}"

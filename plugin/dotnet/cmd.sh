@@ -6,37 +6,21 @@
 #     ...
 #
 function _do_dotnet_repo_cmd() {
-  local err=0
-  local dir=${1?'dir arg is required'}
   local cmd=${3?'arg command is required'}
   shift 3
 
-  # By default, runs with dotnet command.
-  local run="dotnet ${cmd}"
+  # For command that is not the default dotnet one,
+  # we need to append the "run" in front to run it with run script.
+  case "${cmd}" in
+  install)
+    dotnet restore || return 1
+    ;;
+  start)
+    dotnet watch run || return 1
+    ;;
+  *)
+    # shellcheck disable=SC2068
+    dotnet "${cmd}" $@ || return 1
+  esac
 
-  # Jumps to the
-  _do_dir_push "${dir}" || return 1
-
-  # shellcheck disable=SC2068
-  {
-    {
-      # For command that is not the default dotnet one,
-      # we need to append the "run" in front to run it with run script.
-      case "${cmd}" in
-      install)
-        run='dotnet restore'
-        ;;
-      start)
-        run='dotnet watch run'
-        ;;
-      esac
-    } &&
-      ${run} $@
-  } || {
-    err=1
-  }
-
-  _do_dir_pop
-
-  return ${err}
 }

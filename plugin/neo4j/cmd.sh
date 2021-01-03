@@ -33,10 +33,7 @@ EXPOSE ${_DO_NEO4J_HTTP_PORT} ${_DO_NEO4J_HTTPS_PORT} ${_DO_NEO4J_BOLT_PORT}
   image=$(_do_neo4j_docker_image_name "${repo}")
 
   # Builds the docker image. This might take a while.
-  _do_docker_util_build_image "${tmp_dir}" "${image}" || {
-    _do_dir_pop
-    return 1
-  }
+  _do_docker_util_build_image "${tmp_dir}" "${image}" || return 1
 }
 
 # Starts neo4j server.

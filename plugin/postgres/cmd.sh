@@ -1,6 +1,6 @@
 
 # Install postgres database to local system. Internally, it will build a docker
-# image that contains postgresdb to run.
+# image that contains postgres to run.
 # Arguments:
 #   1-3. dir, repo, cmd: Common repo command arguments.
 #
@@ -33,10 +33,7 @@ EXPOSE ${_DO_POSTGRES_PORT}
   image=$(_do_postgres_docker_image_name "${repo}")
 
   # Builds the docker image. This might take a while.
-  _do_docker_util_build_image "${tmp_dir}" "${image}" || {
-    _do_dir_pop
-    return 1
-  }
+  _do_docker_util_build_image "${tmp_dir}" "${image}" || return 1
 }
 
 # Starts postgres server.
@@ -60,6 +57,11 @@ function _do_postgres_repo_cmd_start() {
     return 1
   }
 
+  _do_docker_util_create_default_network_if_missing || {
+    _do_log_error 'postgres' 'cannot starts default network'
+    return 1
+  }
+
   # This is the local port that the server un on.
   local port
   port=${_DO_POSTGRES_PORT}
@@ -74,7 +76,9 @@ function _do_postgres_repo_cmd_start() {
 
     # Runs the postgres server as deamon
     _do_docker_util_run_container_as_deamon "${image}" "${container}" \
-      -p "${port}:${_DO_POSTGRES_PORT}" $@ &> /dev/null &&
+      --network "${_DO_DOCKER_NETWORK}" \
+      --publish "${port}:${_DO_POSTGRES_PORT}" \
+      $@ &> /dev/null &&
 
     # Notifies run success
     echo "Postgres is running at port ${port} as '${container}' docker container." &&

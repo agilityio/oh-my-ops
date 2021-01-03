@@ -20,7 +20,7 @@ function _do_drone_repo_cmd_install() {
   # https://docs.drone.io/server/provider/gitlab/
   echo "
 FROM drone/drone:${_DO_DRONE_VERSION}
-ENV DRONE_SERVER_HOST=\"${_DO_DRONE_SERVER_HOST}\"
+ENV DRONE_SERVER_HOST=\"${_DO_DRONE_SERVER_HOST}:${_DO_DRONE_HTTP_PORT}\"
 ENV DRONE_SERVER_PROTO=\"${_DO_DRONE_SERVER_PROTO}\"
 ENV DRONE_RPC_SECRET=\"${_DO_DRONE_RPC_SECRET}\"
 
@@ -45,7 +45,7 @@ ENV DRONE_GITLAB_SKIP_VERIFY=true
   _do_log_debug 'drone' 'build drone runner docker file'
   echo "
 FROM drone/drone-runner-docker:${_DO_DRONE_VERSION}
-ENV DRONE_RPC_HOST=\"${_DO_DRONE_SERVER_HOST}\"
+ENV DRONE_RPC_HOST=\"${_DO_DRONE_SERVER_HOST}:${_DO_DRONE_HTTP_PORT}\"
 ENV DRONE_RPC_PROTO=\"${_DO_DRONE_SERVER_PROTO}\"
 ENV DRONE_RPC_SECRET=\"${_DO_DRONE_RPC_SECRET}\"
 ENV DRONE_RUNNER_CAPACITY=${_DO_DRONE_RUNNER_CAPACITY}
@@ -112,7 +112,7 @@ function _do_drone_repo_cmd_start() {
         "Drone" \
         "${_DO_DRONE_GITLAB_CLIENT_ID}" \
         "${_DO_DRONE_GITLAB_CLIENT_SECRET}" \
-        "${_DO_DRONE_SERVER_PROTO}://${_DO_DRONE_SERVER_HOST}/login" \
+        "${_DO_DRONE_SERVER_PROTO}://${_DO_DRONE_SERVER_HOST}:${_DO_DRONE_HTTP_PORT}/login" \
         'api read_user openid'
     } &&
 
@@ -213,7 +213,7 @@ function _do_drone_repo_cmd_status() {
 
   echo "
 Status: ${status}
-App: ${_DO_DRONE_SERVER_PROTO}://${_DO_DRONE_SERVER_HOST}
+App: ${_DO_DRONE_SERVER_PROTO}://${_DO_DRONE_SERVER_HOST}:${_DO_DRONE_HTTP_PORT}
 
 Environment variables:
   docker image: $(_do_drone_docker_image_name "${repo}")

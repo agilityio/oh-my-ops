@@ -133,10 +133,7 @@ VOLUME [ \"/app\" ]
   image=$(_do_sphinx_docker_image_name "${repo}")
 
   # Builds the docker image. This might take a while.
-  _do_docker_util_build_image "${tmp_dir}"/docker "${image}" || {
-    _do_dir_pop
-    return 1
-  }
+  _do_docker_util_build_image "${tmp_dir}"/docker "${image}" || return 1
 }
 
 # Stops sphinx server.

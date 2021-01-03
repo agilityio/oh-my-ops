@@ -19,7 +19,6 @@ function _do_artifactory_repo_cmd_install() {
   # See: https://bintray.com/beta/#/jfrog/reg2/jfrog:artifactory-oss/latest
   echo "
 FROM docker.bintray.io/jfrog/artifactory-oss:${_DO_ARTIFACTORY_VERSION}
-EXPOSE ${_DO_ARTIFACTORY_HTTP_REST_PORT} ${_DO_ARTIFACTORY_HTTP_UI_PORT}
 " > "${tmp_dir}/Dockerfile"
 
 
@@ -29,10 +28,7 @@ EXPOSE ${_DO_ARTIFACTORY_HTTP_REST_PORT} ${_DO_ARTIFACTORY_HTTP_UI_PORT}
   image=$(_do_artifactory_docker_image_name "${repo}")
 
   # Builds the docker image. This might take a while.
-  _do_docker_util_build_image "${tmp_dir}" "${image}" || {
-    _do_dir_pop
-    return 1
-  }
+  _do_docker_util_build_image "${tmp_dir}" "${image}" || return 1
 }
 
 # Starts artifactory server.
@@ -95,7 +91,7 @@ function _do_artifactory_repo_cmd_stop() {
     return 1
   }
 
-  _do_docker_util_kill_container "${container}" &> /dev/null || return 1
+  _do_docker_util_kill_container "${container}" > /dev/null || return 1
 }
 
 

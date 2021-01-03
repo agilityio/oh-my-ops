@@ -1,13 +1,11 @@
 
 # Install gitlab database to local system. Internally, it will build a docker
-# image that contains gitlabdb to run.
+# image that contains gitlab to run.
 # Arguments:
 #   1-3. dir, repo, cmd: Common repo command arguments.
 #
 function _do_gitlab_repo_cmd_install() {
-  local dir=${1?'dir arg required'}
   local repo=${2?'repo arg required'}
-  local cmd=${3?'cmd arg required'}
   shift 3
 
 
@@ -19,7 +17,6 @@ function _do_gitlab_repo_cmd_install() {
   # Makes the docker file
   # https://copdips.com/2018/09/install-gitlab-ce-in-docker-on-ubuntu.html#install-gitlab-ce-in-docker
   # See: https://docs.gitlab.com/12.10/ee/administration/environment_variables.html
-  # TODO: curl  --header "Authorization: Bearer d07b0b033e0c302c7f15d6a17f4ab2cd0a45d06d8cc3f80bc3966e210bbb88f0" http://localhost:8280/api/v4/personal_access_tokens
   echo "
 FROM gitlab/gitlab-ce:${_DO_GITLAB_VERSION}
 ENV GITLAB_HOST=\"http://0.0.0.0:${_DO_GITLAB_HTTP_PORT}\"
@@ -32,10 +29,7 @@ ENV GITLAB_ROOT_PASSWORD=\"${_DO_GITLAB_PASS}\"
   image=$(_do_gitlab_docker_image_name "${repo}")
 
   # Builds the docker image. This might take a while.
-  _do_docker_util_build_image "${tmp_dir}" "${image}" || {
-    _do_dir_pop
-    return 1
-  }
+  _do_docker_util_build_image "${tmp_dir}" "${image}" || return 1
 }
 
 
@@ -58,8 +52,14 @@ function _do_gitlab_repo_cmd_start() {
   local host_ip
   host_ip=$(_do_docker_host_ip) || return 1
 
+
   ! _do_docker_util_container_exists "${container}" || {
     _do_print_error "The container is already running"
+    return 1
+  }
+
+  _do_docker_util_create_default_network_if_missing || {
+    _do_log_error 'gitlab' 'cannot starts default network'
     return 1
   }
 
@@ -73,10 +73,11 @@ function _do_gitlab_repo_cmd_start() {
 
     # Runs the gitlab server as deamon
     _do_docker_util_run_container_as_deamon "${image}" "${container}" \
-    --publish "${_DO_GITLAB_HTTP_PORT}:80" \
-    --publish "${_DO_GITLAB_HTTPS_PORT}:443" \
-    --publish "${_DO_GITLAB_SSH_PORT}:22" \
-    $@ &&
+      --network "${_DO_DOCKER_NETWORK}" \
+      --publish "${_DO_GITLAB_HTTP_PORT}:80" \
+      --publish "${_DO_GITLAB_HTTPS_PORT}:443" \
+      --publish "${_DO_GITLAB_SSH_PORT}:22" \
+      $@ &&
 
     # Waits for the server to be up
     _do_gitlab_repo_cmd_wait "${dir}" "${repo}" &&

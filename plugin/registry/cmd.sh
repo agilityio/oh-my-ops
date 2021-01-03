@@ -7,25 +7,30 @@ function _do_registry_repo_cmd_install() {
   local tmp_dir
   tmp_dir=$(_do_dir_random_tmp_dir)
 
-
-  # If user is not null, generates htpasswd for the registry server.
-  # It is important to note that, registry server requires https to work.
-  [[ -z "${_DO_REGISTRY_USER}" ]] ||
-  _do_htpasswd_util_run "${_DO_REGISTRY_USER}" "${_DO_REGISTRY_PASS}" \
-    >"${tmp_dir}/htpasswd" || {
-    _do_log_error 'registry' 'Failed to generate htpasswd.'
-    return 1
-  }
+  local docker_file
+  docker_file="${tmp_dir}/Dockerfile"
 
   # See: https://gabrieltanner.org/blog/docker-registry
   echo "
 FROM registry:${_DO_REGISTRY_VERSION}
-ADD htpasswd /auth/htpasswd
+" >"${docker_file}"
 
+  # If user is not null, generates htpasswd for the registry server.
+  # It is important to note that, registry server requires https to work.
+  [[ -z "${_DO_REGISTRY_USER}" ]] || {
+    _do_htpasswd_util_run "${_DO_REGISTRY_USER}" "${_DO_REGISTRY_PASS}" \
+      >"${tmp_dir}/htpasswd" &&
+      echo "
+ADD htpasswd /auth/htpasswd
 ENV REGISTRY_AUTH=\"htpasswd\"
 ENV REGISTRY_AUTH_HTPASSWD_REALM=\"Registry Realm\"
 ENV REGISTRY_AUTH_HTPASSWD_PATH=\"/auth/htpasswd\"
-" >"${tmp_dir}/Dockerfile"
+" >>"${docker_file}"
+
+  } || {
+    _do_log_error 'registry' 'Failed to generate htpasswd.'
+    return 1
+  }
 
   # The docker image to build. This image name is localized
   # to the current repository only.
@@ -60,6 +65,11 @@ function _do_registry_repo_cmd_start() {
     return 1
   }
 
+  _do_docker_util_create_default_network_if_missing || {
+    _do_log_error 'pypiserver' 'cannot starts default network'
+    return 1
+  }
+
   # shellcheck disable=SC2068
   {
     {
@@ -71,6 +81,7 @@ function _do_registry_repo_cmd_start() {
       # Runs the registry server as deamon
       # TODO: Send in username/pass?
       _do_docker_util_run_container_as_deamon "${image}" "${container}" \
+        --network "${_DO_DOCKER_NETWORK}" \
         --publish "${_DO_REGISTRY_PORT}:5000" \
         $@ &&
 
