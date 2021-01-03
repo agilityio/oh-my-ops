@@ -10,3 +10,4 @@ function _do_htpasswd_util_run() {
     "${_DO_HTPASSWD_DOCKER_IMAGE}" \
     -nb "${user}" "${pass}" || return 1
 }
+

@@ -1,5 +1,6 @@
 _do_plugin 'jq'
 _do_plugin 'curl'
+_do_plugin 'hostfile'
 _do_plugin 'docker'
 _do_plugin 'repo'
 

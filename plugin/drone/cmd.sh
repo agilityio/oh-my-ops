@@ -1,6 +1,6 @@
 
 # Install drone database to local system. Internally, it will build a docker
-# image that contains dronedb to run.
+# image that contains drone to run.
 # Arguments:
 #   1-3. dir, repo, cmd: Common repo command arguments.
 #
@@ -96,16 +96,23 @@ function _do_drone_repo_cmd_start() {
     return 1
   }
 
+  {
+    _do_docker_util_image_exists "${image}" &&
+    _do_docker_util_image_exists "${runner_image}"
+  } ||
+  _do_drone_repo_cmd_install "${dir}" "${repo}" "${cmd}" || {
+    _do_log_error 'drone' 'failed to install docker images for gitlab.'
+    return 1
+  }
+
+  _do_hostfile_util_create_docker_host_if_missing || {
+    _do_log_error 'drone' 'Cannot setup hostfile required by gitlab.'
+    return 1
+  }
+
   # shellcheck disable=SC2068
   {
     {
-      # Makes sure the docker image is built
-      {
-        _do_docker_util_image_exists "${image}" &&
-        _do_docker_util_image_exists "${runner_image}"
-      } ||
-      _do_drone_repo_cmd_install "${dir}" "${repo}" "${cmd}"
-    } && {
       _do_log_info 'drone' 'Install default oauth application' &&
       _do_gitlab_repo_cmd_wait "${dir}" "${repo}" &&
       _do_gitlab_util_psql_create_application "${repo}" \
@@ -119,8 +126,10 @@ function _do_drone_repo_cmd_start() {
     # Runs the drone server as deamon
     _do_log_info 'drone' 'Runs drone server container' &&
     _do_docker_util_run_container_as_deamon "${image}" "${container}" \
-    --publish "${_DO_DRONE_HTTP_PORT}:80" \
-    --publish "${_DO_DRONE_HTTPS_PORT}:443" &&
+      -v /var/run/docker.sock:/var/run/docker.sock \
+      --add-host "${_DO_DOCKER_HOST_NAME}:${_DO_DOCKER_HOST_IP}" \
+      --publish "${_DO_DRONE_HTTP_PORT}:80" \
+      --publish "${_DO_DRONE_HTTPS_PORT}:443" &&
 
     # Gives the server a bit time to start
     sleep 3 &&
@@ -128,8 +137,8 @@ function _do_drone_repo_cmd_start() {
     # Runs the drone runner as deamon
     _do_log_info 'drone' 'Runs drone runner container' &&
     _do_docker_util_run_container_as_deamon "${runner_image}" "${runner_container}" \
-    -v /var/run/docker.sock:/var/run/docker.sock \
-    --publish "${_DO_DRONE_RUNNER_PORT}:3000" &&
+      -v /var/run/docker.sock:/var/run/docker.sock \
+      --publish "${_DO_DRONE_RUNNER_PORT}:3000" &&
 
     # Notifies run success
     echo "Gitlab is running as '${container}' docker container." &&

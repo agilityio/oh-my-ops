@@ -1,4 +1,3 @@
-
 # Install artifactory database to local system. Internally, it will build a docker
 # image that contains artifactorydb to run.
 # Arguments:
@@ -19,8 +18,7 @@ function _do_artifactory_repo_cmd_install() {
   # See: https://bintray.com/beta/#/jfrog/reg2/jfrog:artifactory-oss/latest
   echo "
 FROM docker.bintray.io/jfrog/artifactory-oss:${_DO_ARTIFACTORY_VERSION}
-" > "${tmp_dir}/Dockerfile"
-
+" >"${tmp_dir}/Dockerfile"
 
   # The docker image to build. This image name is localized
   # to the current repository only.
@@ -52,30 +50,34 @@ function _do_artifactory_repo_cmd_start() {
     return 1
   }
 
-  # shellcheck disable=SC2068
-  {
-    {
-      # Makes sure the docker image is built
-      _do_docker_util_image_exists "${image}" ||
-      _do_artifactory_repo_cmd_install "${dir}" "${repo}" "${cmd}"
-    } &&
+  _do_docker_util_image_exists "${image}" ||
+    _do_artifactory_repo_cmd_install "${dir}" "${repo}" "${cmd}" || {
+    _do_log_error 'artifactory' 'fail to install artifactory docker image'
+    return 1
+  }
 
-    # Runs the artifactory server as deamon
-    # TODO: Send in username/pass?
-    _do_docker_util_run_container_as_deamon "${image}" "${container}" \
+  # shellcheck disable=SC2068
+  # TODO: Send in username/pass?
+  _do_docker_util_run_container_as_deamon "${image}" "${container}" \
     --publish "${_DO_ARTIFACTORY_HTTP_REST_PORT}:8081" \
     --publish "${_DO_ARTIFACTORY_HTTP_UI_PORT}:8082" \
-    $@ &&
+    $@ || {
+    _do_log_error 'artifactory' 'fail to run the docker container'
+    return 1
+  }
+
+    # Runs the artifactory server as deamon
 
     # Notifies run success
-    echo "Artifactory Rest API is running at port ${_DO_ARTIFACTORY_HTTP_REST_PORT}, UI is at ${_DO_ARTIFACTORY_HTTP_UI_PORT}  as '${container}' docker container." &&
+    echo "Artifactory Rest API is running at port ${_DO_ARTIFACTORY_HTTP_REST_PORT},
+UI is at ${_DO_ARTIFACTORY_HTTP_UI_PORT}, as '${container}' docker container."
 
     # Prints out some status about the server
-    _do_artifactory_repo_cmd_status "${dir}" "${repo}"
-
-  } || return 1
+    _do_artifactory_repo_cmd_status "${dir}" "${repo}" || {
+      _do_log_error 'artifactory' 'fail to print out artifactory status'
+      return 1
+    }
 }
-
 
 # Stops artifactory db server.
 #
@@ -91,9 +93,8 @@ function _do_artifactory_repo_cmd_stop() {
     return 1
   }
 
-  _do_docker_util_kill_container "${container}" > /dev/null || return 1
+  _do_docker_util_kill_container "${container}" >/dev/null || return 1
 }
-
 
 # Attach
 #
@@ -118,8 +119,6 @@ function _do_artifactory_repo_cmd_logs() {
 
   _do_docker_util_show_container_logs "${container}" || return 1
 }
-
-
 
 # Stops artifactory db server.
 #

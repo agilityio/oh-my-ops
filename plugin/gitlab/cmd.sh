@@ -49,31 +49,29 @@ function _do_gitlab_repo_cmd_start() {
   local container
   container=$(_do_gitlab_docker_container_name "${repo}")
 
-  local host_ip
-  host_ip=$(_do_docker_host_ip) || return 1
-
-
   ! _do_docker_util_container_exists "${container}" || {
     _do_print_error "The container is already running"
     return 1
   }
 
-  _do_docker_util_create_default_network_if_missing || {
-    _do_log_error 'gitlab' 'cannot starts default network'
+  # Makes sure the docker image is built
+  _do_docker_util_image_exists "${image}" ||
+    _do_gitlab_repo_cmd_install "${dir}" "${repo}" "install" ||
+    {
+      _do_log_error 'gitlab' 'Cannot install gitlab docker image.'
+      return 1
+    }
+
+  _do_hostfile_util_create_docker_host_if_missing || {
+    _do_log_error 'gitlab' 'Cannot setup hostfile required by gitlab.'
     return 1
   }
 
   # shellcheck disable=SC2068
   {
-    {
-      # Makes sure the docker image is built
-      _do_docker_util_image_exists "${image}" ||
-      _do_gitlab_repo_cmd_install "${dir}" "${repo}" "${cmd}"
-    } &&
-
     # Runs the gitlab server as deamon
     _do_docker_util_run_container_as_deamon "${image}" "${container}" \
-      --network "${_DO_DOCKER_NETWORK}" \
+      --add-host "${_DO_DOCKER_HOST_NAME}:${_DO_DOCKER_HOST_IP}" \
       --publish "${_DO_GITLAB_HTTP_PORT}:80" \
       --publish "${_DO_GITLAB_HTTPS_PORT}:443" \
       --publish "${_DO_GITLAB_SSH_PORT}:22" \
@@ -84,8 +82,8 @@ function _do_gitlab_repo_cmd_start() {
 
     # Updates gitlab settings, to allow local webhooks, such as drone integration.
     _do_gitlab_util_update_application_settings "${repo}" "{
-    \"outbound_local_requests_allowlist_raw\": \"${host_ip}\nlocalhost\",
-    \"custom_http_clone_url_root\": \"http://${host_ip}:${_DO_GITLAB_HTTP_PORT}\",
+    \"outbound_local_requests_allowlist_raw\": \"${_DO_DOCKER_HOST_IP}\n${_DO_DOCKER_HOST_NAME}\nlocalhost\",
+    \"custom_http_clone_url_root\": \"http://${_DO_DOCKER_HOST_NAME}:${_DO_GITLAB_HTTP_PORT}\",
     \"allow_local_requests_from_web_hooks_and_services\": true,
     \"allow_local_requests_from_system_hooks\": true
     }
@@ -178,7 +176,7 @@ function _do_gitlab_repo_cmd_status() {
 
   echo "
 Status: ${status}
-App: http://localhost:${_DO_GITLAB_HTTP_PORT}
+App: http://${_DO_DOCKER_HOST_NAME}:${_DO_GITLAB_HTTP_PORT}
 Environment variables:
   docker image: $(_do_gitlab_docker_image_name "${repo}")
   docker container: $(_do_gitlab_docker_container_name "${repo}")
