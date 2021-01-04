@@ -1,3 +1,8 @@
+function _do_git_util_status() {
+  local dir=${1?'dir arg required'}
+  _do_dir_exec "${dir}" "git status" || return 1
+}
+
 # Checks if the given git repository is up to date or not.
 #
 # Arguments:
@@ -47,3 +52,4 @@ function _do_git_util_is_dirty() {
   _do_dir_pop
   return $err
 }
+

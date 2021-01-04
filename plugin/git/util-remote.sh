@@ -71,6 +71,16 @@ function _do_git_util_pull() {
   _do_dir_exec "${dir}" "git pull '${remote}' '${branch}'" 2>/dev/null || return 1
 }
 
+function _do_git_util_sync() {
+  local dir=${1?'dir arg required'}
+  local remote=${2?'remote arg required'}
+  local branch=${3:-"$(_do_git_util_get_current_branch "${dir}")"}
+
+  _do_git_util_pull "${dir}" "${remote}" "${branch}" || return 1
+  ! _do_git_util_is_dirty "${dir}" || return 1
+  _do_git_util_push "${dir}" "${remote}" "${branch}" || return 1
+}
+
 function _do_git_util_get_fetch_remote() {
   local dir=${1?'dir arg required'}
   local remote=${2?'remote arg required'}
