@@ -21,7 +21,6 @@ function _do_rabbitmq_repo_cmd_install() {
 FROM rabbitmq:${_DO_RABBITMQ_VERSION}
 ENV RABBITMQ_DEFAULT_USER=\"${_DO_RABBITMQ_USER}\"
 ENV RABBITMQ_DEFAULT_PASS=\"${_DO_RABBITMQ_PASS}\"
-EXPOSE ${_DO_RABBITMQ_HTTP_PORT}
 " > "${tmp_dir}/Dockerfile"
 
 
