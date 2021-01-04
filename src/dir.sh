@@ -85,3 +85,18 @@ function _do_dir_copy_to_random_tmp_dir() {
 
   echo "${tmp_dir}"
 }
+
+function _do_dir_exec() {
+  local dir=${1?'dir arg required'}
+  shift 1
+
+  _do_dir_push "${dir}" || return 1
+
+  local err=0
+
+  # shellcheck disable=SC2068
+  eval $@ || err=$?
+
+  _do_dir_pop
+  return ${err}
+}

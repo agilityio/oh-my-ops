@@ -65,8 +65,8 @@ function _do_string_to_alias_name() {
 
 function _do_string_to_alias_prefix() {
     local name=$(_do_string_to_alias_name "$1")
-    
-    if [ ! "${name}" == "" ]; then 
+
+    if [ ! "${name}" == "" ]; then
         name="${name}-"
     fi
 
@@ -74,8 +74,8 @@ function _do_string_to_alias_prefix() {
 }
 function _do_string_to_alias_suffix() {
     local name=$(_do_string_to_alias_name "$1")
-    
-    if [ ! "${name}" == "" ]; then 
+
+    if [ ! "${name}" == "" ]; then
         name="-${name}"
     fi
 
@@ -150,3 +150,4 @@ function _do_string_endswith() {
     return 1
   fi
 }
+

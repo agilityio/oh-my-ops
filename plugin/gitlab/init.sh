@@ -32,7 +32,8 @@ function _do_gitlab_plugin_init() {
   _DO_GITLAB_USER=${_DO_GITLAB_USER:-root}
 
   # Default root password for gitlab.
-  # It is required to have capital case, special characters. etc.
+  # Important that this password should not have special character
+  # so that it can be embedded into git remote config.
   _DO_GITLAB_PASS=${_DO_GITLAB_PASS:-"goodpass"}
 
   # This key will be added to gitlab on start command.
