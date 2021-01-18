@@ -21,6 +21,7 @@ function _do_gitlab_repo_cmd_install() {
 FROM gitlab/gitlab-ce:${_DO_GITLAB_VERSION}
 ENV GITLAB_HOST=\"http://0.0.0.0:${_DO_GITLAB_HTTP_PORT}\"
 ENV GITLAB_ROOT_PASSWORD=\"${_DO_GITLAB_PASS}\"
+ENV GITLAB_SHARED_RUNNERS_REGISTRATION_TOKEN=${_DO_GITLAB_RUNNER_TOKEN}
 " > "${tmp_dir}/Dockerfile"
 
   # The docker image to build. This image name is localized

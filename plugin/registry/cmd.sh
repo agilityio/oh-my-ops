@@ -4,11 +4,27 @@ function _do_registry_repo_cmd_install() {
   local cmd=${3?'cmd arg required'}
   shift 3
 
+  # The directory that contains the docker extra files
+  local src_dir
+  src_dir="${DO_HOME}/plugin/registry/docker"
+
   local tmp_dir
-  tmp_dir=$(_do_dir_random_tmp_dir)
+  tmp_dir=$(_do_dir_copy_to_random_tmp_dir "${src_dir}") || return 1
 
   local docker_file
-  docker_file="${tmp_dir}/Dockerfile"
+  docker_file="${tmp_dir}/docker/Dockerfile"
+
+
+# FIXME: SSL not yet work
+#  openssl req -newkey rsa:4096 \
+#            -x509 \
+#            -sha256 \
+#            -days 3650 \
+#            -nodes \
+#            -out ca.crt \
+#            -keyout ca.key \
+#            -subj "/C=SI/ST=Ljubljana/L=Ljubljana/O=Security/OU=IT Department/CN=do"
+
 
   # See: https://gabrieltanner.org/blog/docker-registry
   echo "
@@ -19,12 +35,19 @@ FROM registry:${_DO_REGISTRY_VERSION}
   # It is important to note that, registry server requires https to work.
   [[ -z "${_DO_REGISTRY_USER}" ]] || {
     _do_htpasswd_util_run "${_DO_REGISTRY_USER}" "${_DO_REGISTRY_PASS}" \
-      >"${tmp_dir}/htpasswd" &&
+      >"${tmp_dir}/docker/htpasswd" &&
       echo "
+ADD certs /certs
 ADD htpasswd /auth/htpasswd
+
 ENV REGISTRY_AUTH=\"htpasswd\"
 ENV REGISTRY_AUTH_HTPASSWD_REALM=\"Registry Realm\"
 ENV REGISTRY_AUTH_HTPASSWD_PATH=\"/auth/htpasswd\"
+
+ENV REGISTRY_HTTP_ADDR=\"0.0.0.0:443\"
+ENV REGISTRY_HTTP_TLS_CERTIFICATE=\"/certs/ca.crt\"
+ENV REGISTRY_HTTP_TLS_KEY=\"/certs/ca.key\"
+
 " >>"${docker_file}"
 
   } || {
@@ -38,7 +61,7 @@ ENV REGISTRY_AUTH_HTPASSWD_PATH=\"/auth/htpasswd\"
   image=$(_do_registry_docker_image_name "${repo}")
 
   # Builds the docker image. This might take a while.
-  _do_docker_util_build_image "${tmp_dir}" "${image}" || {
+  _do_docker_util_build_image "${tmp_dir}/docker" "${image}" || {
     _do_log_error 'registry' 'Failed to build docker image.'
     return 1
   }
@@ -82,11 +105,12 @@ function _do_registry_repo_cmd_start() {
       # TODO: Send in username/pass?
       _do_docker_util_run_container_as_deamon "${image}" "${container}" \
         --network "${_DO_DOCKER_NETWORK}" \
-        --publish "${_DO_REGISTRY_PORT}:5000" \
+        --publish "${_DO_REGISTRY_HTTP_PORT}:5000" \
+        --publish "18443:443" \
         $@ &&
 
       # Notifies run success
-      echo "Docker private registry server is running at port ${_DO_REGISTRY_PORT} as '${container}' docker container." &&
+      echo "Docker private registry server is running at port ${_DO_REGISTRY_HTTP_PORT} as '${container}' docker container." &&
 
       # Prints out some status about the server
       _do_registry_repo_cmd_status "${dir}" "${repo}"
@@ -189,7 +213,7 @@ Environment variables:
 
   _DO_REGISTRY_VERSION: ${_DO_REGISTRY_VERSION}
   _DO_REGISTRY_HOST: ${_DO_REGISTRY_HOST}
-  _DO_REGISTRY_PORT: ${_DO_REGISTRY_PORT}
+  _DO_REGISTRY_HTTP_PORT: ${_DO_REGISTRY_HTTP_PORT}
   _DO_REGISTRY_USER: ${_DO_REGISTRY_USER}
   _DO_REGISTRY_PASS: ${_DO_REGISTRY_PASS}
   "

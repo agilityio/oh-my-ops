@@ -24,7 +24,6 @@ function _do_mongo_repo_cmd_install() {
 FROM mongo:${_DO_MONGO_VERSION}
 
 WORKDIR /app
-
 ADD bin /app/bin
 
 ENV MONGODB_NAME ${_DO_MONGO_DB}
@@ -32,8 +31,6 @@ ENV MONGODB_USER ${_DO_MONGO_USER}
 ENV MONGODB_PASSWORD ${_DO_MONGO_PASS}
 ENV MONGODB_ADMIN_USER ${_DO_MONGO_ADMIN_USER}
 ENV MONGODB_ADMIN_PASS ${_DO_MONGO_ADMIN_PASS}
-
-EXPOSE ${_DO_MONGO_PORT}
 
 ENTRYPOINT [ \"/app/bin/entrypoint.sh\" ]
   " >"${tmp_dir}/docker/Dockerfile"

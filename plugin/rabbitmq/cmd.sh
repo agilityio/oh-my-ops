@@ -68,7 +68,7 @@ function _do_rabbitmq_repo_cmd_start() {
     $@ &&
 
     # Notifies run success
-    echo "RabbitMQ Rest API is running at port ${_DO_RABBITMQ_HTTP_PORT} as '${container}' docker container." &&
+    echo "Rest API is running at port ${_DO_RABBITMQ_HTTP_PORT} as '${container}' docker container." &&
 
     # Prints out some status about the server
     _do_rabbitmq_repo_cmd_status "${dir}" "${repo}"

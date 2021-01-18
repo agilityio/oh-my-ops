@@ -29,6 +29,12 @@ function test_common_commands() {
   # The run it.
   do-fakerepo-registry-start || _do_assert_fail
 
+  sleep 3
+
+  do-fakerepo-registry-login || _do_assert_fail
+
+  do-fakerepo-registry-logout || _do_assert_fail
+
   # Gets the status
   do-fakerepo-registry-status || _do_assert_fail
 

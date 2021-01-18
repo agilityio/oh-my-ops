@@ -36,6 +36,9 @@ function _do_gitlab_plugin_init() {
   # so that it can be embedded into git remote config.
   _DO_GITLAB_PASS=${_DO_GITLAB_PASS:-"goodpass"}
 
+  # Sets the initial registration token used for GitLab Runner.
+  _DO_GITLAB_RUNNER_TOKEN=${_DO_GITLAB_RUNNER_TOKEN:-"goodpass"}
+
   # This key will be added to gitlab on start command.
   _DO_GITLAB_RSA_PUB_KEY=${_DO_GITLAB_RSA_PUB_KEY:-"~/.ssh/id_rsa.pub"}
 }
