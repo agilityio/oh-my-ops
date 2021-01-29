@@ -19,7 +19,7 @@ DO_INSTALL_REPO="agilityio/oh-my-ops"
 
 # The version to run with.
 # You can find the releases here: https://github.com/agilityio/oh-my-ops/releases
- DO_VERSION="0.1.2"
+ DO_VERSION="0.1.3"
 
 # The array of plugins to enabled.
 DO_PLUGINS="proj git prompt banner env full"
