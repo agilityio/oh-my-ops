@@ -57,6 +57,7 @@ function _do_full_sub_cmd_list() {
     # For each line, convert two the array of 2 parts.
     # The first one should be the directory dir, and the second
     # should be the directory name.
+    # shellcheck disable=SC2206
     local parts=(${sub})
 
     local sub_dir=${parts[0]}

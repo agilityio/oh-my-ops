@@ -31,6 +31,7 @@ function _do_test_parse_args() {
   done
 }
 
+# shellcheck disable=SC2068
 _do_test_parse_args $@
 
 # =============================================================================
@@ -39,7 +40,7 @@ _do_test_parse_args $@
 
 # This is the generated bash file that will be
 # call later. This fill will include the original test source file
-# and some other automatically generated code for trigering the code.
+# and some other automatically generated code for triggering the code.
 cur_dir=$(pwd)
 tmp_dir="$(_do_dir_random_tmp_dir)"
 gen_f=$tmp_dir/do-test.sh
@@ -57,26 +58,28 @@ line=$(printf '%0.1s' "."{1..75})
 
 function _do_test_run_file() {
   local file=$1
-  _do_file_assert $file
+  _do_file_assert "$file"
 
   local only_func=$2
 
-  _do_print_header_1 "$file"
+  _do_print_header_1 "${file}"
 
   # Extracts all test functions out of the original source file and
   # generate function calls to those at the end of the generated test file.
-  local funcs=$(cat $file | grep $pattern | sed -e "s/${pattern}/\1/")
+  local funcs
+  funcs=$(cat "${file}" | grep "${pattern}" | sed -e "s/${pattern}/\1/")
 
   # Loops through all test functions found in the test file. For each
   # of the function, generate a bash file to execute just that function.
   local func
+  # shellcheck disable=SC2068
   for func in ${funcs[@]}; do
     if [ "${func}" == "test_setup" ] || [ "${func}" == "test_teardown" ]; then
       # Skips test_setup and test_teardown function
       continue
     fi
 
-    if [ ! -z "$only_func" ] && [ "${func}" != "${only_func}" ]; then
+    if [ -n "$only_func" ] && [ "${func}" != "${only_func}" ]; then
       # Skips the current function because the "only_func" argument is passed in.
       continue
     fi
@@ -85,53 +88,52 @@ function _do_test_run_file() {
     printf "%s ${_DO_TX_DIM}%s${_DO_FG_NORMAL}" "$func" "${pad}"
 
     # Generates the file that quickly activate the devops framework
-    # and include the orginal test source file and run the current test function.
+    # and include the original test source file and run the current test function.
+    # Notes that trap is used on function execution to make sure test_teardown
+    # can be reached.
+    # See: https://www.putorius.net/using-trap-to-exit-bash-scripts-cleanly.html
     echo "
-source ${DO_HOME}/activate.sh --quick
+source ${DO_HOME}/activate.sh --quick --no-logs --no-plugins
 
-source $file
+source ${file}
 
-if type test_setup &>/dev/null; then
+if type test_setup &> /dev/null; then
     test_setup
 fi
 
-$func
-err=$?
-
-if type test_teardown &>/dev/null; then
-    test_teardown
+if type test_teardown &> /dev/null; then
+    trap test_teardown EXIT
 fi
 
-exit $?
-
-        " >$gen_f
+${func}
+exit \$?
+        " >"$gen_f"
 
     # Go to the temp directory
-    cd ${tmp_dir}
+    cd "${tmp_dir}" || return 1
 
     # Runs the original test file and redirect standard out and error.
-    bash $gen_f >$out_f 2>$err_f
+    bash "${gen_f}" >"${out_f}" 2>"${err_f}"
     local err=$?
 
-    if _do_error $err; then
+    if _do_error ${err}; then
       # The test has failed.
       total_failed=$((total_failed + 1))
 
       printf "[${_DO_FG_RED}F${_DO_FG_NORMAL}]\n"
-      cat $out_f
+      cat "$out_f"
     else
       # The test passed.
       printf "[${_DO_FG_GREEN}P${_DO_FG_NORMAL}]\n"
 
       if [ ${verbose} == "yes" ]; then
-        cat $out_f
+        cat "$out_f"
       fi
     fi
-    cat $err_f
+    cat "$err_f"
 
     total_tests=$((total_tests + 1))
   done
-
 }
 
 # Runs the test on the specified directory. It should scan the directory and its
@@ -145,25 +147,26 @@ exit $?
 function _do_test_run_dir() {
   # Needs to go to the current directories again
   # To resolves the user input.
-  cd $cur_dir &>/dev/null
+  cd "${cur_dir}" &>/dev/null || return 1
 
   # This is the directory to resolve the test cases.
   local dir=$1
   local only_func=$2
 
   # Go to this directory to make sure the find command return the absolute path.
-  cd $dir &>/dev/null
+  cd "$dir" &>/dev/null || return 1
   local err=$?
 
-  if _do_error $err; then
-    _do_assert_fail "Expected a $dir is a directory"
+  if _do_error ${err}; then
+    _do_assert_fail "Expected a ${dir} is a directory"
   fi
 
   # Recursively looks for all test files that end with "-test.sh" and runs them.
   local file
-  for file in $(find $(pwd) -type f -name "*-test.sh"); do
-    if [ -f $file ]; then
-      _do_test_run_file $file $only_func
+  # shellcheck disable=SC2044
+  for file in $(find "$(pwd)" -type f -name "*-test.sh"); do
+    if [ -f "${file}" ]; then
+      _do_test_run_file "${file}" "${only_func}"
     fi
   done
 }
@@ -175,19 +178,20 @@ function _do_test_run() {
     # If the test directories are passed in, just run tests on those directories.
 
     local arg
+    # shellcheck disable=SC2068
     for arg in ${test_args[@]}; do
       # Gets out the test function if any.
       IFS="#" read -ra parts <<<"${arg}"
       arg=${parts[0]}
       func=${parts[1]}
 
-      if [ -f $cur_dir/$arg ]; then
+      if [ -f "${cur_dir}/${arg}" ]; then
         # If the argument is just a file, run the file only
-        _do_test_run_file $cur_dir/$arg $func
+        _do_test_run_file "${cur_dir}/${arg}" "${func}"
 
       else
         # Runs all the file found in the argument.
-        _do_test_run_dir $arg $func
+        _do_test_run_dir "${arg}" "${func}"
       fi
     done
 
@@ -204,13 +208,13 @@ _do_test_run
 # =============================================================================
 
 # Deletes all generated files
-rm -rfd $tmp_dir &>/dev/null
+rm -rfd "${tmp_dir}" &>/dev/null
 
 # All tests passed
-if [ $total_failed -gt 0 ]; then 
+if [ ${total_failed} -gt 0 ]; then
     _do_print_error "Fail ${total_failed} of total ${total_tests} tests!"
     exit 1
-else 
+else
     _do_print_success "All ${total_tests} tests passed!"
     exit 0
-fi 
+fi

@@ -1,0 +1,10 @@
+kind: pipeline
+type: docker
+name: default
+
+steps:
+- name: test
+  image: ubuntu:18.04
+  commands:
+    - apt install -y curl wget git jq
+    - bash test.sh test/main

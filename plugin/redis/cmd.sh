@@ -29,10 +29,7 @@ EXPOSE ${_DO_REDIS_PORT}
   image=$(_do_redis_docker_image_name "${repo}")
 
   # Builds the docker image. This might take a while.
-  _do_docker_container_build "${tmp_dir}" "${image}" || {
-    _do_dir_pop
-    return 1
-  }
+  _do_docker_util_build_image "${tmp_dir}" "${image}" || return 1
 }
 
 # Starts redis server.
@@ -51,7 +48,7 @@ function _do_redis_repo_cmd_start() {
   local container
   container=$(_do_redis_docker_container_name "${repo}")
 
-  ! _do_docker_container_exists "${container}" || {
+  ! _do_docker_util_container_exists "${container}" || {
     _do_print_error "The container is already running"
     return 1
   }
@@ -64,12 +61,12 @@ function _do_redis_repo_cmd_start() {
   {
     {
       # Makes sure the docker image is built
-      _do_docker_image_exists "${image}" ||
+      _do_docker_util_image_exists "${image}" ||
       _do_redis_repo_cmd_install "${dir}" "${repo}" "${cmd}"
     } &&
 
     # Runs the redis server as deamon
-    _do_docker_container_run_deamon "${image}" "${container}" \
+    _do_docker_util_run_container_as_deamon "${image}" "${container}" \
       -p "${port}:${_DO_REDIS_PORT}" $@ &> /dev/null &&
 
     # Notifies run success
@@ -91,12 +88,12 @@ function _do_redis_repo_cmd_stop() {
   local container
   container=$(_do_redis_docker_container_name "${repo}")
 
-  _do_docker_container_exists "${container}" || {
+  _do_docker_util_container_exists "${container}" || {
     _do_print_error "The container is not running"
     return 1
   }
 
-  _do_docker_container_kill "${container}" &> /dev/null || return 1
+  _do_docker_util_kill_container "${container}" &> /dev/null || return 1
 }
 
 
@@ -109,7 +106,7 @@ function _do_redis_repo_cmd_attach() {
   local container
   container=$(_do_redis_docker_container_name "${repo}")
 
-  _do_docker_container_attach "${container}" || return 1
+  _do_docker_util_attach_to_container "${container}" || return 1
 }
 
 # View logs
@@ -121,7 +118,7 @@ function _do_redis_repo_cmd_logs() {
   local container
   container=$(_do_redis_docker_container_name "${repo}")
 
-  _do_docker_container_logs "${container}" || return 1
+  _do_docker_util_show_container_logs "${container}" || return 1
 }
 
 
@@ -133,7 +130,7 @@ function _do_redis_repo_cmd_status() {
   local repo=${2?'repo arg required'}
 
   local status
-  if _do_docker_container_exists "${_DO_REDIS_DOCKER_IMAGE}"; then
+  if _do_docker_util_container_exists "${_DO_REDIS_DOCKER_IMAGE}"; then
     status="Running"
   else
     status="Stopped"

@@ -12,4 +12,5 @@ function _do_git_plugin_init() {
   fi
 
   _do_log_info 'git' 'Initialize plugin'
+  _DO_GIT_CMDS=${_DO_GIT_CMDS:-'help status add commit push pull sync checkout-branch create-branch remove-branch create-stash apply-stash create-tag remove-tag'}
 }

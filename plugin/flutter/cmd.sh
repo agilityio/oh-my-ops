@@ -19,9 +19,6 @@ function _do_flutter_repo_cmd() {
   # By default, runs with flutter command.
   local run="flutter ${cmd}"
 
-  # Jumps to the
-  _do_dir_push "${dir}" || return 1
-
   {
     # shellcheck disable=SC2068
     {
@@ -43,8 +40,6 @@ function _do_flutter_repo_cmd() {
   } || {
     err=1
   }
-
-  _do_dir_pop
 
   return ${err}
 }

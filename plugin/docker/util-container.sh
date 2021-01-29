@@ -1,19 +1,3 @@
-# Builds the specified dir as a new docker image.
-# Arguments:
-#   - dir: The directory to build.
-#   - image: The docker image name.
-#
-function _do_docker_container_build() {
-  local dir=${1?'dir arg required'}
-  local image=${2?'image arg required'}
-  local err=0
-
-  _do_dir_push "$dir"
-  docker build . -t "$image" || err=1
-  _do_dir_pop
-
-  return $err
-}
 
 # Runs a new docker container with the specified image name.
 # Arguments:
@@ -22,7 +6,7 @@ function _do_docker_container_build() {
 #   - ...: All other arguments will be passed into
 #     docker run commands as-is
 #
-function _do_docker_container_run() {
+function _do_docker_util_run_container() {
   local image=${1?'image arg required'}
   shift 1
 
@@ -40,7 +24,7 @@ function _do_docker_container_run() {
 #   - ...: All other arguments will be passed into the
 #     docker run command as-is.
 #
-function _do_docker_container_run_deamon() {
+function _do_docker_util_run_container_as_deamon() {
   local image=${1?'image arg required'}
   local container=${2?'container arg required'}
   shift 2
@@ -56,7 +40,7 @@ function _do_docker_container_run_deamon() {
 # Arguments:
 #   - container: The container to dump the logs.
 #
-function _do_docker_container_logs() {
+function _do_docker_util_show_container_logs() {
   local container=${1?'container arg required'}
   docker logs "$container" || return 1
 }
@@ -66,7 +50,7 @@ function _do_docker_container_logs() {
 # Arguments:
 #   - container: The running container to attach to.
 #
-function _do_docker_container_attach() {
+function _do_docker_util_attach_to_container() {
   local container=${1?'container arg required'}
   docker attach "$container" || return 1
 }
@@ -74,9 +58,9 @@ function _do_docker_container_attach() {
 # Kill a running container.
 #
 # Arguments:
-#   - container: The runnning container to kill.
+#   - container: The running container to kill.
 #
-function _do_docker_container_kill() {
+function _do_docker_util_kill_container() {
   local container=${1?'container arg required'}
   docker kill "$container" || return 1
 }
@@ -86,7 +70,7 @@ function _do_docker_container_kill() {
 # Arguments:
 #   1. container: The container name
 #
-function _do_docker_container_exists() {
+function _do_docker_util_container_exists() {
   local container=${1?'container arg required'}
 
   # Finds the docker process, given the container name.
@@ -100,10 +84,10 @@ function _do_docker_container_exists() {
 # Arguments:
 #   1. container: The container name to check.
 #
-function _do_docker_container_assert_exists() {
+function _do_docker_assert_container_exists() {
   local container=${1?'container arg required'}
 
-  _do_docker_container_exists "$container" ||
+  _do_docker_util_container_exists "$container" ||
     _do_assert_fail "Expected docker process '${container}' exists"
 }
 
@@ -112,8 +96,8 @@ function _do_docker_container_assert_exists() {
 # Arguments:
 #   1. container: The container name to check.
 #
-function _do_docker_container_assert_not_exists() {
+function _do_docker_assert_container_not_exists() {
   local container=${1?'container arg required'}
-  ! _do_docker_container_exists "$container" ||
+  ! _do_docker_util_container_exists "$container" ||
     _do_assert_fail "Expected docker process '${container}' not exists"
 }

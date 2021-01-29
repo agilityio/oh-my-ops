@@ -21,7 +21,7 @@ function _do_repo_plugin_cmd_add() {
   # Makes sure that the specified plugin is a valid one.
   _do_plugin_is_loaded "${plugin}" || _do_assert_fail "Invalid or not loaded plugin '${plugin}'"
 
-  # Gets the directory where the repostory is at.
+  # Gets the directory where the repository is at.
   local dir
   dir=$(_do_repo_dir_get "${repo}")
 

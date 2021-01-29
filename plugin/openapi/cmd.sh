@@ -6,8 +6,6 @@ function _do_openapi_repo_cmd() {
 
   shift 3
 
-  _do_dir_push "${dir}" || return 1
-
   local out_dir='.'
   local generator=''
   local config_file=''
@@ -41,8 +39,6 @@ function _do_openapi_repo_cmd() {
   } || {
     err=1
   }
-
-  _do_dir_pop
 
   return ${err}
 }

@@ -64,15 +64,18 @@ function _do_print_line_2() {
 function _do_print_color {
   local color=$1
   shift 1
+  # shellcheck disable=SC2145
   echo -e "${color}$@${_DO_FG_BLACK}"
 }
 
 function _do_print_blue {
-  _do_print_color ${_DO_FG_BLUE} $@
+  # shellcheck disable=SC2068
+  _do_print_color "${_DO_FG_BLUE}" $@
 }
 
 function _do_print_yellow {
-  _do_print_color ${_DO_FG_YELLOW} $@
+  # shellcheck disable=SC2068
+  _do_print_color "${_DO_FG_YELLOW}" $@
 }
 
 

@@ -1,4 +1,4 @@
-function _do_docker_dir_resolved() {
+function _do_docker_util_resolve_dir() {
   local dir=${1?'dir arg required'}
 
   dir=$(_do_dir_normalized "${dir}")

@@ -17,9 +17,9 @@ To get more support, please jump on [gitter](https://gitter.im/oh-my-ops/communi
 ## Prerequisites
 
 * Bash 4+
-* Git, Curl
+* Git, Curl, Wget, jq
 * Docker
-* MacOSX, Linux, or Windows (Cygwin)
+* MacOSX, Linux, or Windows (WSL2)
 * Docker
 
 ## Unit Testing

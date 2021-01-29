@@ -38,8 +38,6 @@ function _do_npm_repo_cmd() {
   shift 3
   local opts=""
 
-  _do_dir_push "${dir}" || return 1
-
   {
     {
       # For command that is not the default npm one,
@@ -88,13 +86,12 @@ function _do_npm_repo_cmd() {
     err=1
   }
 
-  _do_dir_pop
   return ${err}
 }
 
 
 # Runs an npm command at the specified directory.
-# 
+#
 # Arguments:
 # 1. dir: The absolute directory to run the command.
 # 2. cmd: Always "cli"

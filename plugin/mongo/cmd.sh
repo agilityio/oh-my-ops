@@ -1,4 +1,3 @@
-
 # Install mongo database to local system. Internally, it will build a docker
 # image that contains mongodb to run.
 # Arguments:
@@ -25,7 +24,6 @@ function _do_mongo_repo_cmd_install() {
 FROM mongo:${_DO_MONGO_VERSION}
 
 WORKDIR /app
-
 ADD bin /app/bin
 
 ENV MONGODB_NAME ${_DO_MONGO_DB}
@@ -34,11 +32,8 @@ ENV MONGODB_PASSWORD ${_DO_MONGO_PASS}
 ENV MONGODB_ADMIN_USER ${_DO_MONGO_ADMIN_USER}
 ENV MONGODB_ADMIN_PASS ${_DO_MONGO_ADMIN_PASS}
 
-EXPOSE ${_DO_MONGO_PORT}
-
 ENTRYPOINT [ \"/app/bin/entrypoint.sh\" ]
-  " > "${tmp_dir}/docker/Dockerfile"
-
+  " >"${tmp_dir}/docker/Dockerfile"
 
   # The docker image to build. This image name is localized
   # to the current repository only.
@@ -46,10 +41,7 @@ ENTRYPOINT [ \"/app/bin/entrypoint.sh\" ]
   image=$(_do_mongo_docker_image_name "${repo}")
 
   # Builds the docker image. This might take a while.
-  _do_docker_container_build "${tmp_dir}"/docker "${image}" || {
-    _do_dir_pop
-    return 1
-  }
+  _do_docker_util_build_image "${tmp_dir}"/docker "${image}" || return 1
 }
 
 # Starts mongo server.
@@ -68,7 +60,7 @@ function _do_mongo_repo_cmd_start() {
   local container
   container=$(_do_mongo_docker_container_name "${repo}")
 
-  ! _do_docker_container_exists "${container}" || {
+  ! _do_docker_util_container_exists "${container}" || {
     _do_print_error "The container is already running"
     return 1
   }
@@ -81,23 +73,22 @@ function _do_mongo_repo_cmd_start() {
   {
     {
       # Makes sure the docker image is built
-      _do_docker_image_exists "${image}" ||
-      _do_mongo_repo_cmd_install "${dir}" "${repo}" "${cmd}"
+      _do_docker_util_image_exists "${image}" ||
+        _do_mongo_repo_cmd_install "${dir}" "${repo}" "${cmd}"
     } &&
 
-    # Runs the mongo server as deamon
-    _do_docker_container_run_deamon "${image}" "${container}" \
-      -p "${port}:${_DO_MONGO_PORT}" $@ &> /dev/null &&
+      # Runs the mongo server as deamon
+      _do_docker_util_run_container_as_deamon "${image}" "${container}" \
+        -p "${port}:${_DO_MONGO_PORT}" $@ &>/dev/null &&
 
-    # Notifies run success
-    echo "Mongo is running at port ${port} as '${container}' docker container." &&
+      # Notifies run success
+      echo "Mongo is running at port ${port} as '${container}' docker container." &&
 
-    # Prints out some status about the server
-    _do_mongo_repo_cmd_status "${dir}" "${repo}"
+      # Prints out some status about the server
+      _do_mongo_repo_cmd_status "${dir}" "${repo}"
 
   } || return 1
 }
-
 
 # Stops mongo db server.
 #
@@ -108,14 +99,13 @@ function _do_mongo_repo_cmd_stop() {
   local container
   container=$(_do_mongo_docker_container_name "${repo}")
 
-  _do_docker_container_exists "${container}" || {
+  _do_docker_util_container_exists "${container}" || {
     _do_print_error "The container is not running"
     return 1
   }
 
-  _do_docker_container_kill "${container}" &> /dev/null || return 1
+  _do_docker_util_kill_container "${container}" &>/dev/null || return 1
 }
-
 
 # Attach
 #
@@ -126,7 +116,7 @@ function _do_mongo_repo_cmd_attach() {
   local container
   container=$(_do_mongo_docker_container_name "${repo}")
 
-  _do_docker_container_attach "${container}" || return 1
+  _do_docker_util_attach_to_container "${container}" || return 1
 }
 
 # View logs
@@ -138,10 +128,8 @@ function _do_mongo_repo_cmd_logs() {
   local container
   container=$(_do_mongo_docker_container_name "${repo}")
 
-  _do_docker_container_logs "${container}" || return 1
+  _do_docker_util_show_container_logs "${container}" || return 1
 }
-
-
 
 # Stops mongo db server.
 #
@@ -150,7 +138,7 @@ function _do_mongo_repo_cmd_status() {
   local repo=${2?'repo arg required'}
 
   local status
-  if _do_docker_container_exists "${_DO_MONGO_DOCKER_IMAGE}"; then
+  if _do_docker_util_container_exists "${_DO_MONGO_DOCKER_IMAGE}"; then
     status="Running"
   else
     status="Stopped"

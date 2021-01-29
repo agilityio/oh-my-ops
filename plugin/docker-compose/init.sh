@@ -1,3 +1,4 @@
+_do_plugin 'repo'
 _do_log_level_warn "docker-compose"
 
 _do_src_include_others_same_dir
@@ -13,4 +14,5 @@ function _do_docker-compose_plugin_init() {
   fi
 
   _do_log_info "docker-compose" "Initialize plugin"
+  _DO_DOCKER_COMPOSE_CMDS=${_DO_DOCKER_COMPOSE_CMDS:-'start stop build'}
 }
